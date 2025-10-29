@@ -1,1 +1,1 @@
-# principy-sofveru
+# principy-softveru
