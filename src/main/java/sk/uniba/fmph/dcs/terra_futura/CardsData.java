@@ -1,3 +1,7 @@
+package sk.uniba.fmph.dcs.terra_futura;
+
+import sk.uniba.fmph.dcs.terra_futura.enums.Deck;
+
 public class CardsData {
     private CardsData() {}
 
@@ -21,9 +25,9 @@ public class CardsData {
 
     public static class CardSource {
         private final byte index; 
-        private final GameObjects.Deck source;
+        private final Deck source;
         
-        public CardSource(int index, GameObjects.Deck source) {
+        public CardSource(int index, Deck source) {
             this.index = (byte)index;
             this.source = source;
         }
@@ -32,7 +36,7 @@ public class CardsData {
             return (int)index;
         }
 
-        public GameObjects.Deck getSourceDeck() {
+        public Deck getSourceDeck() {
             return source;
         }
         
