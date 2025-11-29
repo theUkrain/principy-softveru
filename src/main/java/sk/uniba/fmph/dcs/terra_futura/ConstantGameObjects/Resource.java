@@ -1,4 +1,4 @@
-package sk.uniba.fmph.dcs.terra_futura.enums;
+package sk.uniba.fmph.dcs.terra_futura.GameConstantObjects;
 
 public  enum  Resource {
     GREEN,
