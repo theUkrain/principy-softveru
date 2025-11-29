@@ -1,14 +1,15 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
 
 public class AssistanceEffect implements Effect {
 
     @Override
-    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
-        return true;
+    public boolean activate(Card card) {
+        return false;
     }
 
     @Override

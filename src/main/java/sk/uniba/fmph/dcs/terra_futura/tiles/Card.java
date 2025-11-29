@@ -1,6 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import sk.uniba.fmph.dcs.terra_futura.enums.Resource;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.*;
 
@@ -68,7 +68,7 @@ public class Card implements  CardInterface {
      * @return true, if isn't overpolluted.
      */
     @Override
-    public boolean canPutResources() {
+    public boolean canPutResources(List<Resource> resources) {
         return !isOverPolluted();
     }
 

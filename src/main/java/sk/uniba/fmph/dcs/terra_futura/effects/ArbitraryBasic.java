@@ -1,36 +1,28 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
 
 public class ArbitraryBasic implements Effect {
-    private int requiredInputs;
-    private List<Resource> guaranteedOutputs;
-    private int generatedPollution;
+    private final int requiredInputs;
+    private final List<Resource> guaranteedOutputs;
 
-    public ArbitraryBasic(final int requiredInputs, final List<Resource> guaranteedOutputs, final int generatedPollution) {
+    public ArbitraryBasic(final int requiredInputs, final List<Resource> guaranteedOutputs) {
         this.requiredInputs = requiredInputs;
         this.guaranteedOutputs = guaranteedOutputs;
-        this.generatedPollution = generatedPollution;
     }
 
     @Override
-    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
+    public boolean activate(Card card) {
+        if (card.canPutResources()) {
+            card.putResources(guaranteedOutputs);
 
-        if (input.size() < requiredInputs) {
-            return false;
+            return true;
         }
 
-        if (output.size() != 1) {
-            return false;
-        }
-
-        if (!guaranteedOutputs.contains(output.getFirst())) {
-            return false;
-        }
-
-        return generatedPollution <= pollution;
+        return false;
     }
 
     @Override
@@ -40,6 +32,6 @@ public class ArbitraryBasic implements Effect {
 
     @Override
     public String state() {
-        return "ArbitraryBasic: required input " + requiredInputs + " to generate " + guaranteedOutputs + " (pollution: " + generatedPollution + ")";
+        return "ArbitraryBasic: required input " + requiredInputs + " to generate " + guaranteedOutputs + " (pollution: \" + generatedPollution + \")";
     }
 }

@@ -1,6 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,36 +9,24 @@ import java.util.Map;
 
 public class TransformationFixed implements Effect {
 
-    private List<Resource> requiredInputs;
-    private List<Resource> guaranteedOutputs;
-    private int generatedPollution;
+    private final List<Resource> requiredInputs;
+    private final List<Resource> guaranteedOutputs;
 
-    public TransformationFixed(final List<Resource> requiredInputs,final List<Resource> guaranteedOutputs, final int generatedPollution) {
+    public TransformationFixed(final List<Resource> requiredInputs,final List<Resource> guaranteedOutputs) {
         this.requiredInputs = requiredInputs;
         this.guaranteedOutputs = guaranteedOutputs;
-        this.generatedPollution = generatedPollution;
     }
 
     @Override
-    public boolean check(final List<Resource> input,final List<Resource> output,final int pollution) {
-        Map<Resource, Integer> inputsCounts = count(input);
-        Map<Resource, Integer> requiredCounts = count(requiredInputs);
-        for (Resource r : requiredCounts.keySet()) {
-            if (inputsCounts.getOrDefault(r, 0) < requiredCounts.get(r)) {
-                return false;
-            }
+    public boolean activate(Card card) {
+        if (card.canGetResources(requiredInputs) && card.canPutResources()) {
+            card.putResources(guaranteedOutputs);
+            card.getResources(requiredInputs);
+
+            return true;
         }
 
-        Map<Resource, Integer> outputCounts = count(output);
-        Map<Resource, Integer> guaranteedCounts = count(guaranteedOutputs);
-        for (Resource r : guaranteedCounts.keySet()) {
-            if (!outputCounts.equals(guaranteedCounts)) {
-                return false;
-            }
-        }
-
-        return pollution >= generatedPollution;
-
+        return false;
     }
 
     @Override
@@ -52,9 +41,11 @@ public class TransformationFixed implements Effect {
 
     private Map<Resource, Integer> count(final List<Resource> input) {
         Map<Resource, Integer> counts = new HashMap<>();
+
         for (Resource r : input) {
             counts.put(r, counts.getOrDefault(r, 0) + 1);
         }
+
         return counts;
     }
 }
