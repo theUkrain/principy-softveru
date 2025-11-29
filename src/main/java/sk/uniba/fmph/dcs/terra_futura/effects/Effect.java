@@ -1,5 +1,4 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
-import sk.uniba.fmph.dcs.terra_futura.enums.Resource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
