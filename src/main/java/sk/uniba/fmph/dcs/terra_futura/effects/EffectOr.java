@@ -1,11 +1,16 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import sk.uniba.fmph.dcs.terra_futura.enums.Resource;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.List;
 
-public class EfectOr implements Effect {
+public class EffectOr implements Effect {
     private List<Effect> effects;
+
+    public EffectOr(Effect e1, Effect e2){
+        effects.add(e1);
+        effects.add(e2);
+    }
 
     @Override
     public boolean check(List<Resource> input, List<Resource> output, int pollution) {
