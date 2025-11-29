@@ -6,10 +6,10 @@ import java.util.List;
 
 public class PollutionTransfer implements Effect{
     private int currentPolutionQuantity;
-
+    private static final int MAX_POLUTION = 4;
     @Override
-    public boolean check(List<Resource> input, List<Resource> output, int pollution) {
-        return currentPolutionQuantity<4;
+    public boolean check(final List<Resource> input,final List<Resource> output, final int pollution) {
+        return currentPolutionQuantity < MAX_POLUTION;
     }
 
     @Override

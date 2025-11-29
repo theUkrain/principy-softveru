@@ -5,7 +5,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import java.util.List;
 
 public class StartingCardEffect implements Effect {
-    List<Effect> effects;
+    private List<Effect> effects;
 
     public StartingCardEffect() {
         effects.add(new EffectOr(
@@ -16,7 +16,7 @@ public class StartingCardEffect implements Effect {
     }
 
     @Override
-    public boolean check(List<Resource> input, List<Resource> output, int pollution) {
+    public boolean check(final List<Resource> input,final List<Resource> output,final int pollution) {
         for (Effect e : effects) {
             if (e.check(input, output, pollution)) {
                 return true;
@@ -32,6 +32,13 @@ public class StartingCardEffect implements Effect {
 
     @Override
     public String state() {
-        return "";
+        StringBuilder out = new StringBuilder();
+        out.append("[");
+        for (Effect e : effects) {
+            out.append(e.state());
+            out.append(",");
+        }
+        out.append("]");
+        return out.toString();
     }
 }

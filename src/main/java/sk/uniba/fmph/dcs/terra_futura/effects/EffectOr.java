@@ -7,13 +7,13 @@ import java.util.List;
 public class EffectOr implements Effect {
     private List<Effect> effects;
 
-    public EffectOr(Effect e1, Effect e2){
+    public EffectOr(final Effect e1, final Effect e2) {
         effects.add(e1);
         effects.add(e2);
     }
 
     @Override
-    public boolean check(List<Resource> input, List<Resource> output, int pollution) {
+    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
         for (Effect e : effects) {
             if (e.check(input, output, pollution)) {
                 return true;

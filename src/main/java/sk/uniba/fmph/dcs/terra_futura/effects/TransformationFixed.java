@@ -12,14 +12,14 @@ public class TransformationFixed implements Effect {
     private List<Resource> guaranteedOutputs;
     private int generatedPollution;
 
-    public TransformationFixed(List<Resource> requiredInputs, List<Resource> guaranteedOutputs, int generatedPollution) {
+    public TransformationFixed(final List<Resource> requiredInputs,final List<Resource> guaranteedOutputs, final int generatedPollution) {
         this.requiredInputs = requiredInputs;
         this.guaranteedOutputs = guaranteedOutputs;
         this.generatedPollution = generatedPollution;
     }
 
     @Override
-    public boolean check(List<Resource> input, List<Resource> output, int pollution) {
+    public boolean check(final List<Resource> input,final List<Resource> output,final int pollution) {
         Map<Resource, Integer> inputsCounts = count(input);
         Map<Resource, Integer> requiredCounts = count(requiredInputs);
         for (Resource r : requiredCounts.keySet()) {
@@ -50,7 +50,7 @@ public class TransformationFixed implements Effect {
         return "TransformationFixed: " + requiredInputs + " -> " + guaranteedOutputs + " (pollution: " + generatedPollution + ")";
     }
 
-    private Map<Resource, Integer> count(List<Resource> input) {
+    private Map<Resource, Integer> count(final List<Resource> input) {
         Map<Resource, Integer> counts = new HashMap<>();
         for (Resource r : input) {
             counts.put(r, counts.getOrDefault(r, 0) + 1);

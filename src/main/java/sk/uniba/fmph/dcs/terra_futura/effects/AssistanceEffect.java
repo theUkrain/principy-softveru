@@ -4,10 +4,10 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.List;
 
-public class AssistanceEffect implements Effect{
+public class AssistanceEffect implements Effect {
 
     @Override
-    public boolean check(List<Resource> input, List<Resource> output, int pollution) {
+    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
         return true;
     }
 
