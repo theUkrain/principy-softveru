@@ -7,7 +7,7 @@ import java.util.List;
 public class TransformationFixed implements Effect{
 
     private List<Resource> from;
-    private List<Resource> to
+    private List<Resource> to;
 
     @Override
     public boolean check(List<Resource> input, List<Resource> output, int pollution) {
