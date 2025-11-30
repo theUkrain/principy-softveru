@@ -30,6 +30,6 @@ public class AssistanceEffect implements Effect {
 
     @Override
     public String toString() {
-        return "";
+        return "This is assistance effect";
     }
 }
