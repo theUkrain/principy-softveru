@@ -32,6 +32,10 @@ public class Pile implements PileInterface {
     public void discardCard() {
         discard.add(active.getFirst());
         active.removeFirst();
+        if(active.isEmpty()){
+            Collections.shuffle(discard);
+            active = new ArrayList<>(discard);
+        }
     }
 
     @Override
