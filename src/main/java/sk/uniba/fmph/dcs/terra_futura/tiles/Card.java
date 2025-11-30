@@ -1,15 +1,13 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import java.util.List;
-
-import sk.uniba.fmph.dcs.terra_futura.enums.Resource;
-
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.util.Collection;
 import java.util.Map;
 
 public interface Card {
+    
+    boolean isOverPolluted();
+    
     boolean canGetResources(Map<Resource, Integer> resources);
     void  getResources(Map<Resource, Integer> resources);
 

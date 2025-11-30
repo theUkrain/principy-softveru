@@ -21,4 +21,16 @@ public class EffectOr implements Effect{
         
     }
 
+    @Override
+    public boolean canProvideAssistance() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'canProvideAssistance'");
+    }
+
+    @Override
+    public int hashcode() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hashcode'");
+    }
+
 }

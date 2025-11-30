@@ -30,4 +30,10 @@ public class ArbitraryBasic implements Effect {
     public String toString() {
         return "Generated resource/resources is " + generatedPollution;
     }
+
+    @Override
+    public int hashcode() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hashcode'");
+    }
 }

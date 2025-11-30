@@ -66,4 +66,10 @@ public class TransformationFixed implements Effect {
         return "This effect for " + requiredInputs + " can generate "
                 + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
     }
+
+    @Override
+    public int hashcode() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hashcode'");
+    }
 }
