@@ -1,11 +1,13 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class Grid {
+public class Grid implements GridInterface {
     private Card[][] field;
 
     private GridPosition topLeft, bottomRight;
@@ -90,11 +92,7 @@ public class Grid {
         }
         return ans;
     }
-
-    public void setActivationPattern(List<GridPosition> pattern){
-        this.pattern = pattern;
-    }
-
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -110,6 +108,11 @@ public class Grid {
         }
         
         return sb.toString();
+    }
+
+    @Override
+    public void setActivationPattern(Collection<GridPosition> pattern) {
+        this.pattern = new ArrayList<>(pattern);
     }
 
 }
