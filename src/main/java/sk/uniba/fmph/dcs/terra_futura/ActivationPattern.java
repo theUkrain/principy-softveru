@@ -1,12 +1,14 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.json.JSONObject;
-import org.json.JSONArray;
+
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
+
+import org.json.JSONArray;
+
 
 
 public final class ActivationPattern {
@@ -36,7 +38,7 @@ public final class ActivationPattern {
 
     public String state() {
         JSONArray patternList = new JSONArray();
-        for (GridPosition entry : pattern) {
+        for (GridPosition entry: pattern) {
             JSONObject pair = new JSONObject();
             pair.put("x", entry.getX());
             pair.put("y", entry.getY());

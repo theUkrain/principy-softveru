@@ -42,8 +42,8 @@ public class CardFactory {
     }
 
     public static Card startCard() {
-        // TODO make effects for start card
-        return new ConcreteCard(0, null, null, null);
+        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        return card;
     }
 
 
@@ -118,7 +118,6 @@ public class CardFactory {
 
         }
 
-
         /**
          *
          * @return true, if isn't overpolluted.
@@ -173,4 +172,5 @@ public class CardFactory {
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
+
 }
