@@ -1,24 +1,48 @@
-//package sk.uniba.fmph.dcs.terra_futura.effects;
-//
-//import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-//
-//import java.util.List;
-//
-//public class PollutionTransfer implements Effect{
-//    private int currentPolutionQuantity;
-//    private static final int MAX_POLUTION = 4;
-//    @Override
-//    public boolean check(final List<Resource> input,final List<Resource> output, final int pollution) {
-//        return currentPolutionQuantity < MAX_POLUTION;
-//    }
-//
-//    @Override
-//    public boolean hasAssistance() {
-//        return false;
-//    }
-//
-//    @Override
-//    public String state() {
-//        return "Current pollution quantity " + currentPolutionQuantity;
-//    }
-//}
+package sk.uniba.fmph.dcs.terra_futura.effects;
+
+import org.apache.commons.lang3.tuple.Pair;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+
+import java.util.List;
+import java.util.Map;
+
+public class PollutionTransfer implements Effect {
+
+    public int execute(Card card, List<Pair<Card, Integer>> cards) {
+        int commulatedPollution = 0;
+        for (Pair<Card, Integer> p : cards) {
+            commulatedPollution += p.getRight();
+        }
+        if (card.canPutResources(Map.of(Resource.POLLUTION, commulatedPollution))) {
+            for (Pair<Card, Integer> p : cards) {
+                p.getLeft().getResources(Map.of(Resource.POLLUTION, p.getRight()));
+            }
+            return -commulatedPollution;
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean canProvideAssistance() {
+        return true;
+    }
+
+    @Override
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+        int commulatedPollution = 0;
+        for (Resource r: cards.keySet()) {
+            for (Pair<Card, Integer> p : cards.get(r)) {
+                commulatedPollution += p.getRight();
+            }
+        }
+        return card.canPutResources(Map.of(Resource.POLLUTION, commulatedPollution));
+    }
+
+    @Override
+    public String toString() {
+        return "This effect will get up to 4 pollutions " +
+                "from other cards considering amount of pollution " +
+                "on card that is being under this effect";
+    }
+}

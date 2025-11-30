@@ -6,14 +6,13 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface Card {
-
-    boolean isOverPolluted();
-
     boolean canGetResources(Map<Resource, Integer> resources);
     void  getResources(Map<Resource, Integer> resources);
 
     boolean canPutResources(Map<Resource, Integer> resources);
     void putResources(Map<Resource, Integer> resources);
+
+
 
     CardSource getCardSource();
 

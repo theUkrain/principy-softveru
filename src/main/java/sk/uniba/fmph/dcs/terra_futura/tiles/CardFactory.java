@@ -1,6 +1,5 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
@@ -39,11 +38,6 @@ public class CardFactory {
 
         ConcreteCard card  = new ConcreteCard(pollutionSpaces,  upper, lower, cardSource);
         return card;
-    }
-
-    public static Card startCard() {
-        // TODO make effects for start card
-        return new ConcreteCard(0, null, null, null);
     }
 
     private static class ConcreteCard implements Card {
@@ -118,7 +112,6 @@ public class CardFactory {
         }
 
         /**
-         *
          * @return true, if isn't overpolluted.
          */
         @Override
