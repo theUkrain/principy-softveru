@@ -1,13 +1,11 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
 import sk.uniba.fmph.dcs.terra_futura.ActivationPattern;
+import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-public class Grid {
+public class Grid implements InterfaceActivateGrid {
     private int lbX;
     private int lbY;
 
@@ -15,6 +13,8 @@ public class Grid {
     private int rtY;
 
     private List<List<Card>> field;
+
+    private Collection<GridPosition> pattern;
 
     public Grid() {
         field = new ArrayList<>(5);
@@ -37,11 +37,51 @@ public class Grid {
                          coordinate.getY() > lbY && coordinate.getY() < rtY));
     }
 
-    public Set<GridPosition> putCard(GridPosition coordinate, Card card) {
-        return null;
+    private Set<Card> proccessActivation(GridPosition coordinate) {
+        if (!canPutCard(coordinate)) {
+            throw new IllegalStateException("Can't put card");
+        }
+
+        Set<Card> cards = new HashSet<>();
+
+        for (int i = 0; i < 5; i++) {
+            Optional<Card> activeCardX = getCard(new GridPosition(i, coordinate.getY()));
+            Optional<Card> activeCardY = getCard(new GridPosition(coordinate.getX(), i));
+
+            if (activeCardX.isPresent()) {
+                cards.add(activeCardX.get());
+            }
+
+            if (activeCardY.isPresent()) {
+                cards.add(activeCardY.get());
+            }
+        }
+
+        return cards;
     }
 
-    public Set<GridPosition> getActivatedCards(ActivationPattern pattern) {
-        return null;
+    public Set<Card> putCard(GridPosition coordinate, Card card) {
+        if (!canPutCard(coordinate)) {
+            throw new IllegalStateException("Can't put card");
+        }
+
+        field.get(coordinate.getY()).set(coordinate.getX(), card);
+        return proccessActivation(coordinate);
+    }
+
+    public Set<Card> getActivatedCards() {
+        Set<Card> cards = new HashSet<>();
+
+        for (GridPosition pos : pattern) {
+            Set<Card> currentActivation = proccessActivation(pos);
+            cards.addAll(currentActivation);
+        }
+
+        return cards;
+    }
+
+    @Override
+    public void setActivationPattern(Collection<GridPosition> pattern) {
+        this.pattern = pattern;
     }
 }

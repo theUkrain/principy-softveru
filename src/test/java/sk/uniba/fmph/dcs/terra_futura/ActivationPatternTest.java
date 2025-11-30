@@ -11,18 +11,19 @@ import java.util.Collection;
 
 import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
 import sk.uniba.fmph.dcs.terra_futura.ActivationPattern;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 import static org.junit.Assert.*;
 
 class ActivateGridFake implements InterfaceActivateGrid {
-    ArrayList<SimpleEntry<Integer, Integer>> activations;
+    ArrayList<GridPosition> activations;
 
     public ActivateGridFake() {
         this.activations = new ArrayList<>();
     }
 
     @Override
-    public void setActivationPattern(Collection<SimpleEntry<Integer,Integer>> pattern) {
+    public void setActivationPattern(Collection<GridPosition> pattern) {
         activations = new ArrayList<>(pattern);
     }
 }
@@ -65,12 +66,12 @@ public class ActivationPatternTest {
         activationPattern.select();
         checkStateString("(0,0)(0,0)(-1,1)", true);
         assertEquals(3, grid.activations.size());
-        assertEquals(Integer.valueOf(0), grid.activations.get(0).getKey());
-        assertEquals(Integer.valueOf(0), grid.activations.get(0).getValue());
-        assertEquals(Integer.valueOf(0), grid.activations.get(1).getKey());
-        assertEquals(Integer.valueOf(0), grid.activations.get(1).getValue());
-        assertEquals(Integer.valueOf(-1), grid.activations.get(2).getKey());
-        assertEquals(Integer.valueOf(1), grid.activations.get(2).getValue());
+        assertEquals(0, grid.activations.get(0).getX());
+        assertEquals(0, grid.activations.get(0).getY());
+        assertEquals(0, grid.activations.get(1).getX());
+        assertEquals(0, grid.activations.get(1).getY());
+        assertEquals(-1, grid.activations.get(2).getX());
+        assertEquals(1, grid.activations.get(2).getY());
     }
         
 
