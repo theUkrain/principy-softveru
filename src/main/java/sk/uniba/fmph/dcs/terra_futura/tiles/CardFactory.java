@@ -4,7 +4,6 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +38,14 @@ public class CardFactory {
 
         ConcreteCard card  = new ConcreteCard(pollutionSpaces,  upper, lower, cardSource);
         return card;
+
     }
+
+    public static Card startCard() {
+        // TODO make effects for start card
+        return new ConcreteCard(0, null, null, null);
+    }
+
 
     private static class ConcreteCard implements Card {
 
@@ -56,7 +62,7 @@ public class CardFactory {
 
         public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
-            resources = new HashMap();
+            resources = new HashMap<>();
 
             this.upper = upper;
             this.lower = lower;
@@ -112,7 +118,9 @@ public class CardFactory {
 
         }
 
+
         /**
+         *
          * @return true, if isn't overpolluted.
          */
         @Override
@@ -162,7 +170,7 @@ public class CardFactory {
                     "pollution spaces: " + pollutionSpaces + '\n' +
                     "upper effect: " + upper.toString() + '\n' +
                     "lower effect: " + lower.toString() + '\n' +
-                    "Source deck: " + cardSource.getSourceDeck() + '\n';
+                    "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
 }

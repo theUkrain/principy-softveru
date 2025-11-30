@@ -51,8 +51,8 @@ public class PileTest {
         }
     }
 
-    @DisplayName("Test method: getCard")
     @Test
+    @DisplayName("Test method: getCard")
     public void testGetCard() {
         // Data set
         List<Card> input = new ArrayList<Card>();
