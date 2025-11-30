@@ -32,15 +32,15 @@ public class ActivationPatternTest {
 
     private ActivateGridFake grid;
     private ActivationPattern activationPattern;
-    private ArrayList<SimpleEntry<Integer, Integer>> patternEntries;
+    private ArrayList<GridPosition> patternEntries;
 
     @Before
     public void setUp() {
         grid = new ActivateGridFake();
         patternEntries = new ArrayList<>();
-        patternEntries.add(new SimpleEntry<Integer,Integer>(0, 0));
-        patternEntries.add(new SimpleEntry<Integer,Integer>(0, 0));
-        patternEntries.add(new SimpleEntry<Integer,Integer>(-1, 1));
+        patternEntries.add(new GridPosition(0, 0));
+        patternEntries.add(new GridPosition(0, 0));
+        patternEntries.add(new GridPosition(-1, 1));
         activationPattern = new ActivationPattern(grid, patternEntries);
     }
 

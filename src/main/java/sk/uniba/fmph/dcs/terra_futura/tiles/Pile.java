@@ -23,19 +23,29 @@ public class Pile implements PileInterface {
     }
 
     public Optional<Card> getCard(int index) {
+        if (index < 0) {
+            index = 0;
+        }
+
         if (index >= input.size()) {
             if (input.isEmpty()) {
                 newPile();
+
+                if (input.isEmpty()) {
+                    throw new ArrayIndexOutOfBoundsException("Pile is empty");
+                }
             }
 
             index = input.size() - 1;
         }
 
        if (index > 3) {
-           return Optional.ofNullable(input.get(4));
+           index = 4;
        }
 
-       return Optional.ofNullable(input.get(index));
+       Card card = input.get(index);
+       input.remove(index);
+       return Optional.ofNullable(card);
     }
 
     @Override
