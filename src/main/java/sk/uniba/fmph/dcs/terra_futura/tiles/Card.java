@@ -4,38 +4,19 @@ import java.util.List;
 
 import sk.uniba.fmph.dcs.terra_futura.enums.Resource;
 
-public class Card {
-    private Resource[] resources;
-    private int pollutionSpace;
-    public Card(){}
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-    public boolean canGetResource(List<Resource> res){
-        return true;
-    }
+import java.util.Collection;
+import java.util.Map;
 
-    public List<Resource> getResources(List<Resource> res){
-        return null;
-    }
+public interface Card {
+    boolean canGetResources(Map<Resource, Integer> resources);
+    void  getResources(Map<Resource, Integer> resources);
 
-    public boolean canPutResource(List<Resource> res){
-        return true;
-    }
+    boolean canPutResources(Map<Resource, Integer> resources);
+    void putResources(Map<Resource, Integer> resources);
 
-    public void putResource(List<Resource> res){}
+    CardSource getCardSource();
 
-    public boolean check(List<Resource> input, List<Resource> output, int polution){
-        return true;
-    }
-
-    public boolean checkLower(List<Resource> input, List<Resource> output, int polution){
-        return true;
-    }
-
-    public boolean hasAssistance(){
-        return true;
-    }
-
-    public String state(){
-        return "";
-    }
+    boolean hasAssistance();
 }
