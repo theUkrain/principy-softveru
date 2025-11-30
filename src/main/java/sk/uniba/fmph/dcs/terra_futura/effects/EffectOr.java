@@ -1,46 +1,40 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EffectOr implements Effect {
-    private List<Effect> effects;
 
-    public EffectOr(final Effect e1, final Effect e2) {
-        effects.add(e1);
-        effects.add(e2);
+    List<Effect> effectPair = new ArrayList<>();
+
+    public EffectOr(Effect e1, Effect e2) {
+        effectPair.add(e1);
+        effectPair.add(e2);
+    }
+
+    public Effect execute(int whatEffectToTrigger) {
+        return effectPair.get(whatEffectToTrigger);
+    }
+
+    public boolean canProvideAssistance(){
+        return true;
     }
 
     @Override
-    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
-        for (Effect e : effects) {
-            if (e.check(input, output, pollution)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+        return effectPair.getFirst().check(card, cards,  wantedResource) &&
+                effectPair.getLast().check(card,cards, wantedResource);
     }
 
-    @Override
-    public boolean hasAssistance() {
-        for (Effect e : effects) {
-            if (e.hasAssistance()) {
-                return true;
-            }
-        }
-        return false;
+    public String toString(){
+        return "This composite effect is consist of" + effectPair.getFirst()
+                + " and " + effectPair.getLast() + " they will do ongoing effects \n First: "
+                + effectPair.getFirst().toString() + " Second: " + effectPair.getLast().toString();
     }
 
-    @Override
-    public String state() {
-        StringBuilder out = new StringBuilder();
-        out.append("[");
-        for (Effect e : effects) {
-            out.append(e.state());
-            out.append(",");
-        }
-        out.append("]");
-        return out.toString();
-    }
 }

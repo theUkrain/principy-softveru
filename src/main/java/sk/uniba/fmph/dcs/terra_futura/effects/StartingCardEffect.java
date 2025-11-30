@@ -1,44 +1,33 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
+import java.util.Map;
 
 public class StartingCardEffect implements Effect {
-    private List<Effect> effects;
 
-    public StartingCardEffect() {
-        effects.add(new EffectOr(
-                new EffectOr(
-                        new ArbitraryBasic(0, List.of(Resource.GREEN, Resource.RED, Resource.YELLOW), 0),
-                        new ArbitraryBasic(0, List.of(Resource.MONEY), 0)),
-                new AssistanceEffect()));
+    EffectOr upperEffect = new EffectOr(new RawMaterialProducer(Map.of(Resource.UNIVERSAL, 1), 0),
+            new RawMaterialProducer(Map.of(Resource.MONEY, 1), 0));
+    Effect lowerEffect = new AssistanceEffect();
+
+    public Effect executeUpper(int whatEffectToTrigger) {
+        return upperEffect.execute(whatEffectToTrigger);
+    }
+
+    public Effect executeLower() {
+        return lowerEffect;
     }
 
     @Override
-    public boolean check(final List<Resource> input,final List<Resource> output,final int pollution) {
-        for (Effect e : effects) {
-            if (e.check(input, output, pollution)) {
-                return true;
-            }
-        }
+    public boolean canProvideAssistance() {
         return false;
     }
 
     @Override
-    public boolean hasAssistance() {
-        return true;
-    }
-
-    @Override
-    public String state() {
-        StringBuilder out = new StringBuilder();
-        out.append("[");
-        for (Effect e : effects) {
-            out.append(e.state());
-            out.append(",");
-        }
-        out.append("]");
-        return out.toString();
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+        return lowerEffect.check(card, cards, wantedResource) && upperEffect.check(card, cards, wantedResource);
     }
 }
