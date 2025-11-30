@@ -9,12 +9,11 @@ public interface Card {
     boolean canGetResources(Map<Resource, Integer> resources);
     void  getResources(Map<Resource, Integer> resources);
 
+    public boolean isOverPolluted();
+
     boolean canPutResources(Map<Resource, Integer> resources);
     void putResources(Map<Resource, Integer> resources);
 
-
-
     CardSource getCardSource();
-
     boolean hasAssistance();
 }

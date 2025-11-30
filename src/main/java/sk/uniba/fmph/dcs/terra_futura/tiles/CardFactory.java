@@ -1,5 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
