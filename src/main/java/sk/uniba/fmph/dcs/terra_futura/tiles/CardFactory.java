@@ -39,7 +39,11 @@ public class CardFactory {
 
         ConcreteCard card  = new ConcreteCard(pollutionSpaces,  upper, lower, cardSource);
         return card;
+    }
 
+    public static Card startCard() {
+        // TODO make effects for start card
+        return new ConcreteCard(0, null, null, null);
     }
 
     private static class ConcreteCard implements Card {
@@ -68,7 +72,8 @@ public class CardFactory {
 
         }
 
-        private boolean isOverPolluted() {
+        @Override
+        public boolean isOverPolluted() {
             return curPollution > pollutionSpaces;
         }
 
