@@ -42,8 +42,8 @@ public class CardFactory {
     }
 
     public static Card startCard() {
-        // TODO make effects for start card
-        return new ConcreteCard(0, null, null, null);
+        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        return card;
     }
 
 
@@ -62,7 +62,7 @@ public class CardFactory {
 
         public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
-            resources = new HashMap();
+            resources = new HashMap<>();
 
             this.upper = upper;
             this.lower = lower;

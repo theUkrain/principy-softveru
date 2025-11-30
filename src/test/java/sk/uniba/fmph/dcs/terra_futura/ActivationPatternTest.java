@@ -6,11 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 
-import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
-import sk.uniba.fmph.dcs.terra_futura.ActivationPattern;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 import static org.junit.Assert.*;

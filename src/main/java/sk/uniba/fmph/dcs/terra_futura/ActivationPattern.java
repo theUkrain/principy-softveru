@@ -1,6 +1,5 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 

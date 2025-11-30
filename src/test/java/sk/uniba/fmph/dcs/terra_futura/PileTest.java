@@ -10,6 +10,6 @@ public class PileTest {
     @Test
     void testFunctionality(){
         List<Card> cards = new ArrayList<>();
-        for(int i=0; i<)
+        cards.isEmpty();
     }
 }
