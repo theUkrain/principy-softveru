@@ -67,8 +67,33 @@ public class PileTest {
         for (int i = 0; i < 20; i++) {
             Optional<Card> card = pile.getCard(i);
             Assertions.assertTrue(card.isPresent());
+            System.out.println(card.get());
         }
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> pile.getCard(0));
+    }
+
+    @Test
+    @DisplayName("Test method: discardCard")
+    public void testDiscardCard() {
+        // Data set
+        List<Card> input = new ArrayList<Card>();
+
+        for (int i = 0; i < 20; i++) {
+            input.add(new TestCard());
+        }
+
+        // Test for exceptions
+        Pile pile = new Pile(input);
+
+        for (int i = 0; i < 20; i++) {
+            pile.discardCard();
+        }
+
+        for (int i = 0; i < 20; i++) {
+            pile.getCard(0);
+        }
+
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> pile.discardCard());
     }
 }

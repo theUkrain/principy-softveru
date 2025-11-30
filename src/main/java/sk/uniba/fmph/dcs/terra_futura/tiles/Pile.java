@@ -20,6 +20,11 @@ public class Pile implements PileInterface {
     private void newPile() {
         Collections.shuffle(discardPile);
         input = new ArrayList<>(discardPile);
+        discardPile.clear();
+
+        if (input.isEmpty()) {
+            throw new ArrayIndexOutOfBoundsException("Pile is empty");
+        }
     }
 
     public Optional<Card> getCard(int index) {
@@ -30,10 +35,6 @@ public class Pile implements PileInterface {
         if (index >= input.size()) {
             if (input.isEmpty()) {
                 newPile();
-
-                if (input.isEmpty()) {
-                    throw new ArrayIndexOutOfBoundsException("Pile is empty");
-                }
             }
 
             index = input.size() - 1;
@@ -50,12 +51,12 @@ public class Pile implements PileInterface {
 
     @Override
     public void discardCard() {
-        discardPile.add(input.getFirst());
-        input.removeFirst();
-
         if (input.isEmpty()) {
             newPile();
         }
+
+        discardPile.add(input.getFirst());
+        input.removeFirst();
     }
 
     @Override
