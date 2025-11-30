@@ -1,60 +1,69 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class TransformationFixed implements Effect {
 
-    private List<Resource> requiredInputs;
-    private List<Resource> guaranteedOutputs;
+    private Map<Resource, Integer> requiredInputs;
+    private Map<Resource, Integer> guaranteedOutputs;
     private int generatedPollution;
 
-    public TransformationFixed(final List<Resource> requiredInputs,final List<Resource> guaranteedOutputs, final int generatedPollution) {
+    public TransformationFixed(final Map<Resource, Integer> requiredInputs,
+                               final Map<Resource, Integer> guaranteedOutputs,
+                               final int generatedPollution) {
         this.requiredInputs = requiredInputs;
         this.guaranteedOutputs = guaranteedOutputs;
         this.generatedPollution = generatedPollution;
     }
 
-    @Override
-    public boolean check(final List<Resource> input,final List<Resource> output,final int pollution) {
-        Map<Resource, Integer> inputsCounts = count(input);
-        Map<Resource, Integer> requiredCounts = count(requiredInputs);
-        for (Resource r : requiredCounts.keySet()) {
-            if (inputsCounts.getOrDefault(r, 0) < requiredCounts.get(r)) {
-                return false;
+    public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+
+        if(!card.canPutResources(guaranteedOutputs)){
+            return 0;
+        }
+
+        boolean canProduce = true;
+        for(Resource r: cards.keySet()){
+            int acumulatedAmountOfResource = 0;
+            for(Pair<Card, Integer> p: cards.get(r)){
+                acumulatedAmountOfResource +=p.getRight();
+                if(!p.getLeft().canGetResources(Map.of(r,p.getRight()))){
+                    canProduce = false;
+                }
+            }
+            if(acumulatedAmountOfResource<requiredInputs.get(r)){
+                canProduce = false;
             }
         }
-
-        Map<Resource, Integer> outputCounts = count(output);
-        Map<Resource, Integer> guaranteedCounts = count(guaranteedOutputs);
-        for (Resource r : guaranteedCounts.keySet()) {
-            if (!outputCounts.equals(guaranteedCounts)) {
-                return false;
+        if(canProduce){
+            for(Resource r: cards.keySet()){
+                for(Pair<Card, Integer> p: cards.get(r)){
+                    if(p.getLeft().canGetResources()){
+                        p.getLeft().getResources(Map.of(r,p.getRight()));
+                    }
+                }
             }
+            card.putResources(guaranteedOutputs);
+            return generatedPollution;
         }
-
-        return pollution >= generatedPollution;
-
+        return 0;
     }
 
     @Override
-    public boolean hasAssistance() {
-        return false;
+    public boolean canProvideAssistance() {
+        return true;
     }
+
 
     @Override
-    public String state() {
-        return "TransformationFixed: " + requiredInputs + " -> " + guaranteedOutputs + " (pollution: " + generatedPollution + ")";
-    }
-
-    private Map<Resource, Integer> count(final List<Resource> input) {
-        Map<Resource, Integer> counts = new HashMap<>();
-        for (Resource r : input) {
-            counts.put(r, counts.getOrDefault(r, 0) + 1);
-        }
-        return counts;
+    public String toString() {
+        return "This effect for " + requiredInputs + " can generate "
+                + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
     }
 }

@@ -1,46 +1,24 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class EffectOr implements Effect {
-    private List<Effect> effects;
+public class EffectOr implements Effect{
 
-    public EffectOr(final Effect e1, final Effect e2) {
-        effects.add(e1);
-        effects.add(e2);
+    List<Effect> effectPair = new ArrayList<>();
+
+    public EffectOr(Effect e1, Effect e2){
+        effectPair.add(e1);
+        effectPair.add(e2);
     }
 
-    @Override
-    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
-        for (Effect e : effects) {
-            if (e.check(input, output, pollution)) {
-                return true;
-            }
-        }
-        return false;
+    public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource, int whatEffectToTrigger) {
+        
     }
 
-    @Override
-    public boolean hasAssistance() {
-        for (Effect e : effects) {
-            if (e.hasAssistance()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public String state() {
-        StringBuilder out = new StringBuilder();
-        out.append("[");
-        for (Effect e : effects) {
-            out.append(e.state());
-            out.append(",");
-        }
-        out.append("]");
-        return out.toString();
-    }
 }

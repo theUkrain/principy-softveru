@@ -1,45 +1,33 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.List;
 
 public class ArbitraryBasic implements Effect {
-    private int requiredInputs;
     private List<Resource> guaranteedOutputs;
     private int generatedPollution;
 
-    public ArbitraryBasic(final int requiredInputs, final List<Resource> guaranteedOutputs, final int generatedPollution) {
-        this.requiredInputs = requiredInputs;
+    public ArbitraryBasic(final List<Resource> guaranteedOutputs, final int generatedPollution) {
         this.guaranteedOutputs = guaranteedOutputs;
         this.generatedPollution = generatedPollution;
     }
 
-    @Override
-    public boolean check(final List<Resource> input, final List<Resource> output, final int pollution) {
-
-        if (input.size() < requiredInputs) {
-            return false;
+    public int execute(Card card, Resource resource) {
+        if (card.canPutResources(guaranteedOutputs) && guaranteedOutputs.contains(resource)) {
+            card.putResources(List.of(resource));
         }
-
-        if (output.size() != 1) {
-            return false;
-        }
-
-        if (!guaranteedOutputs.contains(output.getFirst())) {
-            return false;
-        }
-
-        return generatedPollution <= pollution;
+        return generatedPollution;
     }
 
     @Override
-    public boolean hasAssistance() {
+    public boolean canProvideAssistance() {
         return false;
     }
 
     @Override
-    public String state() {
-        return "ArbitraryBasic: required input " + requiredInputs + " to generate " + guaranteedOutputs + " (pollution: " + generatedPollution + ")";
+    public String toString() {
+        return "Generated resource/resources is " + generatedPollution;
     }
 }
