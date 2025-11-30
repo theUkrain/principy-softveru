@@ -4,6 +4,7 @@ public  enum  Resource {
     GREEN,
     RED,
     YELLOW,
+    UNIVERSAL,
     BULB,
     GEAR,
     CAR,
