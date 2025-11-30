@@ -20,8 +20,8 @@ public class Grid {
             }
         }
         field[2][2] = CardFactory.startCard();
-        topLeft = new GridPosition(2, 2);
-        bottomRight = new GridPosition(2, 2);
+        topLeft = new GridPosition(0, 0);
+        bottomRight = new GridPosition(0, 0);
     }
 
     public Optional<Card> getCard(GridPosition coordinate){
@@ -52,7 +52,19 @@ public class Grid {
 
     public Set<Card> putCard(GridPosition coordinate, Card card){
         if(!canPutCard(coordinate)) throw new IllegalStateException("Cannot put card");
-        field[coordinate.getY()][coordinate.getX()] = card;
+        field[2 + coordinate.getY()][2 + coordinate.getX()] = card;
+        if(coordinate.getX() < topLeft.getX()){
+            topLeft = new GridPosition(coordinate.getX(), topLeft.getY());
+        }
+        if(coordinate.getX() > bottomRight.getX()){
+            bottomRight = new GridPosition(coordinate.getX(), bottomRight.getY());
+        }
+        if(coordinate.getY() < topLeft.getY()){
+            topLeft = new GridPosition(topLeft.getX(), coordinate.getY());
+        }
+        if(coordinate.getY() > bottomRight.getY()){
+            bottomRight = new GridPosition(bottomRight.getX(), coordinate.getY());
+        }
         Set<Card> act = new HashSet<>();
         for(int i = 0; i<field.length; ++i){
             for(int j = 0; j<field[i].length; ++j){
