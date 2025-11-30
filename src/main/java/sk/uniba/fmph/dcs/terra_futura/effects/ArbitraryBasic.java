@@ -21,4 +21,10 @@ public class ArbitraryBasic implements Effect {
 
     @Override
     }
+
+    @Override
+    public int hashcode() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hashcode'");
+    }
 }

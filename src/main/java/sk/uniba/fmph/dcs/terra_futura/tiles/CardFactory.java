@@ -42,6 +42,12 @@ public class CardFactory {
 
     }
 
+    public static Card startCard() {
+        // TODO make effects for start card
+        return new ConcreteCard(0, null, null, null);
+    }
+
+
     private static class ConcreteCard implements Card {
 
         private Map<Resource, Integer> resources;
@@ -68,7 +74,8 @@ public class CardFactory {
 
         }
 
-        private boolean isOverPolluted() {
+        @Override
+        public boolean isOverPolluted() {
             return curPollution > pollutionSpaces;
         }
 
@@ -155,6 +162,15 @@ public class CardFactory {
         @Override
         public CardSource getCardSource() {
             return cardSource;
+        }
+
+        @Override
+        public String toString() {
+            return "resources: " + this.resources + '\n' +
+                    "pollution spaces: " + pollutionSpaces + '\n' +
+                    "upper effect: " + upper.toString() + '\n' +
+                    "lower effect: " + lower.toString() + '\n' +
+                    "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
 
