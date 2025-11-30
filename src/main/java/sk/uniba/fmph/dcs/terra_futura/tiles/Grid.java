@@ -5,7 +5,7 @@ import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
 
 import java.util.*;
 
-public class Grid implements InterfaceActivateGrid {
+public class Grid implements InterfaceActivateGrid, GridInterface {
     private int lbX;
     private int lbY;
 
@@ -66,6 +66,23 @@ public class Grid implements InterfaceActivateGrid {
         }
 
         field.get(coordinate.getY()).set(coordinate.getX(), card);
+
+        if (coordinate.getX() > rtX) {
+            rtX = coordinate.getX();
+        }
+
+        else if (coordinate.getX() < lbX) {
+            lbX = coordinate.getX();
+        }
+
+        if (coordinate.getY() > rtY) {
+            rtY = coordinate.getY();
+        }
+
+        else if (coordinate.getY() < lbY) {
+            lbY = coordinate.getY();
+        }
+
         return proccessActivation(coordinate);
     }
 
@@ -83,5 +100,22 @@ public class Grid implements InterfaceActivateGrid {
     @Override
     public void setActivationPattern(Collection<GridPosition> pattern) {
         this.pattern = pattern;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int j = lbY; j < rtY; j++) {
+            for (int i = lbX; i < rtX; i++) {
+                Optional<Card> card = getCard(new GridPosition(j, i));
+
+                if (card.isPresent()) {
+                    sb.append("X: " + i + ", Y:" + j + ": \n" + card.get().toString());
+                }
+            }
+        }
+
+        return sb.toString();
     }
 }

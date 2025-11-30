@@ -161,6 +161,14 @@ public class CardFactory {
         public CardSource getCardSource() {
             return cardSource;
         }
-    }
 
+        @Override
+        public String toString() {
+            return "resources: " + this.resources + '\n' +
+                    "pollution spaces: " + pollutionSpaces + '\n' +
+                    "upper effect: " + upper.toString() + '\n' +
+                    "lower effect: " + lower.toString() + '\n' +
+                    "Source deck: " + cardSource.getSourceDeck() + '\n';
+        }
+    }
 }
