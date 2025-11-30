@@ -6,50 +6,49 @@ public class Pile implements PileInterface {
     private List<Card> active;
     private List<Card> discard;
 
-    public Pile(List<Card> input){
-        this.active = new ArrayList<>(input);
-        Collections.shuffle(active);
+    public Pile(Collection<Card> input){
+        active = new ArrayList<>(input);
         discard = new ArrayList<>();
+        Collections.shuffle(active);
+    }
+
+    private void refill() {
+        List<Card> temp = active;
+        Collections.shuffle(discard);
+        active = discard;
+        discard = temp;
     }
 
     @Override
     public Optional<Card> getCard(int index) {
-        if(active.isEmpty()){
-            Collections.shuffle(discard);
-            active = new ArrayList<>(discard);
-        }
-        if(index >= 4){
-            if(active.size() <= 4){
-                index = active.size()-1;
-            }else index = 4;
-        }
-        Card element = active.get(index);
-        active.remove(index);
-        return Optional.of(element);
+
+        if(active.isEmpty()) refill();
+
+        if(index > 4) index = 4;
+
+        if(index >= active.size()) return Optional.empty();
+
+        return Optional.ofNullable(active.remove(index));
+
     }
 
     @Override
     public void discardCard() {
-        discard.add(active.getFirst());
-        active.removeFirst();
-        if(active.isEmpty()){
-            Collections.shuffle(discard);
-            active = new ArrayList<>(discard);
-        }
+
+        if(active.isEmpty()) return;
+
+        discard.add(active.removeFirst());
+
     }
 
     @Override
     public String toString(){
-        String s = "Active:\n";
-        for(Card c: active){
-            s += " " + c + "\n";
-        }
-
-        s += "Discard:\n";
-        for(Card c: active){
-            s += " " + c + "\n";
-        }
-        return s;
+        StringBuilder sb = new StringBuilder();
+        sb.append("Active:\n");
+        for (Card c : active) sb.append(" ").append(c).append("\n");
+        sb.append("Discard:\n");
+        for (Card c : discard) sb.append(" ").append(c).append("\n");
+        return sb.toString();
     }
 
 }
