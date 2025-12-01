@@ -42,6 +42,10 @@ public class CardFactory {
 
     }
 
+    public static Card startCard() {
+        return new ConcreteCard(0, null, null, new CardSource(0, Deck.I));
+    }
+
     private static class ConcreteCard implements Card {
 
         private Map<Resource, Integer> resources;
@@ -57,18 +61,18 @@ public class CardFactory {
 
         public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
-            resources = new HashMap();
+            resources = new HashMap<>();
 
             this.upper = upper;
             this.lower = lower;
 
             this.pollutionSpaces = pollutionSpaces;
-            this.hasAssistance = upper.canProvideAssistance() || lower.canProvideAssistance();
+            this.hasAssistance = (upper != null &&  upper.canProvideAssistance()) || (lower != null &&  lower.canProvideAssistance());
             this.cardSource = cardSource;
 
         }
 
-        private boolean isOverPolluted() {
+        public boolean isOverPolluted() {
             return curPollution > pollutionSpaces;
         }
 
@@ -148,6 +152,16 @@ public class CardFactory {
         }
 
         @Override
+        public Effect getUpper() {
+            return upper;
+        }
+
+        @Override
+        public Effect getLower() {
+            return lower;
+        }
+
+        @Override
         public boolean hasAssistance() {
             return hasAssistance;
         }
@@ -155,6 +169,15 @@ public class CardFactory {
         @Override
         public CardSource getCardSource() {
             return cardSource;
+        }
+
+        @Override
+        public String toString() {
+            return "resources: " + this.resources + '\n' +
+                    "pollution spaces: " + pollutionSpaces + '\n' +
+                    "upper effect: " + ( upper != null ? upper.toString() : "none") + '\n' +
+                    "lower effect: " + ( lower != null ? lower.toString() : "none") + '\n' +
+                    "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
 

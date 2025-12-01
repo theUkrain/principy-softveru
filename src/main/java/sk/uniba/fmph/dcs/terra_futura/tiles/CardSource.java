@@ -1,5 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 public  class CardSource {
     private final byte index;
@@ -16,6 +17,12 @@ public  class CardSource {
 
     public Deck getSourceDeck() {
         return source;
+    }
+
+    @Override
+    public String toString() {
+        return "Deck: " + source  + "\n" +
+                "Index: " + source + "\n ";
     }
 
 }
