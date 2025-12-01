@@ -19,6 +19,12 @@ public class CardFactory {
         return card;
     }
 
+    public static Card startCard() {
+        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        return card;
+    }
+
+
     private static class ConcreteCard implements Card {
 
         private Map<Resource, Integer> resources;
@@ -34,7 +40,7 @@ public class CardFactory {
 
         public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
-            resources = new HashMap();
+            resources = new HashMap<>();
 
             this.upper = upper;
             this.lower = lower;
@@ -45,7 +51,9 @@ public class CardFactory {
 
         }
 
-        private boolean isOverPolluted() {
+
+        @Override
+        public boolean isOverPolluted() {
             return curPollution > pollutionSpaces;
         }
 
@@ -138,6 +146,17 @@ public class CardFactory {
         public CardSource getCardSource() {
             return cardSource;
         }
+
+        @Override
+        public Effect getUpper() {
+            return upper;
+        }
+
+        @Override
+        public Effect getLower() {
+            return lower;
+        }
+
     }
 
 }

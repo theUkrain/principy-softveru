@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class AssistanceEffect implements Effect {
 
+
     public Effect execute(Card cardWithAssist, Effect effectOfAnoutherPlayer,
                           Map<Resource, List<Pair<Card, Integer>>> cards,
                           Map<Resource, Integer> wantedResource) {

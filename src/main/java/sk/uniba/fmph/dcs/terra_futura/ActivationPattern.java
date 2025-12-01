@@ -6,15 +6,16 @@ import java.util.Collection;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 
 public final class ActivationPattern {
-    private ArrayList<SimpleEntry<Integer, Integer>> pattern;
+    private ArrayList<GridPosition> pattern;
     private boolean selected;
     private InterfaceActivateGrid grid;
 
-    public ActivationPattern(final InterfaceActivateGrid grid, final Collection<SimpleEntry<Integer, Integer>> pattern) {
+    public ActivationPattern(final InterfaceActivateGrid grid, final Collection<GridPosition> pattern) {
         this.grid = grid;
         this.pattern = new ArrayList<>(pattern);  // copy the pattern
         this.selected = false;
@@ -36,10 +37,10 @@ public final class ActivationPattern {
 
     public String state() {
         JSONArray patternList = new JSONArray();
-        for (SimpleEntry<Integer, Integer> entry: pattern) {
+        for (GridPosition entry: pattern) {
             JSONObject pair = new JSONObject();
-            pair.put("x", entry.getKey());
-            pair.put("y", entry.getValue());
+            pair.put("x", entry.getX());
+            pair.put("y", entry.getY());
             patternList.put(pair);
         }
         JSONObject result = new JSONObject();
