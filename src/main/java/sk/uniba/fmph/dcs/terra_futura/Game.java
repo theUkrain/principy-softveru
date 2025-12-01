@@ -38,11 +38,15 @@ public class Game implements TerraFuturaInterface {
         curPlayer = players.get(ind);
     }
 
-    private void process(RawMaterialProducer effect){
+    public void process(Effect effect) {
+        effect.apply(this);
+    }
+
+    public void process(RawMaterialProducer effect){
         effect.execute();
     }
 
-    private void process(TransformationFixed effect){
+    public void process(TransformationFixed effect){
         // Map<Resource, List<Pair<Card, Integer>>> cards
         Map<Resource, List<Pair<Card, Integer>>> taken = new HashMap<>();
         Map<Resource, Integer> requieredRes = effect.getRequiredInputs();
@@ -85,19 +89,19 @@ public class Game implements TerraFuturaInterface {
         effect.execute(taken);
     }
 
-    private void process(Exchange effect){
+    public void process(Exchange effect){
 
     }
 
-    private void process(EffectOr effect){
+    public void process(EffectOr effect){
 
     }
 
-    private void process(AssistanceEffect effect){
+    public void process(AssistanceEffect effect){
 
     }
 
-    private void process(PollutionTransfer effect){
+    public void process(PollutionTransfer effect){
 
     }
 }

@@ -2,6 +2,7 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.HashMap;
@@ -77,6 +78,11 @@ public class Exchange extends SetCardToEffect {
     @Override
     public boolean canProvideAssistance() {
         return true;
+    }
+
+    @Override
+    public void apply(Game game) {
+        game.process(this);
     }
 
 

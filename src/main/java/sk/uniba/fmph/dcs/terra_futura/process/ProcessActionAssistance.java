@@ -1,6 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.process;
 
 
+import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.effects.AssistanceEffect;
 import sk.uniba.fmph.dcs.terra_futura.effects.CopyableEffect;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
@@ -9,8 +10,9 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends ProcessAction {
     private T effectAnotherPlayer;
+    private Game game;
 
-    public ProcessActionAssistance(Effect effect, T effectAnotherPlayer) {
+    public ProcessActionAssistance(Effect effect, T effectAnotherPlayer, Game game) {
         super(effect);
         this.effectAnotherPlayer = effectAnotherPlayer;
     }
@@ -28,7 +30,7 @@ public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends 
         SetCardToEffect newEffect = (SetCardToEffect) result.copy();
         newEffect.setCard(card);
 
-        // TODO call Game to process newEffect
+        game.process((Effect) newEffect);
 
         return 0;
     }
