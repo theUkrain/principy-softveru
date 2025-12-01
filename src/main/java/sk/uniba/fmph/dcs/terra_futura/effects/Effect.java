@@ -8,9 +8,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface Effect {
-    String toString();
-
     boolean canProvideAssistance();
-
-    boolean equals(Object obj);
 }

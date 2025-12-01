@@ -1,23 +1,39 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EffectOr implements Effect {
 
-    List<Effect> effectList = new ArrayList<>();
+    private List<Effect> effectList = new ArrayList<>();
 
     public EffectOr(Effect e1, Effect e2) {
         effectList.add(e1);
         effectList.add(e2);
     }
 
+    public EffectOr(List<Effect> effectList) {
+        this.effectList = effectList;
+    }
+
+    public List<Effect> getEffectList() {
+        return Collections.unmodifiableList(this.effectList);
+    }
+
     public Effect execute(int whatEffectToTrigger) {
         return effectList.get(whatEffectToTrigger);
     }
 
+    @Override
     public boolean canProvideAssistance(){
-        return true;
+        for (Effect effect : effectList) {
+            if (effect.canProvideAssistance()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String toString(){
@@ -50,5 +66,10 @@ public class EffectOr implements Effect {
            }
        }
        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(effectList);
     }
 }

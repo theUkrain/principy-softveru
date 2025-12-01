@@ -98,8 +98,8 @@ public class EffectsTest {
                 "execute(1) must return AssistanceEffect, cuz the second effect in EffectOr");
 
         EffectOr expectedEffect1 = new EffectOr(
-                new RawMaterialProducer(Pair.of(Resource.UNIVERSAL, 1), 0),
-                new RawMaterialProducer(Pair.of(Resource.MONEY, 1), 0));
+                new RawMaterialProducer(Resource.UNIVERSAL),
+                new RawMaterialProducer(Resource.MONEY));
 
         Assertions.assertTrue(trigger1.equals(expectedEffect1));
     }
