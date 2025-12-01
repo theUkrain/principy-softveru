@@ -23,8 +23,6 @@ public class EffectsTest {
         tests.add(Pair.of(Map.of(Resource.RED, 2, Resource.MONEY, 1), Map.of(Resource.CAR, 1)));
         tests.add(Pair.of(Map.of(Resource.GREEN, 1, Resource.MONEY, 4), Map.of(Resource.CAR, 1, Resource.YELLOW, 2)));
 
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
-
         List<Card> cards = new ArrayList<>();
 
         for (int i = 0; i < tests.size(); i++) {
