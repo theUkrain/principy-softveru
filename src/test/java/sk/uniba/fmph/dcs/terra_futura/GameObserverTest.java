@@ -2,6 +2,9 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 import org.junit.Before;
 import org.junit.Test;
+import sk.uniba.fmph.dcs.terra_futura.Observer.GameObserver;
+import sk.uniba.fmph.dcs.terra_futura.Observer.TerraFuturaObserverInterface;
+
 import static org.junit.Assert.*;
 
 import java.util.HashMap;
@@ -11,6 +14,7 @@ public class GameObserverTest {
 
     /**
      * Mock observer for testing.
+     * Implements TerraFuturaObserverInterface and tracks notifications.
      */
     private static class MockObserver implements TerraFuturaObserverInterface {
         private String lastNotification;
@@ -55,6 +59,11 @@ public class GameObserverTest {
         assertEquals("Should have 1 observer", 1, gameObserver.getObserverCount());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testRegisterNullObserver() {
+        gameObserver.registerObserver(1, null);
+    }
+
     @Test
     public void testRegisterMultipleObservers() {
         gameObserver.registerObserver(1, observer1);
@@ -75,6 +84,13 @@ public class GameObserverTest {
         assertFalse("Observer 1 should be unregistered", gameObserver.hasObserver(1));
         assertTrue("Observer 2 should still be registered", gameObserver.hasObserver(2));
         assertEquals("Should have 1 observer", 1, gameObserver.getObserverCount());
+    }
+
+    @Test
+    public void testUnregisterNonExistentObserver() {
+        // Should not throw exception
+        gameObserver.unregisterObserver(999);
+        assertEquals("Should have 0 observers", 0, gameObserver.getObserverCount());
     }
 
     @Test
@@ -99,6 +115,14 @@ public class GameObserverTest {
 
         assertNull("Observer 1 should not receive notification",
                 observer1.getLastNotification());
+        assertEquals("Observer 1 should not be notified",
+                0, observer1.getNotificationCount());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNotifyPlayerWithNullState() {
+        gameObserver.registerObserver(1, observer1);
+        gameObserver.notifyPlayer(1, null);
     }
 
     @Test
@@ -137,6 +161,12 @@ public class GameObserverTest {
                 "State for player 1", observer1.getLastNotification());
         assertNull("Observer 2 should not receive notification",
                 observer2.getLastNotification());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNotifyAllWithNullMap() {
+        gameObserver.registerObserver(1, observer1);
+        gameObserver.notifyAll(null);
     }
 
     @Test
@@ -193,5 +223,84 @@ public class GameObserverTest {
                 observer1.getLastNotification());
         assertEquals("Notification count should be 0",
                 0, observer1.getNotificationCount());
+    }
+
+    @Test
+    public void testClearAllObservers() {
+        gameObserver.registerObserver(1, observer1);
+        gameObserver.registerObserver(2, observer2);
+
+        assertEquals("Should have 2 observers", 2, gameObserver.getObserverCount());
+
+        gameObserver.clearAllObservers();
+
+        assertEquals("Should have 0 observers after clear", 0, gameObserver.getObserverCount());
+        assertFalse("Observer 1 should not be registered", gameObserver.hasObserver(1));
+        assertFalse("Observer 2 should not be registered", gameObserver.hasObserver(2));
+    }
+
+    @Test
+    public void testObserverException() {
+        // Observer that throws exception
+        TerraFuturaObserverInterface faultyObserver = new TerraFuturaObserverInterface() {
+            @Override
+            public void notify(String gameState) {
+                throw new RuntimeException("Test exception");
+            }
+        };
+
+        gameObserver.registerObserver(1, faultyObserver);
+        gameObserver.registerObserver(2, observer2);
+
+        Map<Integer, String> states = new HashMap<>();
+        states.put(1, "State 1");
+        states.put(2, "State 2");
+
+        // Should not throw - exception is caught internally
+        gameObserver.notifyAll(states);
+
+        // Observer 2 should still receive notification despite observer 1 failing
+        assertEquals("Observer 2 should receive notification",
+                "State 2", observer2.getLastNotification());
+    }
+
+    @Test
+    public void testMultiplePlayersIndependentNotifications() {
+        gameObserver.registerObserver(1, observer1);
+        gameObserver.registerObserver(2, observer2);
+
+        // Notify only player 1
+        gameObserver.notifyPlayer(1, "Player 1 message");
+
+        assertEquals("Observer 1 should receive message",
+                "Player 1 message", observer1.getLastNotification());
+        assertNull("Observer 2 should not receive message",
+                observer2.getLastNotification());
+
+        // Now notify only player 2
+        gameObserver.notifyPlayer(2, "Player 2 message");
+
+        assertEquals("Observer 2 should receive message",
+                "Player 2 message", observer2.getLastNotification());
+        assertEquals("Observer 1 should keep old message",
+                "Player 1 message", observer1.getLastNotification());
+    }
+
+    @Test
+    public void testObserverReceivesOnlyOwnState() {
+        gameObserver.registerObserver(1, observer1);
+        gameObserver.registerObserver(2, observer2);
+
+        Map<Integer, String> states = new HashMap<>();
+        states.put(1, "Secret state for player 1");
+        states.put(2, "Secret state for player 2");
+
+        gameObserver.notifyAll(states);
+
+        // Each observer should receive only their own state
+        assertEquals("Observer 1 should receive only player 1 state",
+                "Secret state for player 1", observer1.getLastNotification());
+        assertEquals("Observer 2 should receive only player 2 state",
+                "Secret state for player 2", observer2.getLastNotification());
     }
 }

@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Manages reward selection after assistance action.
- * Tracks which player can select rewards and what resources are available.
+ * Manages reward selection after assistance action
+ * Tracks which player can select rewards and what resources are available
  */
 public class SelectReward {
     private Optional<Integer> player;
@@ -20,7 +20,7 @@ public class SelectReward {
     private Card targetCard;
 
     /**
-     * Constructor initializes empty reward selection.
+     * Constructor initializes empty reward selection
      */
     public SelectReward() {
         this.player = Optional.empty();
@@ -30,8 +30,8 @@ public class SelectReward {
     }
 
     /**
-     * Set up reward selection for a player.
-     * Called after successful assistance action.
+     * Set up reward selection for a player
+     * Called after successful assistance action
      *
      * @param playerId ID of player who can select rewards
      * @param card Card where rewards will be placed
@@ -59,7 +59,7 @@ public class SelectReward {
     }
 
     /**
-     * Check if specified resource can be selected as reward.
+     * Check if specified resource can be selected as reward
      * Resource must be in available rewards and not yet fully selected.
      *
      * @param resource Resource to check
@@ -82,8 +82,8 @@ public class SelectReward {
     }
 
     /**
-     * Select a resource as reward.
-     * Adds resource to target card and marks as selected.
+     * Select a resource as reward
+     * Adds resource to target card and marks as selected
      *
      * @param resource Resource to select
      * @return true if selection successful, false otherwise
@@ -121,7 +121,7 @@ public class SelectReward {
     }
 
     /**
-     * Get current state of reward selection.
+     * Get current state of reward selection
      *
      * @return String representation of state
      */
@@ -163,7 +163,7 @@ public class SelectReward {
     }
 
     /**
-     * Check if specified player is the one who can select rewards.
+     * Check if specified player is the one who can select rewards
      *
      * @param playerId Player ID to check
      * @return true if this player can select, false otherwise
@@ -173,7 +173,7 @@ public class SelectReward {
     }
 
     /**
-     * Check if there are still rewards to select.
+     * Check if there are still rewards to select
      *
      * @return true if rewards remain, false otherwise
      */
@@ -190,7 +190,7 @@ public class SelectReward {
     }
 
     /**
-     * Clear reward selection state.
+     * Clear reward selection state
      */
     private void clear() {
         this.player = Optional.empty();
@@ -200,7 +200,7 @@ public class SelectReward {
     }
 
     /**
-     * Get the player who can select rewards.
+     * Get the player who can select rewards
      *
      * @return Optional player ID
      */
@@ -209,7 +209,7 @@ public class SelectReward {
     }
 
     /**
-     * Get map of available rewards with quantities.
+     * Get map of available rewards with quantities
      *
      * @return Map of resources to quantities
      */
@@ -222,7 +222,7 @@ public class SelectReward {
     }
 
     /**
-     * Get map of already selected rewards with quantities.
+     * Get map of already selected rewards with quantities
      *
      * @return Map of resources to quantities
      */

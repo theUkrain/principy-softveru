@@ -95,8 +95,4 @@ public class Pile implements PileInterface {
 
         return sb.toString();
     }
-
-    // Note: The methods takeCard, hasCards, getHiddenCardsCount were removed
-    // because the logic you provided in the second snippet manages everything
-    // via getCard (which removes the item) and internal state management.
 }

@@ -21,34 +21,70 @@ public class TransformationFixed implements Effect {
         this.generatedPollution = generatedPollution;
     }
 
-    public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+    /*add one more material, universal material(colored cube), and fix
+    execute in way that I would be able to use any colored material via counter and one more condition, so
+    I would be able to produce some output*/
 
-        if(!card.canPutResources(guaranteedOutputs)){
+    public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+        if (!card.canPutResources(guaranteedOutputs)) {
             return 0;
         }
 
-        boolean canProduce = true;
-        for(Resource r: cards.keySet()){
-            int acumulatedAmountOfResource = 0;
-            for(Pair<Card, Integer> p: cards.get(r)){
-                acumulatedAmountOfResource +=p.getRight();
-                if(!p.getLeft().canGetResources(Map.of(r,p.getRight()))){
-                    canProduce = false;
-                }
-            }
-            if(acumulatedAmountOfResource<requiredInputs.get(r)){
-                canProduce = false;
-            }
-        }
-        if(canProduce){
-            for(Resource r: cards.keySet()){
-                for(Pair<Card, Integer> p: cards.get(r)){
-                    if(p.getLeft().canGetResources()){
-                        p.getLeft().getResources(Map.of(r,p.getRight()));
+
+        if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
+            int accumulatedResource = 0;
+            for (Resource r : cards.keySet()) {
+                for (Pair<Card, Integer> p : cards.get(r)) {
+                    if (card.canGetResources(Map.of(r, p.getRight()))
+                            && (r.equals(Resource.GREEN) || r.equals(Resource.RED) || r.equals(Resource.YELLOW))) {
+                        accumulatedResource += p.getRight();
                     }
                 }
             }
-            card.putResources(guaranteedOutputs);
+            if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
+                if (guaranteedOutputs.containsKey(Resource.UNIVERSAL)
+                        && (guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.RED) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.YELLOW) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.GREEN))
+                        && (wantedResource.containsKey(Resource.RED) || wantedResource.containsKey(Resource.GREEN) || wantedResource.containsKey(Resource.YELLOW))) {
+                    card.putResources(wantedResource);
+                    return generatedPollution;
+                }
+
+            }
+        }
+
+        boolean canProduce = true;
+        for (Resource r : cards.keySet()) {
+            int acumulatedAmountOfResource = 0;
+            for (Pair<Card, Integer> p : cards.get(r)) {
+                acumulatedAmountOfResource += p.getRight();
+                if (!p.getLeft().canGetResources(Map.of(r, p.getRight()))) {
+                    canProduce = false;
+                }
+            }
+            if (acumulatedAmountOfResource < requiredInputs.get(r)) {
+                canProduce = false;
+            }
+        }
+        if (canProduce) {
+            if(guaranteedOutputs.containsKey(Resource.UNIVERSAL)){
+                int accumulated = 0;
+                for(Resource r: wantedResource.keySet()){
+                    if(r.equals(Resource.RED) || r.equals(Resource.YELLOW) || r.equals(Resource.GREEN)){
+                        accumulated += wantedResource.get(r);
+                    }
+                }
+                if(accumulated > guaranteedOutputs.get(Resource.UNIVERSAL)){
+                    return 0;
+                }
+            }
+            for (Resource r : cards.keySet()) {
+                for (Pair<Card, Integer> p : cards.get(r)) {
+                    p.getLeft().getResources(Map.of(r, p.getRight()));
+                }
+            }
+            for(Resource r: wantedResource.keySet()){
+                card.putResources(Map.of(r,wantedResource.get(r)));
+            }
             return generatedPollution;
         }
         return 0;
@@ -61,14 +97,56 @@ public class TransformationFixed implements Effect {
 
 
     @Override
-    public String toString() {
-        return "This effect for " + requiredInputs + " can generate "
-                + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+        if (!card.canPutResources(guaranteedOutputs)) {
+            return false;
+        }
+
+        if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
+            int accumulatedResource = 0;
+            for (Resource r : cards.keySet()) {
+                for (Pair<Card, Integer> p : cards.get(r)) {
+                    if (card.canGetResources(Map.of(r, p.getRight()))
+                            && (r.equals(Resource.GREEN) || r.equals(Resource.RED) || r.equals(Resource.YELLOW))) {
+                        accumulatedResource += p.getRight();
+                    }
+                }
+            }
+            if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
+                if (guaranteedOutputs.containsKey(Resource.UNIVERSAL)
+                        && (guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.RED) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.YELLOW) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.GREEN))
+                        && (wantedResource.containsKey(Resource.RED) || wantedResource.containsKey(Resource.GREEN) || wantedResource.containsKey(Resource.YELLOW))) {
+                    return false;
+                }
+
+            }
+        }
+
+        boolean canProduce = true;
+
+        for (Resource r : cards.keySet()) {
+            int acumulatedAmountOfResource = 0;
+            for (Pair<Card, Integer> p : cards.get(r)) {
+                if (!p.getLeft().canGetResources(Map.of(r, p.getRight()))) {
+                    canProduce = false;
+                }
+                acumulatedAmountOfResource += p.getRight();
+            }
+            if (acumulatedAmountOfResource < requiredInputs.get(r)) {
+                canProduce = false;
+            }
+        }
+        for (Resource r : wantedResource.keySet()) {
+            if (!guaranteedOutputs.containsKey(r) || guaranteedOutputs.get(r) < wantedResource.getOrDefault(r, 0)) {
+                canProduce = false;
+            }
+        }
+        return canProduce;
     }
 
     @Override
-    public int hashcode() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hashcode'");
+    public String toString() {
+        return "This effect for " + requiredInputs + " can generate "
+                + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
     }
 }

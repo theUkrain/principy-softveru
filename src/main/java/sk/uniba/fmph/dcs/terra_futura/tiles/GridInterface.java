@@ -9,5 +9,4 @@ public interface GridInterface {
     boolean canPutCard(GridPosition coordinate);
     Set<Card> putCard(GridPosition coordinate, Card card);
     Set<Card> getActivatedCards();
-    void setActivationPattern(Collection<GridPosition> pattern);
 }

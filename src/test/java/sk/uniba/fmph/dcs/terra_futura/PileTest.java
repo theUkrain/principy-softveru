@@ -1,194 +1,116 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Pile;
+import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
+import sk.uniba.fmph.dcs.terra_futura.tiles.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import java.util.*;
 
 public class PileTest {
+    private class TestCard implements Card{
 
-    private static class MockCard extends Card {
-        private final String id;
-
-        public MockCard(String id) {
-            super(new ArrayList<>(), 0);
-            this.id = id;
+        @Override
+        public boolean canGetResources(Map<Resource, Integer> resources) {
+            return false;
         }
 
         @Override
-        public String state() {
-            return "Card[" + id + "]";
+        public void getResources(Map<Resource, Integer> resources) {}
+
+        @Override
+        public boolean canPutResources(Map<Resource, Integer> resources) {
+            return false;
+        }
+
+        @Override
+        public void putResources(Map<Resource, Integer> resources) {}
+
+        @Override
+        public boolean isOverPolluted() {
+            return false;
+        }
+
+        @Override
+        public CardSource getCardSource() {
+            return null;
+        }
+
+        @Override
+        public boolean hasAssistance() {
+            return false;
+        }
+
+        @Override
+        public Effect getUpper() {
+            return null;
+        }
+
+        @Override
+        public Effect getLower() {
+            return null;
         }
     }
 
-    private List<Card> createTestCards(int count) {
-        List<Card> cards = new ArrayList<>();
-        for (int i = 0; i < count; i++) {
-            cards.add(new MockCard("Card" + i));
+    private List<Card> generateInput(int n){
+        List<Card> input = new ArrayList<>();
+        for(int i = 0; i<n ;++i){
+            input.add(new TestCard());
         }
-        return cards;
+        return input;
     }
 
     @Test
-    public void testPileInitialization() {
-        List<Card> cards = createTestCards(10);
-        Random random = new Random(42);
-        Pile pile = new Pile(cards, random);
+    @DisplayName("Test method: getCard")
+    public void testGetCard(){
+        List<Card> input = generateInput(20);
+        Pile tpile = new Pile(input);
 
-        // Should have 4 visible cards
-        for (int i = 0; i < 4; i++) {
-            assertTrue("Visible card " + i + " should be present",
-                    pile.getCard(i).isPresent());
-        }
-
-        // Should have 6 hidden cards
-        assertEquals("Should have 6 hidden cards", 6, pile.getHiddenCardsCount());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testPileInitializationWithTooFewCards() {
-        List<Card> cards = createTestCards(3);
-        new Pile(cards);
-    }
-
-    @Test
-    public void testGetCard() {
-        List<Card> cards = createTestCards(10);
-        Random random = new Random(42);
-        Pile pile = new Pile(cards, random);
-
-        // Valid indices
-        for (int i = 0; i < 4; i++) {
-            Optional<Card> card = pile.getCard(i);
-            assertTrue("Card at index " + i + " should exist", card.isPresent());
+        for(int i=0; i<20; ++i){
+            Optional<Card> tcard = tpile.getCard(i);
+            assertEquals(true, tcard.isPresent());
         }
 
-        // Invalid indices
-        assertFalse("Negative index should return empty", pile.getCard(-1).isPresent());
-        assertFalse("Out of bounds index should return empty", pile.getCard(4).isPresent());
-    }
 
-    @Test
-    public void testTakeCard() {
-        List<Card> cards = createTestCards(10);
-        Random random = new Random(42);
-        Pile pile = new Pile(cards, random);
-
-        int initialHidden = pile.getHiddenCardsCount();
-
-        // Take a valid card
-        assertTrue("Should successfully take card", pile.takeCard(0));
-
-        // Card should be refilled from hidden
-        assertTrue("Card should be refilled", pile.getCard(0).isPresent());
-        assertEquals("Hidden cards should decrease by 1",
-                initialHidden - 1, pile.getHiddenCardsCount());
-    }
-
-    @Test
-    public void testTakeCardInvalidIndex() {
-        List<Card> cards = createTestCards(10);
-        Pile pile = new Pile(cards);
-
-        assertFalse("Should fail with negative index", pile.takeCard(-1));
-        assertFalse("Should fail with out of bounds index", pile.takeCard(10));
-    }
-
-    @Test
-    public void testRemoveLastCard() {
-        List<Card> cards = createTestCards(10);
-        Random random = new Random(42);
-        Pile pile = new Pile(cards, random);
-
-        int initialHidden = pile.getHiddenCardsCount();
-
-        pile.removeLastCard();
-
-        // Last card (index 3) should be refilled
-        assertTrue("Last card should be refilled", pile.getCard(3).isPresent());
-        assertEquals("Hidden cards should decrease",
-                initialHidden - 1, pile.getHiddenCardsCount());
-    }
-
-    @Test
-    public void testTakeAllCards() {
-        List<Card> cards = createTestCards(10);
-        Random random = new Random(42);
-        Pile pile = new Pile(cards, random);
-
-        // Take all cards
-        for (int i = 0; i < 10; i++) {
-            pile.takeCard(0);
+        input = generateInput(20);
+        final Pile pile2 = new Pile(input);
+        for(int i=0; i<20; ++i){
+            pile2.getCard(i);
         }
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> pile2.getCard(0));
 
-        assertEquals("Should have no hidden cards", 0, pile.getHiddenCardsCount());
-        assertFalse("Should have no cards left", pile.hasCards());
-    }
+        input  = generateInput(3);
+        Pile pile3 = new Pile(input);
+        Card c1 = (pile3.getCard(0)).get();
+        Card c2 = (pile3.getCard(0)).get();
+        assertEquals(true, c1!=c2);
 
-    @Test
-    public void testHasCards() {
-        List<Card> cards = createTestCards(5);
-        Pile pile = new Pile(cards);
-
-        assertTrue("Should have cards initially", pile.hasCards());
-
-        // Take all cards
-        for (int i = 0; i < 5; i++) {
-            pile.takeCard(0);
-        }
-
-        assertFalse("Should have no cards after taking all", pile.hasCards());
-    }
-
-    @Test
-    public void testState() {
-        List<Card> cards = createTestCards(10);
-        Pile pile = new Pile(cards);
-
-        String state = pile.state();
-        assertNotNull("State should not be null", state);
-        assertTrue("State should contain 'Pile'", state.contains("Pile"));
-        assertTrue("State should contain 'visible'", state.contains("visible"));
-        assertTrue("State should contain 'hidden'", state.contains("hidden"));
-    }
-
-    @Test
-    public void testRandomnessControlled() {
-        List<Card> cards1 = createTestCards(10);
-        List<Card> cards2 = createTestCards(10);
-
-        Random random1 = new Random(42);
-        Random random2 = new Random(42);
-
-        Pile pile1 = new Pile(cards1, random1);
-        Pile pile2 = new Pile(cards2, random2);
-
-        // With same seed, should get same state
-        assertEquals("Same seed should produce same state",
-                pile1.state(), pile2.state());
-    }
-
-    @Test
-    public void testRefillMaintainsVisibleCount() {
-        List<Card> cards = createTestCards(10);
-        Pile pile = new Pile(cards);
-
-        // Take several cards
-        pile.takeCard(0);
-        pile.takeCard(1);
-        pile.takeCard(2);
-
-        // Should still have visible cards refilled
-        int visibleCount = 0;
-        for (int i = 0; i < 4; i++) {
-            if (pile.getCard(i).isPresent()) {
-                visibleCount++;
+        input = generateInput(50);
+        Pile pile4 = new Pile(input);
+        int extracted = 0;
+        for(int i=0; i<50; ++i){
+            if(i%2 == 0){
+                ++extracted;
+                pile4.getCard(0);
+            }else{
+                pile4.discardCard();
             }
         }
+        assertEquals(25, extracted);
+        Optional<Card> ct = pile4.getCard(0);
+        assertEquals(true, ct.isPresent());
 
-        assertEquals("Should maintain 4 visible cards", 4, visibleCount);
+        input = generateInput(25);
+        Pile pile5 = new Pile(input);
+        for(int i=0; i<25; ++i){
+            assertDoesNotThrow(() -> pile5.discardCard());
+        }
     }
 }

@@ -4,6 +4,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,10 +12,10 @@ public class CardFactory {
 
     private CardFactory() {};
 
-    private static int maxI;
-    private static int maxII;
+    private static final int maxI;
+    private static final int maxII;
 
-    private  static int counterI;
+    private static int counterI;
     private static int counterII;
 
     static {
@@ -24,6 +25,12 @@ public class CardFactory {
         maxI = 23;
         maxII = 24;
     }
+
+    public static Card startCard() {
+        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        return card;
+    }
+
 
     public static Card card(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
@@ -41,12 +48,6 @@ public class CardFactory {
 
     }
 
-    public static Card startCard() {
-        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
-        return card;
-    }
-
-
     private static class ConcreteCard implements Card {
 
         private Map<Resource, Integer> resources;
@@ -62,18 +63,17 @@ public class CardFactory {
 
         public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
-            resources = new HashMap<>();
+            resources = new HashMap();
 
             this.upper = upper;
             this.lower = lower;
 
             this.pollutionSpaces = pollutionSpaces;
-            this.hasAssistance = upper.canProvideAssistance() || lower.canProvideAssistance();
+            this.hasAssistance = (upper != null &&  upper.canProvideAssistance()) || (lower != null &&  lower.canProvideAssistance());
             this.cardSource = cardSource;
 
         }
 
-        @Override
         public boolean isOverPolluted() {
             return curPollution > pollutionSpaces;
         }
@@ -125,6 +125,7 @@ public class CardFactory {
         @Override
         public boolean canPutResources(Map<Resource, Integer> resources) {
 
+
             if(isOverPolluted()) return false;
 
             if(curPollution + resources.getOrDefault(Resource.POLLUTION, 0) > pollutionSpaces) return false;
@@ -154,6 +155,16 @@ public class CardFactory {
         }
 
         @Override
+        public Effect getUpper() {
+            return upper;
+        }
+
+        @Override
+        public Effect getLower() {
+            return lower;
+        }
+
+        @Override
         public boolean hasAssistance() {
             return hasAssistance;
         }
@@ -167,8 +178,8 @@ public class CardFactory {
         public String toString() {
             return "resources: " + this.resources + '\n' +
                     "pollution spaces: " + pollutionSpaces + '\n' +
-                    "upper effect: " + upper.toString() + '\n' +
-                    "lower effect: " + lower.toString() + '\n' +
+                    "upper effect: " + ( upper != null ? upper.toString() : "none") + '\n' +
+                    "lower effect: " + ( lower != null ? lower.toString() : "none") + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
