@@ -91,51 +91,52 @@ public class SingleForSingle implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        if (!card.canPutResources(guaranteedOutputs)) {
-            return false;
-        }
-
-        if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
-            int accumulatedResource = 0;
-            for (Resource r : cards.keySet()) {
-                for (Pair<Card, Integer> p : cards.get(r)) {
-                    if (card.canGetResources(Map.of(r, p.getRight()))
-                            && (r.equals(Resource.GREEN) || r.equals(Resource.RED) || r.equals(Resource.YELLOW))) {
-                        accumulatedResource += p.getRight();
-                    }
-                }
-            }
-            if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
-                if (guaranteedOutputs.containsKey(Resource.UNIVERSAL)
-                        && (guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.RED) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.YELLOW) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.GREEN))
-                        && (wantedResource.containsKey(Resource.RED) || wantedResource.containsKey(Resource.GREEN) || wantedResource.containsKey(Resource.YELLOW))) {
-                    return false;
-                }
-
-            }
-        }
-
-        boolean canProduce = true;
-
-        for (Resource r : cards.keySet()) {
-            int acumulatedAmountOfResource = 0;
-            for (Pair<Card, Integer> p : cards.get(r)) {
-                if (!p.getLeft().canGetResources(Map.of(r, p.getRight()))) {
-                    canProduce = false;
-                }
-                acumulatedAmountOfResource += p.getRight();
-            }
-            if (acumulatedAmountOfResource < requiredInputs.get(r)) {
-                canProduce = false;
-            }
-        }
-        for (Resource r : wantedResource.keySet()) {
-            if (!guaranteedOutputs.containsKey(r) || guaranteedOutputs.get(r) < wantedResource.getOrDefault(r, 0)) {
-                canProduce = false;
-            }
-        }
-        return canProduce;
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
+//        if (!card.canPutResources(guaranteedOutputs)) {
+//            return false;
+//        }
+//
+//        if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
+//            int accumulatedResource = 0;
+//            for (Resource r : cards.keySet()) {
+//                for (Pair<Card, Integer> p : cards.get(r)) {
+//                    if (card.canGetResources(Map.of(r, p.getRight()))
+//                            && (r.equals(Resource.GREEN) || r.equals(Resource.RED) || r.equals(Resource.YELLOW))) {
+//                        accumulatedResource += p.getRight();
+//                    }
+//                }
+//            }
+//            if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
+//                if (guaranteedOutputs.containsKey(Resource.UNIVERSAL)
+//                        && (guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.RED) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.YELLOW) || guaranteedOutputs.get(Resource.UNIVERSAL) >= wantedResource.get(Resource.GREEN))
+//                        && (wantedResource.containsKey(Resource.RED) || wantedResource.containsKey(Resource.GREEN) || wantedResource.containsKey(Resource.YELLOW))) {
+//                    return false;
+//                }
+//
+//            }
+//        }
+//
+//        boolean canProduce = true;
+//
+//        for (Resource r : cards.keySet()) {
+//            int acumulatedAmountOfResource = 0;
+//            for (Pair<Card, Integer> p : cards.get(r)) {
+//                if (!p.getLeft().canGetResources(Map.of(r, p.getRight()))) {
+//                    canProduce = false;
+//                }
+//                acumulatedAmountOfResource += p.getRight();
+//            }
+//            if (acumulatedAmountOfResource < requiredInputs.get(r)) {
+//                canProduce = false;
+//            }
+//        }
+//        for (Resource r : wantedResource.keySet()) {
+//            if (!guaranteedOutputs.containsKey(r) || guaranteedOutputs.get(r) < wantedResource.getOrDefault(r, 0)) {
+//                canProduce = false;
+//            }
+//        }
+//        return canProduce;
+        return true;
     }
 
     @Override

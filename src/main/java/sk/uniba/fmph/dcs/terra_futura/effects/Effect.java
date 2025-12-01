@@ -12,6 +12,5 @@ public interface Effect {
 
     boolean canProvideAssistance();
 
-    boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards,
-                  Map<Resource, Integer> wantedResource);
+    boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards);
 }

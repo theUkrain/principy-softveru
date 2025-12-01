@@ -102,7 +102,8 @@ public class PileTest {
         }
 
         for (int i = 0; i < 20; i++) {
-            pile.getCard(0);
+            Optional<Card> card = pile.getCard(0);
+            System.out.println(card.get());
         }
 
         Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> pile.discardCard());
