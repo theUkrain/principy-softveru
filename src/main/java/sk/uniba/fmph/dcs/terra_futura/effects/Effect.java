@@ -11,4 +11,6 @@ public interface Effect {
     String toString();
 
     boolean canProvideAssistance();
+
+    boolean equals(Object obj);
 }

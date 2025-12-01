@@ -101,7 +101,7 @@ public class EffectsTest {
                 new RawMaterialProducer(Pair.of(Resource.UNIVERSAL, 1), 0),
                 new RawMaterialProducer(Pair.of(Resource.MONEY, 1), 0));
 
-        Assertions.assertEquals(expectedEffect1, trigger1);
+        Assertions.assertTrue(trigger1.equals(expectedEffect1));
     }
 
 

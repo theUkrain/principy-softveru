@@ -1,10 +1,11 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EffectOr implements Effect {
 
-    List<Effect> effectList;
+    List<Effect> effectList = new ArrayList<>();
 
     public EffectOr(Effect e1, Effect e2) {
         effectList.add(e1);
@@ -27,5 +28,27 @@ public class EffectOr implements Effect {
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+       if (this == obj) {
+            return true;
+       }
+
+       if (obj == null || getClass() != obj.getClass()) {
+           return false;
+       }
+
+       EffectOr other = (EffectOr) obj;
+       if(effectList.size() != other.effectList.size()){
+           return false;
+       }
+       for(int i = 0; i < effectList.size(); i++){
+           if(!effectList.get(i).equals(other.effectList.get(i))){
+               return false;
+           }
+       }
+       return true;
     }
 }
