@@ -38,6 +38,7 @@ public class TransformationFixed extends SetCardToEffect implements Effect {
         }
 
         Map<Resource, Integer> recievedResources = new HashMap<>();
+        recievedResources.put(Resource.MONEY, 0);
         recievedResources.put(Resource.RED, 0);
         recievedResources.put(Resource.YELLOW, 0);
         recievedResources.put(Resource.GREEN, 0);
@@ -61,7 +62,7 @@ public class TransformationFixed extends SetCardToEffect implements Effect {
         }
 
         for(Resource r: recievedResources.keySet()){
-            if(recievedResources.get(r) < requiredInputs.get(r)){
+            if(requiredInputs.containsKey(r) && recievedResources.get(r) < requiredInputs.get(r)){
                 throw new IllegalStateException("Insufficient resources");
             }
         }
@@ -80,5 +81,30 @@ public class TransformationFixed extends SetCardToEffect implements Effect {
     public String toString() {
         return "This effect for " + requiredInputs + " can generate "
                 + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
+    }
+
+    public Map<Resource, Integer> getRequiredInputs(){
+        return requiredInputs;
+    }
+
+    public Map<Resource, Integer> getGuaranteedOutputs(){
+        return guaranteedOutputs;
+    }
+
+    public int getGeneratedPollution(){
+        return generatedPollution;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+
+        TransformationFixed t = (TransformationFixed) obj;
+
+        return this.requiredInputs.equals(t.getRequiredInputs()) &&
+                this.guaranteedOutputs.equals(t.getGuaranteedOutputs()) &&
+                this.generatedPollution == t.getGeneratedPollution();
     }
 }

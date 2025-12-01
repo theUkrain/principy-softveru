@@ -1,26 +1,22 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.Map;
 
 public class RawMaterialProducer extends SetCardToEffect implements Effect {
-    private final Pair<Resource, Integer> guaranteedOutputs;
-    private final int generatedPollution;
+    private final Resource guaranteedOutputs;
 
-    public RawMaterialProducer(final Pair<Resource, Integer> guaranteedOutputs, final int generatedPollution) {
-        this.guaranteedOutputs = Pair.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight());
-        this.generatedPollution = generatedPollution;
+    public RawMaterialProducer(final Resource guaranteedOutputs) {
+        this.guaranteedOutputs = guaranteedOutputs;
     }
 
-    public int execute() {
-        if (!card.canPutResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()))) {
+    public void execute() {
+        if (!card.canPutResources(Map.of(guaranteedOutputs, 1))) {
             throw new IllegalStateException("Cant put resources");
         }
 
-        card.putResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()));
-        return generatedPollution;
+        card.putResources(Map.of(guaranteedOutputs, 1));
     }
 
     @Override
@@ -30,6 +26,19 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
 
     @Override
     public String toString() {
-        return "Generated resource/resources is " + generatedPollution;
+        return "Generates resource " + guaranteedOutputs;
+    }
+
+    public Resource getGuaranteedOutputs(){
+        return guaranteedOutputs;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+        RawMaterialProducer t = (RawMaterialProducer) obj;
+        return this.guaranteedOutputs == t.getGuaranteedOutputs();
     }
 }

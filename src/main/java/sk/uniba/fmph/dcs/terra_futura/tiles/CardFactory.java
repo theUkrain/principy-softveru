@@ -189,6 +189,30 @@ public class CardFactory {
                     "lower effect: " + ( lower != null ? lower.toString() : "none") + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
+
+        @Override
+        public void takePollution(int amount) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'takePollution'");
+        }
+
+        @Override
+        public void putPollution(int amount) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'putPollution'");
+        }
+
+        @Override
+        public boolean canTakePollution(int amount) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'canTakePollution'");
+        }
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'canPutPollution'");
+        }
     }
 
 }

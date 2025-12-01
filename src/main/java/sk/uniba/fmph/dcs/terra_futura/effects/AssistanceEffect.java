@@ -19,4 +19,9 @@ public class AssistanceEffect extends SetCardToEffect implements Effect {
     public String toString() {
         return "This is assistance effect";
     }
+
+    @Override
+    public boolean equals(Object obj){
+        return true;
+    }
 }

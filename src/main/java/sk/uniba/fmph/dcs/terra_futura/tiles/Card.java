@@ -20,8 +20,15 @@ public interface Card {
 
     CardSource getCardSource();
 
-    //TODO
+    boolean canTakePollution(int amount);
 
+    void takePollution(int amount);
+
+    boolean canPutPollution(int amount);
+
+    void putPollution(int amount);
+
+    //TODO
     /**
      *
      * method, created ONLY for debug. Returns immutable copy of resources map.
