@@ -29,17 +29,6 @@ public class PollutionTransfer extends SetCardToEffect implements Effect {
     }
 
     @Override
-    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
-        int commulatedPollution = 0;
-        for (Resource r: cards.keySet()) {
-            for (Pair<Card, Integer> p : cards.get(r)) {
-                commulatedPollution += p.getRight();
-            }
-        }
-        return card.canPutResources(Map.of(Resource.POLLUTION, commulatedPollution));
-    }
-
-    @Override
     public String toString() {
         return "This effect will get up to 4 pollutions " +
                 "from other cards considering amount of pollution " +

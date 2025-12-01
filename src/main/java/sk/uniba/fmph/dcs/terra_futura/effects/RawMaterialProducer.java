@@ -1,10 +1,8 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.util.List;
 import java.util.Map;
 
 public class RawMaterialProducer extends SetCardToEffect implements Effect {
@@ -17,7 +15,7 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
     }
 
     public int execute() {
-        if (!check(null)) {
+        if (!card.canPutResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()))) {
             throw new IllegalStateException("Cant put resources");
         }
 
@@ -28,11 +26,6 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
     @Override
     public boolean canProvideAssistance() {
         return false;
-    }
-
-    @Override
-    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
-        return card.canPutResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()));
     }
 
     @Override

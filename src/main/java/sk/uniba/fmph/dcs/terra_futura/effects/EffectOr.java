@@ -1,12 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class EffectOr extends SetCardToEffect implements Effect {
 
@@ -23,12 +18,6 @@ public class EffectOr extends SetCardToEffect implements Effect {
 
     public boolean canProvideAssistance(){
         return true;
-    }
-
-    @Override
-    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
-        return effectPair.getFirst().check(cards) &&
-                effectPair.getLast().check(cards);
     }
 
     public String toString(){
