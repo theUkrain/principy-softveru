@@ -1,5 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import sk.uniba.fmph.dcs.terra_futura.Game;
+
 import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +36,11 @@ public class EffectOr extends SetCardToEffect {
             }
         }
         return false;
+    }
+
+    @Override
+    public void apply(Game game) {
+        game.process(this);
     }
 
     public String toString(){
