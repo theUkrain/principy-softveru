@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class EffectOr implements Effect {
+public class EffectOr extends SetCardToEffect {
 
     private List<Effect> effectList = new ArrayList<>();
 

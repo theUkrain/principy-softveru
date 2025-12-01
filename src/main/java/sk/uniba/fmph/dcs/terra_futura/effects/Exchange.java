@@ -4,77 +4,134 @@ import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Exchange extends SetCardToEffect {
 
-    private Set<Set<Pair<Resource, Integer>>> inputs;
+    private final Map<Set<Pair<Resource, Integer>>, Set<Pair<Resource, Integer>>> instructions;
 
-    private Set<Set<Pair<Resource, Integer>>> outputs;
+    public Exchange(Map<Set<Pair<Resource, Integer>>, Set<Pair<Resource, Integer>>> instructions) {
+        this.instructions = new HashMap<>(instructions);
+    }
 
-    private int generatedPollution;
+    public int execute(Map<Resource, List<Pair<Card, Integer>>> input, Set<Pair<Resource, Integer>> output) {
+        // Convert input to Set<Pair<Resource, Integer>> for comparison with instructions
+        Set<Pair<Resource, Integer>> inputSet = convertInputToSet(input);
 
-    public Exchange(Set<Set<Pair<Resource, Integer>>> inputs, Set<Set<Pair<Resource, Integer>>> outputs) {
-        this.inputs = inputs;
-        this.outputs = outputs;
+        // Validate that this exchange rule exists
+        if (!instructions.containsKey(inputSet)) {
+            throw new UnsupportedOperationException(
+                    "Effect doesn't support exchange from: " + inputSet +
+                            " to: " + output +
+                            "\nAvailable exchanges: " + instructions
+            );
+        }
+
+        // Validate that output matches the rule
+        Set<Pair<Resource, Integer>> expectedOutput = instructions.get(inputSet);
+        if (!expectedOutput.equals(output)) {
+            throw new UnsupportedOperationException(
+                    "Effect with input: " + inputSet +
+                            " should produce: " + expectedOutput +
+                            " but got: " + output
+            );
+        }
+
+        // Validate all cards have required resources
+        validateCardsHaveResources(input);
+
+        // Take resources from input cards
+        takeResourcesFromCards(input);
+
+        // Calculate pollution and put output resources on this card
+        int pollution = putOutputResources(output);
+
+        return pollution;
     }
 
     /**
-     *
-     * @param input <<Resource, Amount>, Taken from this card>.
-     * @param output <Resource, Amount> expected to get.
+     * Converts input map to set for comparison with instructions
      */
-    public int execute (Map<Resource,Pair<Card, Integer>> input, Set<Pair<Resource, Integer>> output) {
-        Set<Pair<Resource, Integer>> kostily = new HashSet();
+    private Set<Pair<Resource, Integer>> convertInputToSet(Map<Resource, List<Pair<Card, Integer>>> input) {
+        Set<Pair<Resource, Integer>> result = new HashSet<>();
 
-        for (Map.Entry<Resource, Pair<Card, Integer>> entry : input.entrySet()) {
-            kostily.add(Pair.of(entry.getKey(), entry.getValue().getRight()));
+        for (Map.Entry<Resource, List<Pair<Card, Integer>>> entry : input.entrySet()) {
+            Resource resource = entry.getKey();
+            int totalAmount = 0;
+
+            for (Pair<Card, Integer> cardAmount : entry.getValue()) {
+                totalAmount += cardAmount.getRight();
+            }
+
+            result.add(Pair.of(resource, totalAmount));
         }
 
-        if(this.outputs.contains(output)) {
-            throw new UnsupportedOperationException("Effect with possible outputs: \n" + this.outputs.toString() +
-                    "\n doesn't support output: " + output.toString());
-        }
+        return result;
+    }
 
-       if(this.inputs.contains(kostily)) {
-            throw new UnsupportedOperationException("Effect with possible inputs: \n" + this.inputs.toString() +
-                    "\n doesn't support input: " + kostily.toString());
-       }
+    /**
+     * Validates that all cards have required resources
+     */
+    private void validateCardsHaveResources(Map<Resource, List<Pair<Card, Integer>>> input) {
+        for (Map.Entry<Resource, List<Pair<Card, Integer>>> entry : input.entrySet()) {
+            Resource resource = entry.getKey();
 
-       for (Map.Entry<Resource, Pair<Card, Integer>> entry : input.entrySet()) {
-            Resource resourceToTake = entry.getKey();
-            Card card = entry.getValue().getLeft();
-            Integer amount = entry.getValue().getRight();
+            for (Pair<Card, Integer> cardAmount : entry.getValue()) {
+                Card card = cardAmount.getLeft();
+                int amount = cardAmount.getRight();
 
-            Map<Resource, Integer> requestDetails = Map.of(resourceToTake, amount);
-
-            if (!(card.canGetResources(requestDetails))) {
-                throw new IllegalArgumentException(
-                        "Card: \n " + card.toString() + " can't provide \n" + resourceToTake + " x" + amount);
+                if (!card.canGetResources(Map.of(resource, amount))) {
+                    throw new IllegalArgumentException(
+                            "Card " + card + " can't provide " + resource + " x" + amount
+                    );
+                }
             }
         }
-       for (Map.Entry<Resource, Pair<Card, Integer>> entry : input.entrySet()) {
-           Resource resourceToTake = entry.getKey();
-           Card card = entry.getValue().getLeft();
-           Integer amount = entry.getValue().getRight();
+    }
 
-           Map<Resource, Integer> request = Map.of(resourceToTake, amount);
+    /**
+     * Takes resources from all input cards.
+     */
+    private void takeResourcesFromCards(Map<Resource, List<Pair<Card, Integer>>> input) {
+        for (Map.Entry<Resource, List<Pair<Card, Integer>>> entry : input.entrySet()) {
+            Resource resource = entry.getKey();
 
-           card.getResources(request);
+            for (Pair<Card, Integer> cardAmount : entry.getValue()) {
+                Card card = cardAmount.getLeft();
+                int amount = cardAmount.getRight();
+
+                card.getResources(Map.of(resource, amount));
+            }
+        }
+    }
+
+    /**
+     * Puts output resources on this card and returns pollution amount
+     */
+    private int putOutputResources(Set<Pair<Resource, Integer>> output) {
+        int pollution = 0;
+        Map<Resource, Integer> resourcesToAdd = new HashMap<>();
+
+        for (Pair<Resource, Integer> resourceAmount : output) {
+            Resource resource = resourceAmount.getLeft();
+            int amount = resourceAmount.getRight();
+
+            if (resource == Resource.POLLUTION) {
+                pollution = amount;
+            } else {
+                resourcesToAdd.put(resource, amount);
+            }
         }
 
-        Map<Resource, Integer> resourcesToPut = new HashMap<>();
-
-        for(Pair<Resource, Integer> resource : output) {
-            resourcesToPut.put(resource.getKey(), resource.getValue());
+        if (!resourcesToAdd.isEmpty()) {
+            this.card.putResources(resourcesToAdd);
         }
 
-        this.card.putResources(resourcesToPut);
+        if (pollution > 0) {
+            this.card.putPollution(pollution);
+        }
 
-        return generatedPollution;
+        return pollution;
     }
 
     @Override
@@ -82,16 +139,40 @@ public class Exchange extends SetCardToEffect {
         return true;
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if(!(o instanceof Exchange)) return false;
-        return (((Exchange) o).inputs == this.inputs && ((Exchange) o).outputs == this.outputs);
+        if (this == o) return true;
+        if (!(o instanceof Exchange)) return false;
+        Exchange exchange = (Exchange) o;
+        return instructions.equals(exchange.instructions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(instructions);
     }
 
     @Override
     public String toString() {
-        return "Exchange effect can provide exchange of one of following inputs to one of outputs: \n Inputs:\n" + this.inputs.toString() +
-                "\n Outputs: " + this.outputs.toString();
+        StringBuilder sb = new StringBuilder("Exchange effect:\n");
+        for (Map.Entry<Set<Pair<Resource, Integer>>, Set<Pair<Resource, Integer>>> entry : instructions.entrySet()) {
+            sb.append("  ").append(formatResourceSet(entry.getKey()))
+                    .append(" -> ")
+                    .append(formatResourceSet(entry.getValue()))
+                    .append("\n");
+        }
+        return sb.toString();
+    }
+
+    private String formatResourceSet(Set<Pair<Resource, Integer>> resources) {
+        StringBuilder sb = new StringBuilder("{");
+        boolean first = true;
+        for (Pair<Resource, Integer> pair : resources) {
+            if (!first) sb.append(", ");
+            sb.append(pair.getLeft()).append(" x").append(pair.getRight());
+            first = false;
+        }
+        sb.append("}");
+        return sb.toString();
     }
 }

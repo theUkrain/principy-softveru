@@ -1,7 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
-import sk.uniba.fmph.dcs.terra_futura.Samostatne.Pile;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
 
 import java.util.Optional;
 
