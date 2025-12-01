@@ -1,7 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

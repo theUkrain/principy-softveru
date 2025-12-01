@@ -1,18 +1,14 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-import sk.uniba.fmph.dcs.terra_futura.ActivationPattern;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
-import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class GridTest {
     @Test
