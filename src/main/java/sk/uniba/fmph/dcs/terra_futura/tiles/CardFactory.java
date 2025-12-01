@@ -158,6 +158,16 @@ public class CardFactory {
         }
 
         @Override
+        public Effect getUpper() {
+            return upper;
+        }
+
+        @Override
+        public Effect getLower() {
+            return lower;
+        }
+
+        @Override
         public boolean canGetPollution(int amount) {
             return curPollution >= amount;
         }
@@ -170,7 +180,6 @@ public class CardFactory {
             curPollution =- amount;
         }
 
-
         @Override
         public boolean canPutPollution(int amount) {
             return curPollution + amount <= pollutionSpaces;
@@ -181,16 +190,6 @@ public class CardFactory {
             if(!canPutPollution(amount)) throw new IllegalArgumentException("You can't put " + amount +
                     " pollution on card with " + (pollutionSpaces - curPollution)  + " free pollution spaces");
             curPollution += amount;
-        }
-
-        @Override
-        public Effect getUpper() {
-            return upper;
-        }
-
-        @Override
-        public Effect getLower() {
-            return lower;
         }
 
         @Override
@@ -211,30 +210,5 @@ public class CardFactory {
                     "lower effect: " + ( lower != null ? lower.toString() : "none") + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
-
-        @Override
-        public void takePollution(int amount) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'takePollution'");
-        }
-
-        @Override
-        public void putPollution(int amount) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'putPollution'");
-        }
-
-        @Override
-        public boolean canTakePollution(int amount) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'canTakePollution'");
-        }
-
-        @Override
-        public boolean canPutPollution(int amount) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'canPutPollution'");
-        }
     }
-
 }

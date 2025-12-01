@@ -26,8 +26,8 @@ public class CardTest {
     public void setup() {
         cards = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
-                    Card card = CardFactory.card(i, null, null, new CardSource(i, Deck.I));
-                    cards.add(card);
+            Card card = CardFactory.card(i, null, null, new CardSource(i, Deck.I));
+            cards.add(card);
         }
     }
 

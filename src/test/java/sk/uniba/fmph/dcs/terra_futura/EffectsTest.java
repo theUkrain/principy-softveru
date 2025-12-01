@@ -7,10 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
-import sk.uniba.fmph.dcs.terra_futura.effects.RawMaterialProducer;
-import sk.uniba.fmph.dcs.terra_futura.effects.StartingCardEffect;
-import sk.uniba.fmph.dcs.terra_futura.effects.TransformationFixed;
+import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardFactory;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
@@ -93,20 +90,20 @@ public class EffectsTest {
     }
 
     public void automatedTestPutRawMaterialProducer() {
-        List<Pair<Resource, Integer>> tests = new ArrayList<>();
-        tests.add(Pair.of(Resource.YELLOW, 1));
-        tests.add(Pair.of(Resource.RED, 2));
-        tests.add(Pair.of(Resource.GREEN, 3));
-        tests.add(Pair.of(Resource.MONEY, 1));
-        tests.add(Pair.of(Resource.YELLOW, 4));
+        List<Resource> tests = new ArrayList<>();
+        tests.add(Resource.YELLOW);
+        tests.add(Resource.RED);
+        tests.add(Resource.GREEN);
+        tests.add(Resource.MONEY);
+        tests.add(Resource.YELLOW);
 
         Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
 
-        for (Pair<Resource, Integer> test : tests) {
-            RawMaterialProducer effect = new RawMaterialProducer(test, 0);
+        for (Resource test : tests) {
+            RawMaterialProducer effect = new RawMaterialProducer(test);
             effect.setCard(card);
             effect.execute();
-            Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
+            Assertions.assertTrue(card.canGetResources(Map.of(test, 1)));
         }
     }
 
@@ -116,39 +113,51 @@ public class EffectsTest {
         // check if card produces correct resources
         automatedTestPutRawMaterialProducer();
 
+        // TODO check pollution
+
         // special checks
-        Pair<Resource, Integer> test = Pair.of(Resource.BULB, 1);
-        RawMaterialProducer effect = new RawMaterialProducer(test, 0);
+        Resource test = Resource.BULB;
+        RawMaterialProducer effect = new RawMaterialProducer(test);
         Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
 
         effect.setCard(card);
         effect.execute();
-        Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
+        Assertions.assertTrue(card.canGetResources(Map.of(test, 1)));
         Assertions.assertFalse(card.canGetResources(Map.of(Resource.RED, 2)));
         Assertions.assertFalse(card.canGetResources(Map.of(Resource.GREEN, 3)));
 
-        test = Pair.of(Resource.MONEY, 2);
-        effect = new RawMaterialProducer(test, 0);
+        test = Resource.MONEY;
+        effect = new RawMaterialProducer(test);
 
         effect.setCard(card);
         effect.execute();
-        Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
+        Assertions.assertTrue(card.canGetResources(Map.of(test, 1)));
         Assertions.assertTrue(card.canGetResources(Map.of(Resource.BULB, 1)));
 
-        test = Pair.of(Resource.RED, 1);
+        test = Resource.RED;
         effect.execute();
-        Assertions.assertFalse(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
+        Assertions.assertFalse(card.canGetResources(Map.of(test, 1)));
     }
 
     @Test
     @DisplayName("StartingCardEffect test")
-    public void testStartingCardEffectTriger() {
+    public void testStartingCardEffectTrigger() {
         StartingCardEffect effect = new StartingCardEffect();
-        Effect trigger = effect.execute(0);
 
-        Assertions.assertTrue(trigger instanceof RawMaterialProducer);
+        Effect trigger1 = effect.execute(0);
 
-        Effect triger2 = effect.execute(1);
-        Assertions.assertTrue(triger2 instanceof RawMaterialProducer);
+        Assertions.assertInstanceOf(EffectOr.class, trigger1,
+                "execute(0) must return EffectOr");
+
+        Effect trigger2 = effect.execute(1);
+
+        Assertions.assertInstanceOf(AssistanceEffect.class, trigger2,
+                "execute(1) must return AssistanceEffect, cuz the second effect in EffectOr");
+
+        EffectOr expectedEffect1 = new EffectOr(
+                new RawMaterialProducer(Resource.UNIVERSAL),
+                new RawMaterialProducer(Resource.MONEY));
+
+        Assertions.assertTrue(trigger1.equals(expectedEffect1));
     }
 }

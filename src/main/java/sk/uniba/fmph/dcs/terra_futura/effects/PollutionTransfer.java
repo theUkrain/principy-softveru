@@ -14,7 +14,7 @@ public class PollutionTransfer extends SetCardToEffect {
         }
         if(card.canPutPollution(commulatedPollution)){
             for (Pair<Card, Integer> p : cards) {
-                p.getLeft().takePollution(p.getRight());
+                p.getLeft().getPollution(p.getRight());
             }
             card.putPollution(commulatedPollution);
         }

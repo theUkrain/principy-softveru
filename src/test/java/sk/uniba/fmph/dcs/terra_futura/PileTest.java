@@ -66,12 +66,12 @@ public class PileTest {
         }
 
         @Override
-        public boolean canTakePollution(int amount) {
+        public boolean canGetPollution(int amount) {
             return true;
         }
 
         @Override
-        public void takePollution(int amount) {}
+        public void getPollution(int amount) {}
 
         @Override
         public boolean canPutPollution(int amount) {

@@ -6,7 +6,7 @@ public  class CardSource {
     private final Deck source;
 
     public CardSource(int index, Deck source) {
-        if (index < 0 || index > 3) {
+        if (index < 0) {
             throw new IllegalArgumentException("Index must be between 0 and 3");
         }
         this.index = (byte)index;
