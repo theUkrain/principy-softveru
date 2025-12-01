@@ -6,7 +6,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.*;
 
-public class TransformationFixed extends SetCardToEffect implements Effect {
+public class TransformationFixed extends SetCardToEffect {
 
     private final Map<Resource, Integer> requiredInputs;
     private final Map<Resource, Integer> guaranteedOutputs;

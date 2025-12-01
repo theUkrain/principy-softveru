@@ -4,7 +4,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.Map;
 
-public class RawMaterialProducer extends SetCardToEffect implements Effect {
+public class RawMaterialProducer extends SetCardToEffect {
     private final Resource guaranteedOutputs;
 
     public RawMaterialProducer(final Resource guaranteedOutputs) {

@@ -11,23 +11,23 @@ public class SingleForSingle_v2 extends SetCardToEffect {
         return false;
     }
 
-    private Map<Resource, Integer> requiredInputs;
-
-    private Map<Resource, Integer> guaranteedOutputs;
-
-    private int generatedPollution;
-
-    public SingleForSingle_v2  (Map<Resource, Integer> requiredInputs, Map<Resource, Integer> guaranteedOutputs, int generatedPollution) {
-        this.requiredInputs = requiredInputs;
-        this.guaranteedOutputs = guaranteedOutputs;
-        this.generatedPollution = generatedPollution;
-    }
-
-    int execute(Resource given, Resource wanted, Card takeFrom) {
-        if(takeFrom.canGetResources()) {
-
-        }
-        return 0;
-    }
+//    private Map<Resource, Integer> requiredInputs;
+//
+//    private Map<Resource, Integer> guaranteedOutputs;
+//
+//    private int generatedPollution;
+//
+//    public SingleForSingle_v2  (Map<Resource, Integer> requiredInputs, Map<Resource, Integer> guaranteedOutputs, int generatedPollution) {
+//        this.requiredInputs = requiredInputs;
+//        this.guaranteedOutputs = guaranteedOutputs;
+//        this.generatedPollution = generatedPollution;
+//    }
+//
+//    int execute(Resource given, Resource wanted, Card takeFrom) {
+//        if(takeFrom.canGetResources()) {
+//
+//        }
+//        return 0;
+//    }
 
 }
