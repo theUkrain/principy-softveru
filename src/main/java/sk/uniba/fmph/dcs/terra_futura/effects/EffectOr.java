@@ -1,29 +1,75 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import java.util.Objects;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class EffectOr extends SetCardToEffect {
+public class EffectOr implements Effect {
 
-    List<Effect> effectPair = new ArrayList<>();
+    private List<Effect> effectList = new ArrayList<>();
 
     public EffectOr(Effect e1, Effect e2) {
-        effectPair.add(e1);
-        effectPair.add(e2);
+        effectList.add(e1);
+        effectList.add(e2);
+    }
+
+    public EffectOr(List<Effect> effectList) {
+        this.effectList = effectList;
+    }
+
+    public List<Effect> getEffectList() {
+        return Collections.unmodifiableList(this.effectList);
     }
 
     public Effect execute(int whatEffectToTrigger) {
-        return effectPair.get(whatEffectToTrigger);
+        return effectList.get(whatEffectToTrigger);
     }
 
+    @Override
     public boolean canProvideAssistance(){
-        return true;
+        for (Effect effect : effectList) {
+            if (effect.canProvideAssistance()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public String toString(){
-        return "This composite effect is consist of" + effectPair.getFirst()
-                + " and " + effectPair.getLast() + " they will do ongoing effects \n First: "
-                + effectPair.getFirst().toString() + " Second: " + effectPair.getLast().toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("This composite effect is consist of ");
+        for(Effect effect : effectList){
+            sb.append(effect.toString());
+        }
+
+        return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+       if (this == obj) {
+            return true;
+       }
+
+       if (obj == null || getClass() != obj.getClass()) {
+           return false;
+       }
+
+       EffectOr other = (EffectOr) obj;
+       if(effectList.size() != other.effectList.size()){
+           return false;
+       }
+       for(int i = 0; i < effectList.size(); i++){
+           if(!effectList.get(i).equals(other.effectList.get(i))){
+               return false;
+           }
+       }
+       return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(effectList);
+    }
 }
