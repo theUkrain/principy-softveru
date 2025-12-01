@@ -20,5 +20,13 @@ public interface Card {
 
     CardSource getCardSource();
 
+    //TODO
+
+    /**
+     *
+     * method, created ONLY for debug. Returns immutable copy of resources map.
+     */
+    public Map<Resource, Integer> getCurResources();
+
     boolean hasAssistance();
 }
