@@ -1,6 +1,5 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 

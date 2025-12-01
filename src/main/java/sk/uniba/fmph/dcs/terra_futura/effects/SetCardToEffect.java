@@ -2,7 +2,7 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
-public abstract class SetCardToEffect {
+public abstract class SetCardToEffect implements Effect {
     protected Card card;
     protected boolean set = false;
 
@@ -10,7 +10,6 @@ public abstract class SetCardToEffect {
         if (set) {
             return;
         }
-
         this.card = card;
         set = true;
     }

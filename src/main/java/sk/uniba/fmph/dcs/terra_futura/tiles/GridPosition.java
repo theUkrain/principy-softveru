@@ -16,4 +16,10 @@ public class GridPosition {
         public int getY() {
             return (int)y;
         }
+
+        @Override
+    public boolean equals(Object o) {
+            if(!(o instanceof GridPosition)) return false;
+            return ((GridPosition) o).getX() == getX() && getY() == ((GridPosition) o).getY();
+        }
 }

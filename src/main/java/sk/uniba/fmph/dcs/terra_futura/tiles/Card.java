@@ -20,5 +20,21 @@ public interface Card {
 
     CardSource getCardSource();
 
+    boolean canGetPollution(int amount);
+
+    void getPollution(int amount);
+
+    boolean canPutPollution(int amount);
+
+    void putPollution(int amount);
+
+    //TODO
+
+    /**
+     *
+     * method, created ONLY for debug. Returns immutable copy of resources map.
+     */
+    public Map<Resource, Integer> getCurResources();
+
     boolean hasAssistance();
 }

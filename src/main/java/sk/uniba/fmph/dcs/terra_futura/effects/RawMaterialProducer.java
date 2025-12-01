@@ -4,7 +4,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.Map;
 
-public class RawMaterialProducer extends SetCardToEffect implements Effect {
+public class RawMaterialProducer extends SetCardToEffect {
     private final Resource guaranteedOutputs;
 
     public RawMaterialProducer(final Resource guaranteedOutputs) {
@@ -25,12 +25,20 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        return false;
+    public String toString() {
+        return "Generates resource " + guaranteedOutputs;
+    }
+
+    public Resource getGuaranteedOutputs(){
+        return guaranteedOutputs;
     }
 
     @Override
-    public String toString() {
-        return "Generates resource " + guaranteedOutputs;
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+        RawMaterialProducer t = (RawMaterialProducer) obj;
+        return this.guaranteedOutputs == t.getGuaranteedOutputs();
     }
 }

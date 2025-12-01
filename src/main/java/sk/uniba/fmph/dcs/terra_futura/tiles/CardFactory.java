@@ -4,7 +4,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,10 +12,10 @@ public class CardFactory {
 
     private CardFactory() {};
 
-    private static final int maxI;
-    private static final int maxII;
+    private static int maxI;
+    private static int maxII;
 
-    private static int counterI;
+    private  static int counterI;
     private static int counterII;
 
     static {
@@ -25,12 +25,6 @@ public class CardFactory {
         maxI = 23;
         maxII = 24;
     }
-
-    public static Card startCard() {
-        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
-        return card;
-    }
-
 
     public static Card card(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
@@ -47,6 +41,12 @@ public class CardFactory {
         return card;
 
     }
+
+    public static Card startCard() {
+        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        return card;
+    }
+
 
     private static class ConcreteCard implements Card {
 
@@ -73,6 +73,13 @@ public class CardFactory {
             this.cardSource = cardSource;
 
         }
+
+        //TODO
+        public Map<Resource, Integer> getCurResources() {
+            System.out.println(curPollution);
+            return Collections.unmodifiableMap(this.resources);
+        }
+
 
         public boolean isOverPolluted() {
             return curPollution >= pollutionSpaces;
@@ -103,18 +110,14 @@ public class CardFactory {
         @Override
         public void getResources(Map<Resource, Integer> resources) {
 
-            if(!canPutResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources +
+            if(!canGetResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources.toString() +
                     "\n" +  "can't be get from card already filled with :" + "\n"  + this.resources + "\n");
 
             for(Resource resource : resources.keySet()) {
-                this.resources.put(resource, this.resources.get(resource) - resources.get(resource));
+                this.resources.put(resource, this.resources.getOrDefault(resource, 0) - resources.get(resource));
             }
 
-            for(Resource resource : this.resources.keySet()) {
-                this.resources.compute(resource, (key, number) -> {if(number == 0) return null; return number;});
-            }
-
-            curPollution = this.resources.getOrDefault(Resource.POLLUTION, 0);
+            this.resources.entrySet().removeIf(e -> e.getValue() == 0);
 
         }
 
@@ -128,7 +131,7 @@ public class CardFactory {
 
             if(isOverPolluted()) return false;
 
-            if(curPollution + resources.getOrDefault(Resource.POLLUTION, 0) > pollutionSpaces) return false;
+            if(this.resources.keySet().contains(Resource.POLLUTION)) return false;
 
             return true;
 
@@ -142,23 +145,17 @@ public class CardFactory {
         @Override
         public void putResources(Map<Resource, Integer> resources) throws IllegalArgumentException {
 
-            if(!canPutResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources +
+            if(!canPutResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources.toString() +
                     "\n" +  "can't be put on card already filled with :" + "\n"  + this.resources.toString() + "\n" +
                     "and  pollution  spaces in quantity of:" + pollutionSpaces + '\n');
 
             for(Resource resource : resources.keySet()) {
 
-                if(!this.resources.keySet().contains(resource)) {
-                    this.resources.put(resource, resources.get(resource));
-                    continue;
-                }
-
-                this.resources.put(resource, this.resources.get(resource)+resources.get(resource));
+                if(!this.resources.keySet().contains(resource)) this.resources.put(resource, resources.get(resource));
+                else this.resources.put(resource, this.resources.get(resource)+resources.get(resource));
             }
-            curPollution = this.resources.getOrDefault(Resource.POLLUTION, 0);
 
         }
-
 
         @Override
         public Effect getUpper() {
@@ -168,6 +165,31 @@ public class CardFactory {
         @Override
         public Effect getLower() {
             return lower;
+        }
+
+        @Override
+        public boolean canGetPollution(int amount) {
+            return curPollution >= amount;
+        }
+
+        @Override
+        public void getPollution(int amount) {
+            if (!canGetPollution(amount)) throw new IllegalArgumentException("Card only has " + curPollution
+                    + " pollution, you are trying to take " + amount
+                    + " pollution" + '\n');
+            curPollution =- amount;
+        }
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            return curPollution + amount <= pollutionSpaces;
+        }
+
+        @Override
+        public void putPollution(int amount) {
+            if(!canPutPollution(amount)) throw new IllegalArgumentException("You can't put " + amount +
+                    " pollution on card with " + (pollutionSpaces - curPollution)  + " free pollution spaces");
+            curPollution += amount;
         }
 
         @Override
@@ -189,5 +211,4 @@ public class CardFactory {
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
-
 }
