@@ -1,4 +1,4 @@
-package sk.uniba.fmph.dcs.terra_futura.Observer;
+package sk.uniba.fmph.dcs.terra_futura.observer;
 
 /**
  * Interface for observers that receive game state notifications.

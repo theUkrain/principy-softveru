@@ -23,7 +23,6 @@ public class EffectsTest {
         tests.add(Pair.of(Map.of(Resource.RED, 2, Resource.MONEY, 1), Map.of(Resource.CAR, 1)));
         tests.add(Pair.of(Map.of(Resource.GREEN, 1, Resource.MONEY, 4), Map.of(Resource.CAR, 1, Resource.YELLOW, 2)));
 
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
 
         List<Card> cards = new ArrayList<>();
 
@@ -40,7 +39,7 @@ public class EffectsTest {
             Map<Resource, Integer> output = test.getRight();
 
             TransformationFixed effect = new TransformationFixed(input, output, 0);
-            effect.setCard(card);
+            Card card = CardFactory.card(1, effect, null, new CardSource(0, Deck.II));
 
             Map<Resource, List<Pair<Card, Integer>>> inputCards = new HashMap<>();
             Map<Card, Pair<Resource, Integer>> toAssert = new HashMap<>();
@@ -80,9 +79,8 @@ public class EffectsTest {
         Map<Resource, Integer> input = Map.of(Resource.RED, 2);
         Map<Resource, Integer> output = Map.of(Resource.CAR, 2);
 
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
         TransformationFixed effect = new TransformationFixed(input, output, 0);
-        effect.setCard(card);
+        Card card = CardFactory.card(1, effect, null, new CardSource(0, Deck.II));
 
         card.putResources(Map.of(Resource.RED, 1));
 
@@ -97,11 +95,9 @@ public class EffectsTest {
         tests.add(Resource.MONEY);
         tests.add(Resource.YELLOW);
 
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
-
         for (Resource test : tests) {
             RawMaterialProducer effect = new RawMaterialProducer(test);
-            effect.setCard(card);
+            Card card = CardFactory.card(1, effect, null, new CardSource(0, Deck.II));
             effect.execute();
             Assertions.assertTrue(card.canGetResources(Map.of(test, 1)));
         }
@@ -118,9 +114,8 @@ public class EffectsTest {
         // special checks
         Resource test = Resource.BULB;
         RawMaterialProducer effect = new RawMaterialProducer(test);
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
+        Card card = CardFactory.card(1, effect, null, new CardSource(0, Deck.II));
 
-        effect.setCard(card);
         effect.execute();
         Assertions.assertTrue(card.canGetResources(Map.of(test, 1)));
         Assertions.assertFalse(card.canGetResources(Map.of(Resource.RED, 2)));
@@ -128,8 +123,8 @@ public class EffectsTest {
 
         test = Resource.MONEY;
         effect = new RawMaterialProducer(test);
-
         effect.setCard(card);
+
         effect.execute();
         Assertions.assertTrue(card.canGetResources(Map.of(test, 1)));
         Assertions.assertTrue(card.canGetResources(Map.of(Resource.BULB, 1)));
@@ -161,107 +156,64 @@ public class EffectsTest {
         Assertions.assertTrue(trigger1.equals(expectedEffect1));
     }
 
-
-    private static class TestCard implements Card{
-        private boolean canGet = true;
-
-        public int getResourcesCount = 0;
-        public int putResourcesCount = 0;
-        public Map<Resource, Integer> recievedResources = new HashMap<>();
-        public void setCanGet(boolean canGet) {
-            this.canGet = canGet;
-        }
-
-        @Override
-        public boolean canGetResources(Map<Resource, Integer> resources) {
-            return canGet;
-        }
-
-        @Override
-        public void getResources(Map<Resource, Integer> resources) { getResourcesCount++;}
-
-        @Override
-        public boolean canPutResources(Map<Resource, Integer> resources) {
-            return true;
-        }
-
-        @Override
-        public void putResources(Map<Resource, Integer> resources) {
-            putResourcesCount++;
-            recievedResources.putAll(resources);
-        }
-
-        @Override
-        public boolean isOverPolluted() {
-            return false;
-        }
-
-        @Override
-        public CardSource getCardSource() {
-            return null;
-        }
-
-        @Override
-        public boolean hasAssistance() {
-            return false;
-        }
-
-        @Override
-        public Effect getUpper() {
-            return null;
-        }
-
-        @Override
-        public Effect getLower() {
-            return null;
-        }
-
-        @Override
-        public Map<Resource, Integer> getCurResources() {
-            return null;
-        }
-
-        @Override
-        public boolean canGetPollution(int amount) {
-            return true;
-        }
-
-        @Override
-        public void getPollution(int amount) {}
-
-        @Override
-        public boolean canPutPollution(int amount) {
-            return true;
-        }
-
-        @Override
-        public void putPollution(int amount) {}
-    }
-
-    private static class TestableExchange extends Exchange {
-        public TestableExchange(Set<Set<Pair<Resource, Integer>>> inputs, Set<Set<Pair<Resource, Integer>>> outputs) {
-            super(inputs, outputs);
-        }
-
-        public void setTargetCard(Card card) {
-            this.card = card;
-        }
-    }
-
-    //public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output)
     @Test
-    @DisplayName("Exchange test")
-    public void testExchange() {
-        List<Pair<Integer, Card>> expectedOutputList = new ArrayList<>();
-        TestCard testCardA = new TestCard();
-        TestCard testCardB = new TestCard();
-        Card testCardC = CardFactory.card(0,);
-        Resource request = Resource.YELLOW;
+    @DisplayName("EffectOr test")
+    public void testEffectOr() {
+        Effect e1 = new TransformationFixed(Map.of(), Map.of(), 0);
+        Effect e2 = new RawMaterialProducer(Resource.UNIVERSAL);
 
-        testCard.setCanGet(false);
+        EffectOr effect = new EffectOr(e1, e2);
 
-        Map<Pair<Resource,Integer>, Card> input = Map.of(request, testCard);
-        Exchange exchange = new Exchange(Set.of(input.keySet()), Set.of(expectedOutput));
+        Assertions.assertEquals(effect.execute(0), e1);
+        Assertions.assertEquals(effect.execute(1), e2);
+
+        e2 = new EffectOr(e1, e2);
+        effect = new EffectOr(e2, e1);
+
+        Assertions.assertEquals(effect.execute(0), e2);
     }
 
+    @Test
+    @DisplayName("AssistanceEffect test")
+    public void testAssistanceEffect() {
+        AssistanceEffect effect = new AssistanceEffect();
+        Effect result =  effect.execute(new TransformationFixed(Map.of(), Map.of(), 0));
+        Assertions.assertNotNull(result);
+        result = effect.execute(new RawMaterialProducer(Resource.RED));
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    @DisplayName("PollutionTransfer test")
+    public void testPollutionTransfer() {
+        Card toTransfer = CardFactory.pollutionTransferCard(new CardSource(0, Deck.II));
+
+        Card card = CardFactory.card(2, null, null, new CardSource(0, Deck.II));
+        card.putPollution(2);
+
+        ((PollutionTransfer)toTransfer.getUpper()).execute(List.of(Pair.of(card, 2)));
+
+        Assertions.assertTrue(toTransfer.canGetPollution(2));
+        Assertions.assertFalse(card.canGetPollution(2));
+
+        card = CardFactory.card(2, null, null, new CardSource(0, Deck.II));
+        Card card2 = CardFactory.card(2, null, null, new CardSource(0, Deck.II));
+        card.putPollution(2);
+        card2.putPollution(2);
+
+        toTransfer.getPollution(2);
+
+        ((PollutionTransfer)toTransfer.getUpper()).execute(List.of(Pair.of(card, 2), Pair.of(card2, 1)));
+
+        Assertions.assertTrue(toTransfer.canGetPollution(3));
+        Assertions.assertFalse(toTransfer.canGetPollution(4));
+        Assertions.assertFalse(card.canGetPollution(2));
+        Assertions.assertFalse(card2.canGetPollution(2));
+        Assertions.assertTrue(card2.canGetPollution(1));
+
+        final Card card3 = CardFactory.card(2, null, null, new CardSource(0, Deck.II));
+        card3.putPollution(2);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> ((PollutionTransfer)toTransfer.getUpper()).execute(List.of(Pair.of(card3, 2))));
+    }
 }

@@ -2,8 +2,8 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 import org.junit.Before;
 import org.junit.Test;
-import sk.uniba.fmph.dcs.terra_futura.Observer.GameObserver;
-import sk.uniba.fmph.dcs.terra_futura.Observer.TerraFuturaObserverInterface;
+import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
+import sk.uniba.fmph.dcs.terra_futura.observer.TerraFuturaObserverInterface;
 
 import static org.junit.Assert.*;
 
