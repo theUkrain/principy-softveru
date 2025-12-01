@@ -8,6 +8,7 @@ import org.junit.*;
 import org.junit.jupiter.api.Assertions;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.effects.SingleForSingle_v2;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardFactory;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
