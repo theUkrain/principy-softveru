@@ -26,9 +26,9 @@ public class EffectOr extends SetCardToEffect implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
-        return effectPair.getFirst().check(card, cards) &&
-                effectPair.getLast().check(card,cards);
+    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
+        return effectPair.getFirst().check(cards) &&
+                effectPair.getLast().check(cards);
     }
 
     public String toString(){

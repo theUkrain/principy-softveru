@@ -29,7 +29,7 @@ public class PollutionTransfer extends SetCardToEffect implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
+    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
         int commulatedPollution = 0;
         for (Resource r: cards.keySet()) {
             for (Pair<Card, Integer> p : cards.get(r)) {

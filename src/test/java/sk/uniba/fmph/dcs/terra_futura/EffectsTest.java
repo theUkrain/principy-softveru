@@ -8,6 +8,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.effects.RawMaterialProducer;
+import sk.uniba.fmph.dcs.terra_futura.effects.StartingCardEffect;
 import sk.uniba.fmph.dcs.terra_futura.effects.TransformationFixed;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardFactory;
@@ -53,7 +54,8 @@ public class EffectsTest {
 
         for (Pair<Resource, Integer> test : tests) {
             RawMaterialProducer effect = new RawMaterialProducer(test, 0);
-            effect.execute(card);
+            effect.setCard(card);
+            effect.execute();
             Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
         }
     }
@@ -71,7 +73,8 @@ public class EffectsTest {
         RawMaterialProducer effect = new RawMaterialProducer(test, 0);
         Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
 
-        effect.execute(card);
+        effect.setCard(card);
+        effect.execute();
         Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
         Assertions.assertFalse(card.canGetResources(Map.of(Resource.RED, 2)));
         Assertions.assertFalse(card.canGetResources(Map.of(Resource.GREEN, 3)));
@@ -79,12 +82,25 @@ public class EffectsTest {
         test = Pair.of(Resource.MONEY, 2);
         effect = new RawMaterialProducer(test, 0);
 
-        effect.execute(card);
+        effect.setCard(card);
+        effect.execute();
         Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
         Assertions.assertTrue(card.canGetResources(Map.of(Resource.BULB, 1)));
 
         test = Pair.of(Resource.RED, 1);
-        effect.execute(card);
+        effect.execute();
         Assertions.assertFalse(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
+    }
+
+    @Test
+    @DisplayName("StartingCardEffect test")
+    public void testStartingCardEffectTriger() {
+        StartingCardEffect effect = new StartingCardEffect();
+        Effect trigger = effect.execute(0);
+
+        Assertions.assertTrue(trigger instanceof RawMaterialProducer);
+
+        Effect triger2 = effect.execute(1);
+        Assertions.assertTrue(triger2 instanceof RawMaterialProducer);
     }
 }

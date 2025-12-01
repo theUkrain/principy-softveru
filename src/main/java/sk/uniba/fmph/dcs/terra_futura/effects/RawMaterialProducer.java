@@ -16,8 +16,8 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
         this.generatedPollution = generatedPollution;
     }
 
-    public int execute(Card card) {
-        if (!check(card, null)) {
+    public int execute() {
+        if (!check(null)) {
             throw new IllegalStateException("Cant put resources");
         }
 
@@ -31,7 +31,7 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
+    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
         return card.canPutResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()));
     }
 
