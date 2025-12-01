@@ -7,29 +7,27 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 import java.util.Map;
 
-public class TransformationFixed implements Effect {
-
+public class SingleForSingle implements Effect {
     private Map<Resource, Integer> requiredInputs;
+
     private Map<Resource, Integer> guaranteedOutputs;
+
     private int generatedPollution;
 
-    public TransformationFixed(final Map<Resource, Integer> requiredInputs,
-                               final Map<Resource, Integer> guaranteedOutputs,
-                               final int generatedPollution) {
+
+    public SingleForSingle(Map<Resource, Integer> requiredInputs, Map<Resource, Integer> guaranteedOutputs, int generatedPollution) {
         this.requiredInputs = requiredInputs;
         this.guaranteedOutputs = guaranteedOutputs;
         this.generatedPollution = generatedPollution;
     }
 
-    /*add one more material, universal material(colored cube), and fix
-    execute in way that I would be able to use any colored material via counter and one more condition, so
-    I would be able to produce some output*/
-
+    /*I need here Map<Resource, Integer> wantedResource
+    so user tell me which one of suggested material he would want to get.
+    Finish implementing execute*/
     public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
         if (!card.canPutResources(guaranteedOutputs)) {
             return 0;
         }
-
 
         if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
             int accumulatedResource = 0;
@@ -53,37 +51,34 @@ public class TransformationFixed implements Effect {
         }
 
         boolean canProduce = true;
+
         for (Resource r : cards.keySet()) {
             int acumulatedAmountOfResource = 0;
             for (Pair<Card, Integer> p : cards.get(r)) {
-                acumulatedAmountOfResource += p.getRight();
                 if (!p.getLeft().canGetResources(Map.of(r, p.getRight()))) {
                     canProduce = false;
                 }
+                acumulatedAmountOfResource += p.getRight();
             }
             if (acumulatedAmountOfResource < requiredInputs.get(r)) {
                 canProduce = false;
             }
         }
-        if (canProduce) {
-            if(guaranteedOutputs.containsKey(Resource.UNIVERSAL)){
-                int accumulated = 0;
-                for(Resource r: wantedResource.keySet()){
-                    if(r.equals(Resource.RED) || r.equals(Resource.YELLOW) || r.equals(Resource.GREEN)){
-                        accumulated += wantedResource.get(r);
-                    }
-                }
-                if(accumulated > guaranteedOutputs.get(Resource.UNIVERSAL)){
-                    return 0;
-                }
+        for (Resource r : wantedResource.keySet()) {
+            if (guaranteedOutputs.get(r) < wantedResource.getOrDefault(r, 0)) {
+                canProduce = false;
             }
+        }
+        if (canProduce) {
             for (Resource r : cards.keySet()) {
                 for (Pair<Card, Integer> p : cards.get(r)) {
                     p.getLeft().getResources(Map.of(r, p.getRight()));
                 }
             }
-            for(Resource r: wantedResource.keySet()){
-                card.putResources(Map.of(r,wantedResource.get(r)));
+            for (Resource r : wantedResource.keySet()) {
+                if (guaranteedOutputs.containsKey(r)) {
+                    card.putResources(Map.of(r, guaranteedOutputs.get(r)));
+                }
             }
             return generatedPollution;
         }
@@ -145,7 +140,24 @@ public class TransformationFixed implements Effect {
 
     @Override
     public String toString() {
-        return "This effect for " + requiredInputs + " can generate "
-                + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
+        StringBuilder out = new StringBuilder();
+        out.append("This effect in exchange for: ");
+        for (Resource r : requiredInputs.keySet()) {
+            out.append(r);
+            out.append(" with quantity of ");
+            out.append(requiredInputs.get(r));
+            out.append(" or ");
+        }
+        out.append("can provide you with ");
+        for (Resource r : guaranteedOutputs.keySet()) {
+            out.append(r);
+            out.append(" with quantity of ");
+            out.append(guaranteedOutputs.get(r));
+            out.append(" or ");
+        }
+        out.append(" and generate ");
+        out.append(generatedPollution);
+        out.append(" amount of pollution");
+        return out.toString();
     }
 }

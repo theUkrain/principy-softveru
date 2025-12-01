@@ -1,7 +1,10 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
+
 import java.util.Collection;
-import java.util.AbstractMap.SimpleEntry;
+
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 public interface InterfaceActivateGrid {
-    void setActivationPattern(Collection<SimpleEntry<Integer, Integer>> pattern);
+    void setActivationPattern(Collection<GridPosition> pattern);
 }
