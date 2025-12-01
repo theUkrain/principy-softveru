@@ -1,8 +1,11 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
 
@@ -11,32 +14,22 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
 
     private GridPosition topLeft, bottomRight;
 
-    private List<List<Card>> field;
+    private List<GridPosition> pattern;
 
-    private Collection<GridPosition> pattern;
-
-    public Grid() {
-        field = new ArrayList<>(5);
-
-        for (int i = 0; i < 5; i++) {
-            field.add(new ArrayList<>());
-
-            for (int j = 0; j < 5; j++) {
-                field.get(i).add(null);
+    public Grid(){
+        field = new Card[5][5];
+        for(int i = 0; i<field.length; ++i){
+            for(int j = 0; j<field[i].length; ++j){
+                field[i][j] = null;
             }
         }
-
-        Card card = CardFactory.startCard();
-        field.get(2).set(2, card);
-
-        ltX = 2;
-        ltY = 2;
-        rbX = 2;
-        rbY = 2;
+        field[2][2] = CardFactory.startCard();
+        topLeft = new GridPosition(0, 0);
+        bottomRight = new GridPosition(0, 0);
     }
 
-    public Optional<Card> getCard(GridPosition coordinate) {
-        return Optional.ofNullable(field.get(coordinate.getY() + 2).get(coordinate.getX() + 2));
+    public Optional<Card> getCard(GridPosition coordinate){
+        return Optional.ofNullable(field[2 + coordinate.getY()][2 +coordinate.getX()]);
     }
 
     public boolean canPutCard(GridPosition coordinate){
@@ -67,13 +60,11 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
         if(coordinate.getX() < topLeft.getX()){
             topLeft = new GridPosition(coordinate.getX(), topLeft.getY());
         }
-
-        else if (coordinate.getX() + 2 < ltX) {
-            ltX = coordinate.getX() + 2;
+        if(coordinate.getX() > bottomRight.getX()){
+            bottomRight = new GridPosition(coordinate.getX(), bottomRight.getY());
         }
-
-        if (coordinate.getY() + 2 > rbY) {
-            rbY = coordinate.getY() + 2;
+        if(coordinate.getY() < topLeft.getY()){
+            topLeft = new GridPosition(topLeft.getX(), coordinate.getY());
         }
         if(coordinate.getY() > bottomRight.getY()){
             bottomRight = new GridPosition(bottomRight.getX(), coordinate.getY());
@@ -103,32 +94,29 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
                 ans.add(c.get());
             }
         }
-
-        return cards;
+        return ans;
     }
-
-    @Override
-    public void setActivationPattern(Collection<GridPosition> pattern) {
-        this.pattern = pattern;
-    }
-
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int j = -2; j < 2; j++) {
-            for (int i = -2; i < 2; i++) {
+        for (int j = topLeft.getY(); j < bottomRight.getY(); j++) {
+            for (int i = topLeft.getX(); i < bottomRight.getX(); i++) {
                 Optional<Card> card = getCard(new GridPosition(j, i));
 
-
                 if (card.isPresent()) {
-                    sb.append("X: ").append(i).append(", Y:").append(j).append(": \n").append(card.get());
+                    sb.append("X: " + i + ", Y:" + j + ": " + card.get().toString());
                 }
             }
         }
 
-
         return sb.toString();
     }
+
+    @Override
+    public void setActivationPattern(Collection<GridPosition> pattern) {
+        this.pattern = new ArrayList<>(pattern);
+    }
+
 }

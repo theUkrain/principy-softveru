@@ -4,7 +4,6 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -158,16 +157,6 @@ public class CardFactory {
 
         }
 
-
-        @Override
-        public Effect getUpper() {
-            return upper;
-        }
-
-        @Override
-        public Effect getLower() {
-            return lower;
-        }
 
         @Override
         public Effect getUpper() {
