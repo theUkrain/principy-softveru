@@ -4,7 +4,6 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +42,10 @@ public class CardFactory {
     }
 
     public static Card startCard() {
-        return new ConcreteCard(0, null, null, new CardSource(0, Deck.I));
+        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        return card;
     }
+
 
     private static class ConcreteCard implements Card {
 
@@ -122,6 +123,7 @@ public class CardFactory {
          */
         @Override
         public boolean canPutResources(Map<Resource, Integer> resources) {
+
 
             if(isOverPolluted()) return false;
 

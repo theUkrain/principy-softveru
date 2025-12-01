@@ -6,11 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
 
-import sk.uniba.fmph.dcs.terra_futura.InterfaceActivateGrid;
-import sk.uniba.fmph.dcs.terra_futura.ActivationPattern;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 import static org.junit.Assert.*;
@@ -55,7 +52,7 @@ public class ActivationPatternTest {
             JSONObject pair = arr.getJSONObject(i);
             s.append(String.format("(%s,%s)", pair.getInt("x"), pair.getInt("y")));
         }
-
+        
         assertEquals(expectedList, s.toString());
         assertEquals(expectedActivated, obj.getBoolean("selected"));
     }
@@ -73,11 +70,11 @@ public class ActivationPatternTest {
         assertEquals(-1, grid.activations.get(2).getX());
         assertEquals(1, grid.activations.get(2).getY());
     }
-
+        
 
     @Test
     public void testPatternCannotBeActivatedTwice() {
         activationPattern.select();
-        //assertThrows(activationPattern.select());
+    //assertThrows(activationPattern.select());
     }
 }
