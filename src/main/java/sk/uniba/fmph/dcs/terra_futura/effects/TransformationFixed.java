@@ -6,7 +6,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.*;
 
-public class TransformationFixed extends SetCardToEffect {
+public class TransformationFixed extends SetCardToEffect implements CopyableEffect {
 
     private final Map<Resource, Integer> requiredInputs;
     private final Map<Resource, Integer> guaranteedOutputs;
@@ -106,5 +106,10 @@ public class TransformationFixed extends SetCardToEffect {
         return this.requiredInputs.equals(t.getRequiredInputs()) &&
                 this.guaranteedOutputs.equals(t.getGuaranteedOutputs()) &&
                 this.generatedPollution == t.getGeneratedPollution();
+    }
+
+    @Override
+    public Effect copy() {
+        return new TransformationFixed(requiredInputs, guaranteedOutputs, generatedPollution);
     }
 }

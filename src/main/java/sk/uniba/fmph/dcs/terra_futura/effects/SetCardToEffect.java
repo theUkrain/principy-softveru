@@ -14,4 +14,8 @@ public abstract class SetCardToEffect implements Effect {
         this.card = card;
         set = true;
     }
+
+    public Card getCard() {
+        return card;
+    }
 }

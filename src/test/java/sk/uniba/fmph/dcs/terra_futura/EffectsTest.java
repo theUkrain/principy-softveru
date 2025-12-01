@@ -135,28 +135,6 @@ public class EffectsTest {
     }
 
     @Test
-    @DisplayName("StartingCardEffect test")
-    public void testStartingCardEffectTrigger() {
-        StartingCardEffect effect = new StartingCardEffect();
-
-        Effect trigger1 = effect.execute(0);
-
-        Assertions.assertInstanceOf(EffectOr.class, trigger1,
-                "execute(0) must return EffectOr");
-
-        Effect trigger2 = effect.execute(1);
-
-        Assertions.assertInstanceOf(AssistanceEffect.class, trigger2,
-                "execute(1) must return AssistanceEffect, cuz the second effect in EffectOr");
-
-        EffectOr expectedEffect1 = new EffectOr(
-                new RawMaterialProducer(Resource.UNIVERSAL),
-                new RawMaterialProducer(Resource.MONEY));
-
-        Assertions.assertTrue(trigger1.equals(expectedEffect1));
-    }
-
-    @Test
     @DisplayName("EffectOr test")
     public void testEffectOr() {
         Effect e1 = new TransformationFixed(Map.of(), Map.of(), 0);
@@ -179,8 +157,6 @@ public class EffectsTest {
         AssistanceEffect effect = new AssistanceEffect();
         Effect result =  effect.execute(new TransformationFixed(Map.of(), Map.of(), 0));
         Assertions.assertNotNull(result);
-        result = effect.execute(new RawMaterialProducer(Resource.RED));
-        Assertions.assertNull(result);
     }
 
     @Test

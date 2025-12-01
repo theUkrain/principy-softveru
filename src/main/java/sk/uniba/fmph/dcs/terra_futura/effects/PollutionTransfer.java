@@ -5,7 +5,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
 
-public class PollutionTransfer extends SetCardToEffect {
+public class PollutionTransfer extends SetCardToEffect implements CopyableEffect {
 
     public void execute(List<Pair<Card, Integer>> cards) {
         int commulatedPollution = 0;
@@ -39,5 +39,10 @@ public class PollutionTransfer extends SetCardToEffect {
     @Override
     public boolean equals(Object obj){
         return true;
+    }
+
+    @Override
+    public Effect copy() {
+        return new PollutionTransfer();
     }
 }

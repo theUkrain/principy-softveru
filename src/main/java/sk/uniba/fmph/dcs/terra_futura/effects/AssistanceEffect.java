@@ -3,10 +3,11 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 
 public class AssistanceEffect extends SetCardToEffect {
 
-    public Effect execute(Effect effectOfAnoutherPlayer) {
+    public <T extends Effect & CopyableEffect> T execute(T effectOfAnoutherPlayer) {
         if (effectOfAnoutherPlayer.canProvideAssistance()) {
             return effectOfAnoutherPlayer;
         }
+
         return null;
     }
 

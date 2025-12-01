@@ -47,7 +47,7 @@ public class CardFactory {
     }
 
     public static Card startCard() {
-        ConcreteCard card = new ConcreteCard(1, new StartingCardEffect(), null, null);
+        ConcreteCard card = new ConcreteCard(1, new EffectOr(new RawMaterialProducer(Resource.UNIVERSAL), new RawMaterialProducer(Resource.MONEY)), new AssistanceEffect(), null);
         return card;
     }
 
