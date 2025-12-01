@@ -13,7 +13,7 @@ public class RawMaterialProducer extends SetCardToEffect {
 
     public void execute() {
         if (!card.canPutResources(Map.of(guaranteedOutputs, 1))) {
-            throw new IllegalStateException("Cant put resources");
+            throw new IllegalStateException("Can't put resources");
         }
 
         card.putResources(Map.of(guaranteedOutputs, 1));

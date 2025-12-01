@@ -54,7 +54,7 @@ public class TransformationFixed extends SetCardToEffect {
 
         if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
             int accumulatedResource = recievedResources.get(Resource.RED) + recievedResources.get(Resource.YELLOW) + recievedResources.get(Resource.GREEN);
-            if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
+            if (accumulatedResource == requiredInputs.get(Resource.UNIVERSAL)) {
                 resourceRetrivier(cards);
                 card.putResources(guaranteedOutputs);
                 return generatedPollution;
@@ -62,7 +62,7 @@ public class TransformationFixed extends SetCardToEffect {
         }
 
         for(Resource r: recievedResources.keySet()){
-            if(requiredInputs.containsKey(r) && recievedResources.get(r) < requiredInputs.get(r)){
+            if(requiredInputs.containsKey(r) && (recievedResources.get(r) < requiredInputs.get(r)|| recievedResources.get(r) > requiredInputs.get(r))){
                 throw new IllegalStateException("Insufficient resources");
             }
         }

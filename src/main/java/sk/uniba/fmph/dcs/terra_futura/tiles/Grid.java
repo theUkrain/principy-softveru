@@ -32,7 +32,7 @@ public class Grid implements GridInterface, InterfaceActivateGrid {
     }
 
     public Optional<Card> getCard(GridPosition coordinate) {
-        return Optional.ofNullable(field[2 + coordinate.getY()][2 + coordinate.getX()]);
+        return Optional.ofNullable(field[coordinate.getX() + topLeft.getX() + 1][coordinate.getY() + topLeft.getY() + 1]);
     }
 
     public boolean canPutCard(GridPosition coordinate) {
