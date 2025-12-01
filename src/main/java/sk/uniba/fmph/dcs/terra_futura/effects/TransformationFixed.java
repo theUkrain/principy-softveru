@@ -6,7 +6,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.*;
 
-public class TransformationFixed extends SetCardToEffect {
+public class TransformationFixed extends SetCardToEffect implements Effect {
 
     private final Map<Resource, Integer> requiredInputs;
     private final Map<Resource, Integer> guaranteedOutputs;
@@ -20,7 +20,7 @@ public class TransformationFixed extends SetCardToEffect {
         this.generatedPollution = generatedPollution;
     }
 
-    public void resourceRetriever(Map<Resource, List<Pair<Card, Integer>>> cards){
+    public void resourceRetrivier(Map<Resource, List<Pair<Card, Integer>>> cards){
         for(Resource r: cards.keySet()){
             for(Pair<Card, Integer> p: cards.get(r)){
                 p.getLeft().getResources(Map.of(r, p.getRight()));
@@ -37,38 +37,38 @@ public class TransformationFixed extends SetCardToEffect {
             throw new IllegalStateException("Card unavailable");
         }
 
-        Map<Resource, Integer> receivedResources = new HashMap<>();
-        receivedResources.put(Resource.MONEY, 0);
-        receivedResources.put(Resource.RED, 0);
-        receivedResources.put(Resource.YELLOW, 0);
-        receivedResources.put(Resource.GREEN, 0);
+        Map<Resource, Integer> recievedResources = new HashMap<>();
+        recievedResources.put(Resource.MONEY, 0);
+        recievedResources.put(Resource.RED, 0);
+        recievedResources.put(Resource.YELLOW, 0);
+        recievedResources.put(Resource.GREEN, 0);
 
         for(Resource r: cards.keySet()){
             for(Pair<Card, Integer> p: cards.get(r)){
                 if(p.getLeft().canGetResources(Map.of(r, p.getRight()))){
-                    receivedResources.put(r, receivedResources.get(r) + p.getRight());
+                    recievedResources.put(r, recievedResources.get(r) + p.getRight());
                 }
             }
         }
 
 
         if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
-            int accumulatedResource = receivedResources.get(Resource.RED) + receivedResources.get(Resource.YELLOW) + receivedResources.get(Resource.GREEN);
+            int accumulatedResource = recievedResources.get(Resource.RED) + recievedResources.get(Resource.YELLOW) + recievedResources.get(Resource.GREEN);
             if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
-                resourceRetriever(cards);
+                resourceRetrivier(cards);
                 card.putResources(guaranteedOutputs);
                 return generatedPollution;
             }
         }
 
-        for(Resource r: receivedResources.keySet()){
-            if(requiredInputs.containsKey(r) && receivedResources.get(r) < requiredInputs.get(r)) {
+        for(Resource r: recievedResources.keySet()){
+            if(requiredInputs.containsKey(r) && recievedResources.get(r) < requiredInputs.get(r)){
                 throw new IllegalStateException("Insufficient resources");
             }
         }
 
         card.putResources(guaranteedOutputs);
-        resourceRetriever(cards);
+        resourceRetrivier(cards);
         return generatedPollution;
     }
 
@@ -81,5 +81,30 @@ public class TransformationFixed extends SetCardToEffect {
     public String toString() {
         return "This effect for " + requiredInputs + " can generate "
                 + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
+    }
+
+    public Map<Resource, Integer> getRequiredInputs(){
+        return requiredInputs;
+    }
+
+    public Map<Resource, Integer> getGuaranteedOutputs(){
+        return guaranteedOutputs;
+    }
+
+    public int getGeneratedPollution(){
+        return generatedPollution;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+
+        TransformationFixed t = (TransformationFixed) obj;
+
+        return this.requiredInputs.equals(t.getRequiredInputs()) &&
+                this.guaranteedOutputs.equals(t.getGuaranteedOutputs()) &&
+                this.generatedPollution == t.getGeneratedPollution();
     }
 }

@@ -64,6 +64,22 @@ public class PileTest {
         public Map<Resource, Integer> getCurResources() {
             return null;
         }
+
+        @Override
+        public boolean canTakePollution(int amount) {
+            return true;
+        }
+
+        @Override
+        public void takePollution(int amount) {}
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            return true;
+        }
+
+        @Override
+        public void putPollution(int amount) {}
     }
 
     private List<Card> generateInput(int n){
