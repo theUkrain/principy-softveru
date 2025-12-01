@@ -1,7 +1,7 @@
 
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-public class AssistanceEffect extends SetCardToEffect implements Effect {
+public class AssistanceEffect extends SetCardToEffect {
 
     public Effect execute(Effect effectOfAnoutherPlayer) {
         if (effectOfAnoutherPlayer.canProvideAssistance()) {

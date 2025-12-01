@@ -3,7 +3,7 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EffectOr extends SetCardToEffect implements Effect {
+public class EffectOr extends SetCardToEffect {
 
     List<Effect> effectPair = new ArrayList<>();
 

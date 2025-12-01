@@ -6,7 +6,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.*;
 
-public class TransformationFixed extends SetCardToEffect implements Effect {
+public class TransformationFixed extends SetCardToEffect {
 
     private final Map<Resource, Integer> requiredInputs;
     private final Map<Resource, Integer> guaranteedOutputs;
@@ -20,7 +20,7 @@ public class TransformationFixed extends SetCardToEffect implements Effect {
         this.generatedPollution = generatedPollution;
     }
 
-    public void resourceRetrivier(Map<Resource, List<Pair<Card, Integer>>> cards){
+    public void resourceRetriever(Map<Resource, List<Pair<Card, Integer>>> cards){
         for(Resource r: cards.keySet()){
             for(Pair<Card, Integer> p: cards.get(r)){
                 p.getLeft().getResources(Map.of(r, p.getRight()));
@@ -37,37 +37,38 @@ public class TransformationFixed extends SetCardToEffect implements Effect {
             throw new IllegalStateException("Card unavailable");
         }
 
-        Map<Resource, Integer> recievedResources = new HashMap<>();
-        recievedResources.put(Resource.RED, 0);
-        recievedResources.put(Resource.YELLOW, 0);
-        recievedResources.put(Resource.GREEN, 0);
+        Map<Resource, Integer> receivedResources = new HashMap<>();
+        receivedResources.put(Resource.MONEY, 0);
+        receivedResources.put(Resource.RED, 0);
+        receivedResources.put(Resource.YELLOW, 0);
+        receivedResources.put(Resource.GREEN, 0);
 
         for(Resource r: cards.keySet()){
             for(Pair<Card, Integer> p: cards.get(r)){
                 if(p.getLeft().canGetResources(Map.of(r, p.getRight()))){
-                    recievedResources.put(r, recievedResources.get(r) + p.getRight());
+                    receivedResources.put(r, receivedResources.get(r) + p.getRight());
                 }
             }
         }
 
 
         if (requiredInputs.containsKey(Resource.UNIVERSAL)) {
-            int accumulatedResource = recievedResources.get(Resource.RED) + recievedResources.get(Resource.YELLOW) + recievedResources.get(Resource.GREEN);
+            int accumulatedResource = receivedResources.get(Resource.RED) + receivedResources.get(Resource.YELLOW) + receivedResources.get(Resource.GREEN);
             if (accumulatedResource >= requiredInputs.get(Resource.UNIVERSAL)) {
-                resourceRetrivier(cards);
+                resourceRetriever(cards);
                 card.putResources(guaranteedOutputs);
                 return generatedPollution;
             }
         }
 
-        for(Resource r: recievedResources.keySet()){
-            if(recievedResources.get(r) < requiredInputs.get(r)){
+        for(Resource r: receivedResources.keySet()){
+            if(requiredInputs.containsKey(r) && receivedResources.get(r) < requiredInputs.get(r)) {
                 throw new IllegalStateException("Insufficient resources");
             }
         }
 
         card.putResources(guaranteedOutputs);
-        resourceRetrivier(cards);
+        resourceRetriever(cards);
         return generatedPollution;
     }
 

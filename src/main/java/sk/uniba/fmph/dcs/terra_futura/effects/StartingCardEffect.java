@@ -3,7 +3,7 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-public class StartingCardEffect extends SetCardToEffect implements Effect {
+public class StartingCardEffect extends SetCardToEffect {
 
     EffectOr effect = new EffectOr(
             new EffectOr(

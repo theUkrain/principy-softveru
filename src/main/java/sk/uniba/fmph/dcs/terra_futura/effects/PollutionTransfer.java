@@ -7,7 +7,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 import java.util.Map;
 
-public class PollutionTransfer extends SetCardToEffect implements Effect {
+public class PollutionTransfer extends SetCardToEffect {
 
     public int execute(Card card, List<Pair<Card, Integer>> cards) {
         int commulatedPollution = 0;

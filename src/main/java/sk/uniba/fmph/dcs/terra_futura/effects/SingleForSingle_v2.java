@@ -6,6 +6,10 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.Map;
 
 public class SingleForSingle_v2 extends SetCardToEffect {
+    @Override
+    public boolean canProvideAssistance() {
+        return false;
+    }
 
     private Map<Resource, Integer> requiredInputs;
 

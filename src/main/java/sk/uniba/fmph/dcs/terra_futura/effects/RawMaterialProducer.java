@@ -5,7 +5,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
 import java.util.Map;
 
-public class RawMaterialProducer extends SetCardToEffect implements Effect {
+public class RawMaterialProducer extends SetCardToEffect {
     private final Pair<Resource, Integer> guaranteedOutputs;
     private final int generatedPollution;
 
@@ -30,6 +30,6 @@ public class RawMaterialProducer extends SetCardToEffect implements Effect {
 
     @Override
     public String toString() {
-        return "Generated resource/resources is " + generatedPollution;
+        return "Generated resource is " + guaranteedOutputs.getLeft();
     }
 }
