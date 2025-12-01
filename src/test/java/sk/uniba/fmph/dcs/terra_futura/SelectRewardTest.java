@@ -1,12 +1,5 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-import java.util.List;
-import java.util.Optional;
-
 public class SelectRewardTest {
 /*
     private Card createMockCard() {

@@ -48,24 +48,24 @@ public class EffectOr extends SetCardToEffect {
 
     @Override
     public boolean equals(Object obj) {
-       if (this == obj) {
+        if (this == obj) {
             return true;
-       }
+        }
 
-       if (obj == null || getClass() != obj.getClass()) {
-           return false;
-       }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
 
-       EffectOr other = (EffectOr) obj;
-       if(effectList.size() != other.effectList.size()){
-           return false;
-       }
-       for(int i = 0; i < effectList.size(); i++){
-           if(!effectList.get(i).equals(other.effectList.get(i))){
-               return false;
-           }
-       }
-       return true;
+        EffectOr other = (EffectOr) obj;
+        if(effectList.size() != other.effectList.size()){
+            return false;
+        }
+        for(int i = 0; i < effectList.size(); i++){
+            if(!effectList.get(i).equals(other.effectList.get(i))){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

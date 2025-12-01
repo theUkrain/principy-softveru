@@ -80,6 +80,11 @@ public class PileTest {
 
         @Override
         public void putPollution(int amount) {}
+
+        @Override
+        public Map<Resource, Integer> takeResources() {
+            return null;
+        }
     }
 
     private List<Card> generateInput(int n){
