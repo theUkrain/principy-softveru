@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class AssistanceEffect implements Effect {
 
-    public Effect execute(Card cardWithAssist, Effect effectOfAnoutherPlayer,
+    public Effect execute(Card cardWithAssist, Effect effectOfAnotherPlayer,
                           Map<Resource, List<Pair<Card, Integer>>> cards,
                           Map<Resource, Integer> wantedResource) {
-        if (effectOfAnoutherPlayer.canProvideAssistance() && effectOfAnoutherPlayer.check(cardWithAssist, cards, wantedResource)) {
-            return effectOfAnoutherPlayer;
+        if (effectOfAnotherPlayer.canProvideAssistance() && effectOfAnotherPlayer.check(cardWithAssist, cards, wantedResource)) {
+            return effectOfAnotherPlayer;
         }
         return null;
     }

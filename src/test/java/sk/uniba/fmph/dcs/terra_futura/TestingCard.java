@@ -56,6 +56,11 @@ public class TestingCard implements Card {
     }
 
     @Override
+    public Map<Resource, Integer> getCurResources() {
+        return Map.of();
+    }
+
+    @Override
     public boolean hasAssistance() {
         return false;
     }

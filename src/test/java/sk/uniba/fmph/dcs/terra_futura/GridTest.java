@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 public class GridTest {
-    @DisplayName("can't put card on occupied place test")
     @Test
     public void occupiedLotException() {
         Grid grid = new Grid();
@@ -21,7 +20,6 @@ public class GridTest {
         });
     }
 
-    @DisplayName("boundaries test")
     @Test
     public void boundariesExceptionTest0() {
         Grid grid = new Grid();
@@ -58,7 +56,6 @@ public class GridTest {
     }
 
     @Test
-    @DisplayName("Test method: canPutCard & putCard")
     public void testCanPutCard() {
         Grid grid = new Grid();
 
