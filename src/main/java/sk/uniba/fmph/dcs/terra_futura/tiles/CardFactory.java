@@ -26,7 +26,7 @@ public class CardFactory {
         maxII = 24;
     }
 
-    public static Card card(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
+    public static Card card(int pollutionSpaces, SetCardToEffect upper, SetCardToEffect lower, CardSource cardSource) {
 
         if( cardSource.getSourceDeck() == Deck.I &&  maxI == counterI) throw new ArrayIndexOutOfBoundsException("With " + counterI
                 + " cards of I level produced, you cannot produce more cards");
@@ -39,7 +39,11 @@ public class CardFactory {
 
         ConcreteCard card  = new ConcreteCard(pollutionSpaces,  upper, lower, cardSource);
         return card;
+    }
 
+    public static Card pollutionTransferCard(CardSource cardSource) {
+        Card card = card(4, new PollutionTransfer(), null, cardSource);
+        return card;
     }
 
     public static Card startCard() {
@@ -56,19 +60,28 @@ public class CardFactory {
         private int curPollution;
         private final CardSource cardSource;
 
-        private final Effect upper;
-        private final Effect lower;
+        private final SetCardToEffect upper;
+        private final SetCardToEffect lower;
 
         private final boolean hasAssistance;
 
-        public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
+        public ConcreteCard(int pollutionSpaces, SetCardToEffect upper, SetCardToEffect lower, CardSource cardSource) {
 
             resources = new HashMap<>();
 
             this.upper = upper;
             this.lower = lower;
 
+            if (upper != null) {
+                this.upper.setCard(this);
+            }
+
+            if (lower != null) {
+                this.lower.setCard(this);
+            }
+
             this.pollutionSpaces = pollutionSpaces;
+
             this.hasAssistance = (upper != null &&  upper.canProvideAssistance()) || (lower != null &&  lower.canProvideAssistance());
             this.cardSource = cardSource;
 
@@ -177,7 +190,7 @@ public class CardFactory {
             if (!canGetPollution(amount)) throw new IllegalArgumentException("Card only has " + curPollution
                     + " pollution, you are trying to take " + amount
                     + " pollution" + '\n');
-            curPollution =- amount;
+            curPollution -= amount;
         }
 
         @Override

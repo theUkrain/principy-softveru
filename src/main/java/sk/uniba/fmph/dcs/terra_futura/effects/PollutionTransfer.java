@@ -18,6 +18,10 @@ public class PollutionTransfer extends SetCardToEffect {
             }
             card.putPollution(commulatedPollution);
         }
+
+        else {
+            throw new IllegalArgumentException("Cant put more pollution");
+        }
     }
 
     @Override

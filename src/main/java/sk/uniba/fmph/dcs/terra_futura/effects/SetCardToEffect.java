@@ -8,8 +8,9 @@ public abstract class SetCardToEffect implements Effect {
 
     public void setCard(Card card) {
         if (set) {
-            return;
+            throw new IllegalStateException("setCard() can be called only once");
         }
+
         this.card = card;
         set = true;
     }
