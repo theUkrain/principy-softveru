@@ -4,6 +4,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,6 @@ public class CardFactory {
         return card;
     }
 
-
     private static class ConcreteCard implements Card {
 
         private Map<Resource, Integer> resources;
@@ -74,7 +74,7 @@ public class CardFactory {
         }
 
         public boolean isOverPolluted() {
-            return curPollution > pollutionSpaces;
+            return curPollution >= pollutionSpaces;
         }
 
         /**
@@ -142,15 +142,31 @@ public class CardFactory {
         public void putResources(Map<Resource, Integer> resources) throws IllegalArgumentException {
 
             if(!canPutResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources +
-                    "\n" +  "can't be put on card already filled with :" + "\n"  + this.resources + "\n" + "and  pollution  spaces in quantity of:"
-                    + pollutionSpaces + '\n');
+                    "\n" +  "can't be put on card already filled with :" + "\n"  + this.resources.toString() + "\n" +
+                    "and  pollution  spaces in quantity of:" + pollutionSpaces + '\n');
 
             for(Resource resource : resources.keySet()) {
-                this.resources.putIfAbsent(resource, resources.get(resource));
+
+                if(!this.resources.keySet().contains(resource)) {
+                    this.resources.put(resource, resources.get(resource));
+                    continue;
+                }
+
                 this.resources.put(resource, this.resources.get(resource)+resources.get(resource));
             }
-            curPollution = this.resources.get(Resource.POLLUTION);
+            curPollution = this.resources.getOrDefault(Resource.POLLUTION, 0);
 
+        }
+
+
+        @Override
+        public Effect getUpper() {
+            return upper;
+        }
+
+        @Override
+        public Effect getLower() {
+            return lower;
         }
 
         @Override
@@ -182,5 +198,4 @@ public class CardFactory {
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
-
 }

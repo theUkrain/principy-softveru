@@ -11,7 +11,10 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class PileTest {
     private class TestCard implements Card{

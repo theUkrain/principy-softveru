@@ -1,3 +1,4 @@
+
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -12,7 +13,7 @@ public class AssistanceEffect implements Effect {
     public Effect execute(Card cardWithAssist, Effect effectOfAnoutherPlayer,
                           Map<Resource, List<Pair<Card, Integer>>> cards,
                           Map<Resource, Integer> wantedResource) {
-        if (effectOfAnoutherPlayer.canProvideAssistance() && effectOfAnoutherPlayer.check(cardWithAssist, cards, wantedResource)) {
+        if (effectOfAnoutherPlayer.canProvideAssistance() && effectOfAnoutherPlayer.check(cardWithAssist, cards)) {
             return effectOfAnoutherPlayer;
         }
         return null;
@@ -24,7 +25,7 @@ public class AssistanceEffect implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
         return false;
     }
 
