@@ -11,8 +11,8 @@ public class StartingCardEffect implements Effect {
 
     EffectOr effect = new EffectOr(
             new EffectOr(
-                    new RawMaterialProducer(Map.of(Resource.UNIVERSAL, 1), 0),
-                    new RawMaterialProducer(Map.of(Resource.MONEY, 1), 0)),
+                    new RawMaterialProducer(Pair.of(Resource.UNIVERSAL, 1), 0),
+                    new RawMaterialProducer(Pair.of(Resource.MONEY, 1), 0)),
             new AssistanceEffect());
 
     public Effect execute(int whatEffectToTrigger) {

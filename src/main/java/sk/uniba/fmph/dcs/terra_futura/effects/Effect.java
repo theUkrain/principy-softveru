@@ -11,6 +11,4 @@ public interface Effect {
     String toString();
 
     boolean canProvideAssistance();
-
-    boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards);
 }

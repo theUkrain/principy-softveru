@@ -63,7 +63,7 @@ public class CardFactory {
 
         public ConcreteCard(int pollutionSpaces, Effect upper, Effect lower, CardSource cardSource) {
 
-            resources = new HashMap();
+            resources = new HashMap<>();
 
             this.upper = upper;
             this.lower = lower;
@@ -75,7 +75,7 @@ public class CardFactory {
         }
 
         public boolean isOverPolluted() {
-            return curPollution > pollutionSpaces;
+            return curPollution >= pollutionSpaces;
         }
 
         /**
@@ -143,16 +143,22 @@ public class CardFactory {
         public void putResources(Map<Resource, Integer> resources) throws IllegalArgumentException {
 
             if(!canPutResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources +
-                    "\n" +  "can't be put on card already filled with :" + "\n"  + this.resources + "\n" + "and  pollution  spaces in quantity of:"
-                    + pollutionSpaces + '\n');
+                    "\n" +  "can't be put on card already filled with :" + "\n"  + this.resources.toString() + "\n" +
+                    "and  pollution  spaces in quantity of:" + pollutionSpaces + '\n');
 
             for(Resource resource : resources.keySet()) {
-                this.resources.putIfAbsent(resource, resources.get(resource));
+
+                if(!this.resources.keySet().contains(resource)) {
+                    this.resources.put(resource, resources.get(resource));
+                    continue;
+                }
+
                 this.resources.put(resource, this.resources.get(resource)+resources.get(resource));
             }
-            curPollution = this.resources.get(Resource.POLLUTION);
+            curPollution = this.resources.getOrDefault(Resource.POLLUTION, 0);
 
         }
+
 
         @Override
         public Effect getUpper() {

@@ -1,21 +1,25 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-
+import org.junit.jupiter.api.Assertions;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.Samostatne.Pile;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
-import sk.uniba.fmph.dcs.terra_futura.tiles.*;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class PileTest {
-    private class TestCard implements Card{
+    private class TestCard implements Card {
+        @Override
+        public boolean isOverPolluted() {
+            return false;
+        }
 
         @Override
         public boolean canGetResources(Map<Resource, Integer> resources) {
@@ -23,7 +27,9 @@ public class PileTest {
         }
 
         @Override
-        public void getResources(Map<Resource, Integer> resources) {}
+        public void getResources(Map<Resource, Integer> resources) {
+
+        }
 
         @Override
         public boolean canPutResources(Map<Resource, Integer> resources) {
@@ -31,21 +37,8 @@ public class PileTest {
         }
 
         @Override
-        public void putResources(Map<Resource, Integer> resources) {}
+        public void putResources(Map<Resource, Integer> resources) {
 
-        @Override
-        public boolean isOverPolluted() {
-            return false;
-        }
-
-        @Override
-        public CardSource getCardSource() {
-            return null;
-        }
-
-        @Override
-        public boolean hasAssistance() {
-            return false;
         }
 
         @Override
@@ -57,60 +50,62 @@ public class PileTest {
         public Effect getLower() {
             return null;
         }
-    }
 
-    private List<Card> generateInput(int n){
-        List<Card> input = new ArrayList<>();
-        for(int i = 0; i<n ;++i){
-            input.add(new TestCard());
+        @Override
+        public CardSource getCardSource() {
+            return null;
         }
-        return input;
+
+        @Override
+        public boolean hasAssistance() {
+            return false;
+        }
     }
 
     @Test
     @DisplayName("Test method: getCard")
-    public void testGetCard(){
-        List<Card> input = generateInput(20);
-        Pile tpile = new Pile(input);
+    public void testGetCard() {
+        // Data set
+        List<Card> input = new ArrayList<Card>();
 
-        for(int i=0; i<20; ++i){
-            Optional<Card> tcard = tpile.getCard(i);
-            assertEquals(true, tcard.isPresent());
+        for (int i = 0; i < 20; i++) {
+            input.add(new TestCard());
         }
 
+        // Test for exceptions
+        Pile pile = new Pile(input);
 
-        input = generateInput(20);
-        final Pile pile2 = new Pile(input);
-        for(int i=0; i<20; ++i){
-            pile2.getCard(i);
+        for (int i = 0; i < 20; i++) {
+            Optional<Card> card = pile.getCard(i);
+            Assertions.assertTrue(card.isPresent());
+            System.out.println(card.get());
         }
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> pile2.getCard(0));
 
-        input  = generateInput(3);
-        Pile pile3 = new Pile(input);
-        Card c1 = (pile3.getCard(0)).get();
-        Card c2 = (pile3.getCard(0)).get();
-        assertEquals(true, c1!=c2);
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> pile.getCard(0));
+    }
 
-        input = generateInput(50);
-        Pile pile4 = new Pile(input);
-        int extracted = 0;
-        for(int i=0; i<50; ++i){
-            if(i%2 == 0){
-                ++extracted;
-                pile4.getCard(0);
-            }else{
-                pile4.discardCard();
-            }
+    @Test
+    @DisplayName("Test method: discardCard")
+    public void testDiscardCard() {
+        // Data set
+        List<Card> input = new ArrayList<Card>();
+
+        for (int i = 0; i < 20; i++) {
+            input.add(new TestCard());
         }
-        assertEquals(25, extracted);
-        Optional<Card> ct = pile4.getCard(0);
-        assertEquals(true, ct.isPresent());
 
-        input = generateInput(25);
-        Pile pile5 = new Pile(input);
-        for(int i=0; i<25; ++i){
-            assertDoesNotThrow(() -> pile5.discardCard());
+        // Test for exceptions
+        Pile pile = new Pile(input);
+
+        for (int i = 0; i < 20; i++) {
+            pile.discardCard();
         }
+
+        for (int i = 0; i < 20; i++) {
+            Optional<Card> card = pile.getCard(0);
+            System.out.println(card.get());
+        }
+
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> pile.discardCard());
     }
 }

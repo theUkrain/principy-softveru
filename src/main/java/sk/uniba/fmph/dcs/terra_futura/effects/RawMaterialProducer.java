@@ -8,32 +8,20 @@ import java.util.List;
 import java.util.Map;
 
 public class RawMaterialProducer implements Effect {
-    private Map<Resource, Integer> guaranteedOutputs;
-    private Resource resource;
-    private int generatedPollution;
+    private final Pair<Resource, Integer> guaranteedOutputs;
+    private final int generatedPollution;
 
-
-    public RawMaterialProducer(final Map<Resource, Integer> guaranteedOutputs, final int generatedPollution) {
-        this.guaranteedOutputs = guaranteedOutputs;
+    public RawMaterialProducer(final Pair<Resource, Integer> guaranteedOutputs, final int generatedPollution) {
+        this.guaranteedOutputs = Pair.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight());
         this.generatedPollution = generatedPollution;
-        if (guaranteedOutputs.keySet().size() > 1) {
-            throw new RuntimeException("To many materials");
-        }
-        for (Resource r : guaranteedOutputs.keySet()) {
-            resource = r;
-        }
     }
 
-    public int execute(Card card, Resource resource) {
-        if (!card.canPutResources(guaranteedOutputs)) {
-            return 0;
+    public int execute(Card card) {
+        if (!check(card, null)) {
+            throw new IllegalStateException("Cant put resources");
         }
-        if (guaranteedOutputs.containsKey(Resource.UNIVERSAL) && (resource.equals(Resource.RED) || resource.equals(Resource.YELLOW) || resource.equals(Resource.GREEN))) {
-            card.putResources(Map.of(resource, 1));
-        }
-        if (guaranteedOutputs.containsKey(resource)) {
-            card.putResources(Map.of(resource, 1));
-        }
+
+        card.putResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()));
         return generatedPollution;
     }
 
@@ -43,18 +31,8 @@ public class RawMaterialProducer implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        boolean canExecute = true;
-        if (!(card.canPutResources(guaranteedOutputs) && wantedResource.keySet().size() > 1)) {
-            canExecute = false;
-        }
-        if (!(guaranteedOutputs.containsKey(Resource.UNIVERSAL) && (resource.equals(Resource.RED) || resource.equals(Resource.YELLOW) || resource.equals(Resource.GREEN)))) {
-            canExecute = false;
-        }
-        if (!guaranteedOutputs.containsKey(resource)) {
-            canExecute = false;
-        }
-        return canExecute;
+    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
+        return card.canPutResources(Map.of(guaranteedOutputs.getLeft(), guaranteedOutputs.getRight()));
     }
 
     @Override
