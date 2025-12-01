@@ -20,6 +20,12 @@ public final class ActivationPattern {
         this.grid = grid;
         this.pattern = new ArrayList<>(pattern);  // copy the pattern
         this.selected = false;
+
+        for(GridPosition position : pattern) {
+            if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) {
+                throw new ArrayIndexOutOfBoundsException();
+            }
+        }
     }
 
     public void select() {

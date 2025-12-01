@@ -95,7 +95,6 @@ public class TransformationFixed implements Effect {
         return true;
     }
 
-
     @Override
     public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
         if (!card.canPutResources(guaranteedOutputs)) {

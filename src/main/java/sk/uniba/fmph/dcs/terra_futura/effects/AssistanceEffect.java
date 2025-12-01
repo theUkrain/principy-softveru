@@ -1,3 +1,4 @@
+
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
