@@ -9,23 +9,9 @@ import java.util.Map;
 
 public class StartingCardEffect extends SetCardToEffect implements Effect {
 
-    EffectOr effect = new EffectOr(
-            new EffectOr(
-                    new RawMaterialProducer(Pair.of(Resource.UNIVERSAL, 1), 0),
-                    new RawMaterialProducer(Pair.of(Resource.MONEY, 1), 0)),
-            new AssistanceEffect());
-
-    public Effect execute(int whatEffectToTrigger) {
-        return effect.execute(whatEffectToTrigger);
-    }
 
     @Override
     public boolean canProvideAssistance() {
         return false;
-    }
-
-    @Override
-    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
-        return effect.check(cards);
     }
 }

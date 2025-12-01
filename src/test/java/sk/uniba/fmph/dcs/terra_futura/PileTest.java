@@ -57,6 +57,26 @@ public class PileTest {
         }
 
         @Override
+        public boolean canGetPollution(int amount) {
+            return false;
+        }
+
+        @Override
+        public void getPollution(int amount) {
+
+        }
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            return false;
+        }
+
+        @Override
+        public void putPollution(int amount) {
+
+        }
+
+        @Override
         public Map<Resource, Integer> getCurResources() {
             return Map.of();
         }

@@ -7,6 +7,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.tiles.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -103,7 +104,7 @@ public class GridTest {
         grid.putCard(new GridPosition(0, 2), inputCards.get(2));
         grid.putCard(new GridPosition(0, 1), inputCards.get(3));
 
-        Set<Card> cards = grid.getActivatedCards();
+        Collection<Card> cards = grid.getActivatedCards();
 
         Assertions.assertTrue(cards.contains(inputCards.get(0)));
         Assertions.assertTrue(cards.contains(inputCards.get(1)));

@@ -119,8 +119,6 @@ public class CardFactory {
 
             this.resources.entrySet().removeIf(e -> e.getValue() == 0);
 
-            curPollution = this.resources.getOrDefault(Resource.POLLUTION, 0);
-
         }
 
         /**
@@ -133,7 +131,7 @@ public class CardFactory {
 
             if(isOverPolluted()) return false;
 
-            if(curPollution + resources.getOrDefault(Resource.POLLUTION, 0) > pollutionSpaces) return false;
+            if(this.resources.keySet().contains(Resource.POLLUTION)) return false;
 
             return true;
 
@@ -157,8 +155,32 @@ public class CardFactory {
                 else this.resources.put(resource, this.resources.get(resource)+resources.get(resource));
             }
 
-            curPollution = this.resources.getOrDefault(Resource.POLLUTION, 0);
+        }
 
+        @Override
+        public boolean canGetPollution(int amount) {
+            return curPollution >= amount;
+        }
+
+        @Override
+        public void getPollution(int amount) {
+            if (!canGetPollution(amount)) throw new IllegalArgumentException("Card only has " + curPollution
+                    + " pollution, you are trying to take " + amount
+                    + " pollution" + '\n');
+            curPollution =- amount;
+        }
+
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            return curPollution + amount <= pollutionSpaces;
+        }
+
+        @Override
+        public void putPollution(int amount) {
+            if(!canPutPollution(amount)) throw new IllegalArgumentException("You can't put " + amount +
+                    " pollution on card with " + (pollutionSpaces - curPollution)  + " free pollution spaces");
+            curPollution += amount;
         }
 
         @Override
