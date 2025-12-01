@@ -13,7 +13,7 @@ public class SingleForSingle_v2  {
 
     private int generatedPollution;
 
-    public SingleForSingle_v2(Map<Resource, Integer> requiredInputs, Map<Resource, Integer> guaranteedOutputs, int generatedPollution) {
+    public SingleForSingle_v2 (Map<Resource, Integer> requiredInputs, Map<Resource, Integer> guaranteedOutputs, int generatedPollution) {
         this.requiredInputs = requiredInputs;
         this.guaranteedOutputs = guaranteedOutputs;
         this.generatedPollution = generatedPollution;

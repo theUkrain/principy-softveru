@@ -7,12 +7,12 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 import java.util.Map;
 
-public class StartingCardEffect implements Effect {
+public class StartingCardEffect extends SetCardToEffect implements Effect {
 
     EffectOr effect = new EffectOr(
             new EffectOr(
-                    new RawMaterialProducer(Map.of(Resource.UNIVERSAL, 1), 0),
-                    new RawMaterialProducer(Map.of(Resource.MONEY, 1), 0)),
+                    new RawMaterialProducer(Pair.of(Resource.UNIVERSAL, 1), 0),
+                    new RawMaterialProducer(Pair.of(Resource.MONEY, 1), 0)),
             new AssistanceEffect());
 
     public Effect execute(int whatEffectToTrigger) {
@@ -25,7 +25,7 @@ public class StartingCardEffect implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        return effect.check(card, cards, wantedResource);
+    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
+        return effect.check(cards);
     }
 }

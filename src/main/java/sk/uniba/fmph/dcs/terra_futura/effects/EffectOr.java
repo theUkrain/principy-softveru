@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EffectOr implements Effect {
+public class EffectOr extends SetCardToEffect implements Effect {
 
     List<Effect> effectPair = new ArrayList<>();
 
@@ -26,9 +26,9 @@ public class EffectOr implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        return effectPair.getFirst().check(card, cards,  wantedResource) &&
-                effectPair.getLast().check(card,cards, wantedResource);
+    public boolean check(Map<Resource, List<Pair<Card, Integer>>> cards) {
+        return effectPair.getFirst().check(cards) &&
+                effectPair.getLast().check(cards);
     }
 
     public String toString(){
