@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Assertions;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
@@ -38,6 +39,16 @@ public class PileTest {
         @Override
         public void putResources(Map<Resource, Integer> resources) {
 
+        }
+
+        @Override
+        public Effect getUpper() {
+            return null;
+        }
+
+        @Override
+        public Effect getLower() {
+            return null;
         }
 
         @Override
