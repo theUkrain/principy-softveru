@@ -11,8 +11,8 @@ public class StartingCardEffect implements Effect {
 
     EffectOr effect = new EffectOr(
             new EffectOr(
-                    new RawMaterialProducer(Pair.of(Resource.UNIVERSAL, 1), 0),
-                    new RawMaterialProducer(Pair.of(Resource.MONEY, 1), 0)),
+                    new RawMaterialProducer(Resource.UNIVERSAL),
+                    new RawMaterialProducer(Resource.MONEY)),
             new AssistanceEffect());
 
     public Effect execute(int whatEffectToTrigger) {
@@ -24,8 +24,4 @@ public class StartingCardEffect implements Effect {
         return false;
     }
 
-    @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
-        return effect.check(card, cards);
-    }
 }

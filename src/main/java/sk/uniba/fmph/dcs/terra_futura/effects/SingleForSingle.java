@@ -90,8 +90,8 @@ public class SingleForSingle implements Effect {
         return true;
     }
 
-    @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
+//    @Override
+//    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
 //        if (!card.canPutResources(guaranteedOutputs)) {
 //            return false;
 //        }
@@ -136,8 +136,8 @@ public class SingleForSingle implements Effect {
 //            }
 //        }
 //        return canProduce;
-        return true;
-    }
+//     return true;
+// }
 
     @Override
     public String toString() {

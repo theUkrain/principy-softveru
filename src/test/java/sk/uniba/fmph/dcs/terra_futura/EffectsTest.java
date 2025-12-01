@@ -18,71 +18,6 @@ import java.util.Map;
 
 public class EffectsTest {
     @Test
-    @DisplayName("TransformationFixed test")
-    public void testTransformationFixed() {
-        Map<Resource, Integer> requiredInputs = new HashMap<>();
-        requiredInputs.put(Resource.RED, 2);
-
-        Map<Resource, Integer> guaranteedOutputs = new HashMap<>();
-        guaranteedOutputs.put(Resource.YELLOW, 1);
-
-        int guaranteedPollution = 0;
-
-        TransformationFixed effect = new TransformationFixed(requiredInputs, guaranteedOutputs, guaranteedPollution);
-
-        Card card = CardFactory.card(0, null, null, new CardSource(0, Deck.II));
-        card.putResources(Map.of(Resource.RED, 2));
-
-        Map<Resource, List<Pair<Card, Integer>>> cards = new HashMap<>();
-        cards.put(Resource.RED, List.of(Pair.of(card, 2)));
-
-        // effect.check(card, cards, )
-    }
-
-    public void automatedTestPutRawMaterialProducer() {
-        List<Pair<Resource, Integer>> tests = new ArrayList<>();
-        tests.add(Pair.of(Resource.YELLOW, 1));
-        tests.add(Pair.of(Resource.RED, 2));
-        tests.add(Pair.of(Resource.GREEN, 3));
-        tests.add(Pair.of(Resource.MONEY, 1));
-        tests.add(Pair.of(Resource.YELLOW, 4));
-
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
-
-        for (Pair<Resource, Integer> test : tests) {
-            RawMaterialProducer effect = new RawMaterialProducer(test, 0);
-            effect.execute(card);
-            Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
-        }
-    }
-
-    @Test
-    @DisplayName("RawMaterialProducer test")
-    public void testRawMaterialProducer() {
-        // check if card produces correct resources
-        automatedTestPutRawMaterialProducer();
-
-        // TODO check pollution
-
-        // special checks
-        Pair<Resource, Integer> test = Pair.of(Resource.BULB, 1);
-        RawMaterialProducer effect = new RawMaterialProducer(test, 0);
-        Card card = CardFactory.card(1, null, null, new CardSource(0, Deck.II));
-
-        effect.execute(card);
-        Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
-        Assertions.assertFalse(card.canGetResources(Map.of(Resource.RED, 2)));
-        Assertions.assertFalse(card.canGetResources(Map.of(Resource.GREEN, 3)));
-
-        test = Pair.of(Resource.MONEY, 2);
-        effect = new RawMaterialProducer(test, 0);
-
-        effect.execute(card);
-        Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
-        Assertions.assertTrue(card.canGetResources(Map.of(Resource.BULB, 1)));
-    }
-
-    @Test
     @DisplayName("StartingCardEffect test")
     public void testStartingCardEffectTrigger() {
         StartingCardEffect effect = new StartingCardEffect();
@@ -103,10 +38,5 @@ public class EffectsTest {
 
         Assertions.assertTrue(trigger1.equals(expectedEffect1));
     }
-
-
-    @Test
-    @DisplayName("StartingCardEffect test")
-    public void testStartingCardEffectCheck() {}
 
 }

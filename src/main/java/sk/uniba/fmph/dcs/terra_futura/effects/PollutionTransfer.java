@@ -28,16 +28,7 @@ public class PollutionTransfer implements Effect {
         return true;
     }
 
-    @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
-        int commulatedPollution = 0;
-        for (Resource r: cards.keySet()) {
-            for (Pair<Card, Integer> p : cards.get(r)) {
-                commulatedPollution += p.getRight();
-            }
-        }
-        return card.canPutResources(Map.of(Resource.POLLUTION, commulatedPollution));
-    }
+
 
     @Override
     public String toString() {

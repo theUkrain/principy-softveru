@@ -14,7 +14,7 @@ public class AssistanceEffect implements Effect {
     public Effect execute(Card cardWithAssist, Effect effectOfAnoutherPlayer,
                           Map<Resource, List<Pair<Card, Integer>>> cards,
                           Map<Resource, Integer> wantedResource) {
-        if (effectOfAnoutherPlayer.canProvideAssistance() && effectOfAnoutherPlayer.check(cardWithAssist, cards)) {
+        if (effectOfAnoutherPlayer.canProvideAssistance()) {
             return effectOfAnoutherPlayer;
         }
         return null;
@@ -25,10 +25,6 @@ public class AssistanceEffect implements Effect {
         return false;
     }
 
-    @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
-        return false;
-    }
 
     @Override
     public String toString() {
