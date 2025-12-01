@@ -114,7 +114,7 @@ public class CardFactory {
                     "\n" +  "can't be get from card already filled with :" + "\n"  + this.resources + "\n");
 
             for(Resource resource : resources.keySet()) {
-                this.resources.put(resource, this.resources.get(resource) - resources.get(resource));
+                this.resources.put(resource, this.resources.getOrDefault(resource, 0) - resources.get(resource));
             }
 
             this.resources.entrySet().removeIf(e -> e.getValue() == 0);
