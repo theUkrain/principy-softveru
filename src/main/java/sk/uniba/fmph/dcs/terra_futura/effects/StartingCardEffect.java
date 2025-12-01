@@ -7,7 +7,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 import java.util.Map;
 
-public class StartingCardEffect implements Effect {
+public class StartingCardEffect extends SetCardToEffect implements Effect {
 
     EffectOr effect = new EffectOr(
             new EffectOr(

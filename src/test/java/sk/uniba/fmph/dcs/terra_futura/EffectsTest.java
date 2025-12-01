@@ -82,5 +82,9 @@ public class EffectsTest {
         effect.execute(card);
         Assertions.assertTrue(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
         Assertions.assertTrue(card.canGetResources(Map.of(Resource.BULB, 1)));
+
+        test = Pair.of(Resource.RED, 1);
+        effect.execute(card);
+        Assertions.assertFalse(card.canGetResources(Map.of(test.getLeft(), test.getRight())));
     }
 }

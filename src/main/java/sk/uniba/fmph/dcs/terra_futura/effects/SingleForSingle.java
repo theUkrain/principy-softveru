@@ -7,7 +7,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 import java.util.Map;
 
-public class SingleForSingle implements Effect {
+public class SingleForSingle extends SetCardToEffect implements Effect {
     private Map<Resource, Integer> requiredInputs;
 
     private Map<Resource, Integer> guaranteedOutputs;

@@ -8,7 +8,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 import java.util.Map;
 
-public class AssistanceEffect implements Effect {
+public class AssistanceEffect extends SetCardToEffect implements Effect {
 
     public Effect execute(Card cardWithAssist, Effect effectOfAnoutherPlayer,
                           Map<Resource, List<Pair<Card, Integer>>> cards,

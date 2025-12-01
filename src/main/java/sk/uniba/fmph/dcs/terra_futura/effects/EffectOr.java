@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EffectOr implements Effect {
+public class EffectOr extends SetCardToEffect implements Effect {
 
     List<Effect> effectPair = new ArrayList<>();
 

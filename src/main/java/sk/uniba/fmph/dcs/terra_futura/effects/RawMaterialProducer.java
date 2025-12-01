@@ -7,7 +7,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import java.util.List;
 import java.util.Map;
 
-public class RawMaterialProducer implements Effect {
+public class RawMaterialProducer extends SetCardToEffect implements Effect {
     private final Pair<Resource, Integer> guaranteedOutputs;
     private final int generatedPollution;
 
