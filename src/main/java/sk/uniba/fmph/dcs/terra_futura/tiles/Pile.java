@@ -1,54 +1,73 @@
+
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import java.util.*;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class Pile implements PileInterface {
-    private List<Card> active;
-    private List<Card> discard;
+    private List<Card> input;
+    private List<Card> discardPile;
 
-    public Pile(Collection<Card> input){
-        active = new ArrayList<>(input);
-        discard = new ArrayList<>();
-        Collections.shuffle(active);
+    public Pile(List<Card> input) {
+        this.input = input;
+        this.discardPile = new ArrayList<>();
+        Collections.shuffle(input);
     }
 
-    private void refill() {
-        List<Card> temp = active;
-        Collections.shuffle(discard);
-        active = discard;
-        discard = temp;
+    private void newPile() {
+        Collections.shuffle(discardPile);
+        input = new ArrayList<>(discardPile);
+        discardPile.clear();
+
+        if (input.isEmpty()) {
+            throw new ArrayIndexOutOfBoundsException("Pile is empty");
+        }
     }
 
-    @Override
     public Optional<Card> getCard(int index) {
+        if (index < 0) {
+            index = 0;
+        }
 
-        if(active.isEmpty()) refill();
+        if (index >= input.size()) {
+            if (input.isEmpty()) {
+                newPile();
+            }
 
-        if(index > 4) index = 4;
+            index = input.size() - 1;
+        }
 
-        if(index >= active.size()) index = active.size()-1;
+        if (index > 3) {
+            index = 4;
+        }
 
-        return Optional.ofNullable(active.remove(index));
-
+        Card card = input.get(index);
+        input.remove(index);
+        return Optional.ofNullable(card);
     }
 
     @Override
     public void discardCard() {
+        if (input.isEmpty()) {
+            newPile();
+        }
 
-        if(active.isEmpty()) return;
-
-        discard.add(active.removeFirst());
-
+        discardPile.add(input.getFirst());
+        input.removeFirst();
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Active:\n");
-        for (Card c : active) sb.append(" ").append(c).append("\n");
-        sb.append("Discard:\n");
-        for (Card c : discard) sb.append(" ").append(c).append("\n");
+
+        for (int i = 0; i < (Math.min(input.size(), 4)); i++) {
+            sb.append("Card (" + i + "): " + input.get(i).toString() + "\n");
+        }
+
         return sb.toString();
     }
-
 }

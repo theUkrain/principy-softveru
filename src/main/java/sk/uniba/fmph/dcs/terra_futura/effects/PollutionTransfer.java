@@ -5,14 +5,18 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
 
-public class PollutionTransfer extends SetCardToEffect {
+public class PollutionTransfer extends SetCardToEffect implements CopyableEffect {
 
     public void execute(List<Pair<Card, Integer>> cards) {
         int commulatedPollution = 0;
         for (Pair<Card, Integer> p : cards) {
-            commulatedPollution += p.getRight();
+            if (p.getLeft().canGetPollution(p.getRight())) {
+                commulatedPollution += p.getRight();
+            } else {
+                throw new IllegalArgumentException("You took more pollution than exist in card " + p.getLeft());
+            }
         }
-        if(card.canPutPollution(commulatedPollution)){
+        if (card.canPutPollution(commulatedPollution)) {
             for (Pair<Card, Integer> p : cards) {
                 p.getLeft().getPollution(p.getRight());
             }
@@ -37,7 +41,12 @@ public class PollutionTransfer extends SetCardToEffect {
     }
 
     @Override
-    public boolean equals(Object obj){
-        return true;
+    public boolean equals(Object obj) {
+        return (obj instanceof PollutionTransfer);
+    }
+
+    @Override
+    public Effect copy() {
+        return new PollutionTransfer();
     }
 }
