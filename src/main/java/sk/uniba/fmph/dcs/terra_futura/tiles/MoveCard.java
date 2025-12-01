@@ -8,7 +8,7 @@ import java.util.Optional;
 public class MoveCard {
 
     /**
-     * Move card from pile to grid.
+     * Move card from pile to grid
      * @param pile Source pile
      * @param index Index of card to take (0-3 for visible cards)
      * @param gridCoordinate Destination position on grid
@@ -30,8 +30,6 @@ public class MoveCard {
         }
 
         if (cardOpt.isEmpty()) {
-            // Should not happen with current Pile implementation
-            // but defensive programming
             return false;
         }
 

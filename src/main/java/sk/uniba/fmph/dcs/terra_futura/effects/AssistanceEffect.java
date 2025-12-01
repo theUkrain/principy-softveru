@@ -22,6 +22,9 @@ public class AssistanceEffect extends SetCardToEffect {
 
     @Override
     public boolean equals(Object obj){
-        return true;
+        if(obj instanceof AssistanceEffect) {
+            return true;
+        }
+        return false;
     }
 }

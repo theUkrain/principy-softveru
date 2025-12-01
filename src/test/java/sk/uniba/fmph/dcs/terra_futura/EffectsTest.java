@@ -160,4 +160,108 @@ public class EffectsTest {
 
         Assertions.assertTrue(trigger1.equals(expectedEffect1));
     }
+
+
+    private static class TestCard implements Card{
+        private boolean canGet = true;
+
+        public int getResourcesCount = 0;
+        public int putResourcesCount = 0;
+        public Map<Resource, Integer> recievedResources = new HashMap<>();
+        public void setCanGet(boolean canGet) {
+            this.canGet = canGet;
+        }
+
+        @Override
+        public boolean canGetResources(Map<Resource, Integer> resources) {
+            return canGet;
+        }
+
+        @Override
+        public void getResources(Map<Resource, Integer> resources) { getResourcesCount++;}
+
+        @Override
+        public boolean canPutResources(Map<Resource, Integer> resources) {
+            return true;
+        }
+
+        @Override
+        public void putResources(Map<Resource, Integer> resources) {
+            putResourcesCount++;
+            recievedResources.putAll(resources);
+        }
+
+        @Override
+        public boolean isOverPolluted() {
+            return false;
+        }
+
+        @Override
+        public CardSource getCardSource() {
+            return null;
+        }
+
+        @Override
+        public boolean hasAssistance() {
+            return false;
+        }
+
+        @Override
+        public Effect getUpper() {
+            return null;
+        }
+
+        @Override
+        public Effect getLower() {
+            return null;
+        }
+
+        @Override
+        public Map<Resource, Integer> getCurResources() {
+            return null;
+        }
+
+        @Override
+        public boolean canGetPollution(int amount) {
+            return true;
+        }
+
+        @Override
+        public void getPollution(int amount) {}
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            return true;
+        }
+
+        @Override
+        public void putPollution(int amount) {}
+    }
+
+    private static class TestableExchange extends Exchange {
+        public TestableExchange(Set<Set<Pair<Resource, Integer>>> inputs, Set<Set<Pair<Resource, Integer>>> outputs) {
+            super(inputs, outputs);
+        }
+
+        public void setTargetCard(Card card) {
+            this.card = card;
+        }
+    }
+
+    //public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output)
+    @Test
+    @DisplayName("Exchange test")
+    public void testExchange() {
+        List<Pair<Integer, Card>> expectedOutputList = new ArrayList<>();
+        TestCard testCardA = new TestCard();
+        TestCard testCardB = new TestCard();
+        Card testCardC = CardFactory.card(0,);
+        Resource request = Resource.YELLOW;
+
+        testCard.setCanGet(false);
+
+        Map<Pair<Resource,Integer>, Card> input = Map.of(request, testCard);
+        Exchange exchange = new Exchange(Set.of(input.keySet()), Set.of(expectedOutput));
+    }
+
 }
