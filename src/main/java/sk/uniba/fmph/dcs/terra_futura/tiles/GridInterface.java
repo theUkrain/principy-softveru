@@ -1,6 +1,5 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -9,5 +8,4 @@ public interface GridInterface {
     boolean canPutCard(GridPosition coordinate);
     Set<Card> putCard(GridPosition coordinate, Card card);
     Set<Card> getActivatedCards();
-    void setActivationPattern(Collection<GridPosition> pattern);
 }
