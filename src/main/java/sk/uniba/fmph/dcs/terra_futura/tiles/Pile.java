@@ -26,7 +26,7 @@ public class Pile implements PileInterface {
 
         if(index > 4) index = 4;
 
-        if(index >= active.size()) return Optional.empty();
+        if(index >= active.size()) index = active.size()-1;
 
         return Optional.ofNullable(active.remove(index));
 

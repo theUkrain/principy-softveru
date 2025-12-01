@@ -158,6 +158,16 @@ public class CardFactory {
         }
 
         @Override
+        public Effect getUpper() {
+            return upper;
+        }
+
+        @Override
+        public Effect getLower() {
+            return lower;
+        }
+
+        @Override
         public boolean canGetPollution(int amount) {
             return curPollution >= amount;
         }
@@ -170,7 +180,6 @@ public class CardFactory {
             curPollution =- amount;
         }
 
-
         @Override
         public boolean canPutPollution(int amount) {
             return curPollution + amount <= pollutionSpaces;
@@ -181,16 +190,6 @@ public class CardFactory {
             if(!canPutPollution(amount)) throw new IllegalArgumentException("You can't put " + amount +
                     " pollution on card with " + (pollutionSpaces - curPollution)  + " free pollution spaces");
             curPollution += amount;
-        }
-
-        @Override
-        public Effect getUpper() {
-            return upper;
-        }
-
-        @Override
-        public Effect getLower() {
-            return lower;
         }
 
         @Override
@@ -212,5 +211,4 @@ public class CardFactory {
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
-
 }
