@@ -3,7 +3,6 @@ package sk.uniba.fmph.dcs.terra_futura.tiles;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 
-import java.util.Collection;
 import java.util.Map;
 
 public interface Card {
@@ -20,6 +19,22 @@ public interface Card {
     Effect getLower();
 
     CardSource getCardSource();
+
+    boolean canGetPollution(int amount);
+
+    void getPollution(int amount);
+
+    boolean canPutPollution(int amount);
+
+    void putPollution(int amount);
+
+    //TODO
+
+    /**
+     *
+     * method, created ONLY for debug. Returns immutable copy of resources map.
+     */
+    public Map<Resource, Integer> getCurResources();
 
     boolean hasAssistance();
 }

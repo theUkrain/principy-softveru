@@ -5,5 +5,4 @@ import java.util.Optional;
 public interface PileInterface {
     Optional<Card> getCard(int index);
     void discardCard();
-    String toString();
 }

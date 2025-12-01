@@ -1,12 +1,10 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 
@@ -16,9 +14,18 @@ public final class ActivationPattern {
     private InterfaceActivateGrid grid;
 
     public ActivationPattern(final InterfaceActivateGrid grid, final Collection<GridPosition> pattern) {
+
+        for(GridPosition position : pattern) if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) throw new ArrayIndexOutOfBoundsException();
+
         this.grid = grid;
         this.pattern = new ArrayList<>(pattern);  // copy the pattern
         this.selected = false;
+
+        for(GridPosition position : pattern) {
+            if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) {
+                throw new ArrayIndexOutOfBoundsException();
+            }
+        }
     }
 
     public void select() {
@@ -30,6 +37,7 @@ public final class ActivationPattern {
     }
 
 
+
     public boolean isSelected() {
         return this.selected;
     }
@@ -37,10 +45,10 @@ public final class ActivationPattern {
 
     public String state() {
         JSONArray patternList = new JSONArray();
-        for (GridPosition entry: pattern) {
+        for (GridPosition position : pattern) {
             JSONObject pair = new JSONObject();
-            pair.put("x", entry.getX());
-            pair.put("y", entry.getY());
+            pair.put("x", position.getX());
+            pair.put("y", position.getY());
             patternList.put(pair);
         }
         JSONObject result = new JSONObject();
