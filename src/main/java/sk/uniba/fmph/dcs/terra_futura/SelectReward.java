@@ -1,10 +1,13 @@
-package sk.uniba.fmph.dcs.terra_futura;
+package sk.uniba.fmph.dcs.terra_futura.Samostatne;
+
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * Manages reward selection after assistance action.
@@ -13,7 +16,7 @@ import java.util.Set;
 public class SelectReward {
     private Optional<Integer> player;
     private final List<Resource> availableRewards;
-    private final List<Resource> selectedRewards;
+    private final Map<Resource, Integer> selectedRewards;
     private Card targetCard;
 
     /**
@@ -22,7 +25,7 @@ public class SelectReward {
     public SelectReward() {
         this.player = Optional.empty();
         this.availableRewards = new ArrayList<>();
-        this.selectedRewards = new ArrayList<>();
+        this.selectedRewards = new HashMap<>();
         this.targetCard = null;
     }
 
@@ -32,11 +35,11 @@ public class SelectReward {
      *
      * @param playerId ID of player who can select rewards
      * @param card Card where rewards will be placed
-     * @param rewards Available resources to choose from
+     * @param rewards Available resources to choose from (with quantities)
      */
-    public void setReward(int playerId, Card card, List<Resource> rewards) {
+    public void setReward(int playerId, Card card, Map<Resource, Integer> rewards) {
         if (rewards == null || rewards.isEmpty()) {
-            throw new IllegalArgumentException("Rewards list cannot be null or empty");
+            throw new IllegalArgumentException("Rewards map cannot be null or empty");
         }
         if (card == null) {
             throw new IllegalArgumentException("Card cannot be null");
@@ -45,13 +48,19 @@ public class SelectReward {
         this.player = Optional.of(playerId);
         this.targetCard = card;
         this.availableRewards.clear();
-        this.availableRewards.addAll(rewards);
         this.selectedRewards.clear();
+
+        // Convert map to list of resources (with repetitions for quantities)
+        for (Map.Entry<Resource, Integer> entry : rewards.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                this.availableRewards.add(entry.getKey());
+            }
+        }
     }
 
     /**
      * Check if specified resource can be selected as reward.
-     * Resource must be in available rewards and not yet selected.
+     * Resource must be in available rewards and not yet fully selected.
      *
      * @param resource Resource to check
      * @return true if resource can be selected, false otherwise
@@ -61,11 +70,15 @@ public class SelectReward {
             return false;
         }
 
-        if (selectedRewards.contains(resource)) {
-            return false;
-        }
+        // Count how many of this resource are available
+        long availableCount = availableRewards.stream()
+                .filter(r -> r == resource)
+                .count();
 
-        return availableRewards.contains(resource);
+        // Count how many already selected
+        int selectedCount = selectedRewards.getOrDefault(resource, 0);
+
+        return selectedCount < availableCount;
     }
 
     /**
@@ -84,16 +97,23 @@ public class SelectReward {
             return false;
         }
 
-        List<Resource> resourceToAdd = List.of(resource);
+        // Create map with single resource
+        Map<Resource, Integer> resourceToAdd = new HashMap<>();
+        resourceToAdd.put(resource, 1);
+
         if (!targetCard.canPutResources(resourceToAdd)) {
             return false;
         }
 
         targetCard.putResources(resourceToAdd);
-        selectedRewards.add(resource);
+        selectedRewards.put(resource, selectedRewards.getOrDefault(resource, 0) + 1);
 
         // If all rewards selected, clear the reward selection
-        if (selectedRewards.size() == availableRewards.size()) {
+        int totalSelected = selectedRewards.values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        if (totalSelected >= availableRewards.size()) {
             clear();
         }
 
@@ -112,18 +132,26 @@ public class SelectReward {
         if (player.isPresent()) {
             sb.append("player: ").append(player.get());
             sb.append(", available: [");
-            for (int i = 0; i < availableRewards.size(); i++) {
-                sb.append(availableRewards.get(i));
-                if (i < availableRewards.size() - 1) {
-                    sb.append(", ");
-                }
+
+            // Group available by resource type
+            Map<Resource, Long> availableCounts = new HashMap<>();
+            for (Resource r : availableRewards) {
+                availableCounts.put(r, availableCounts.getOrDefault(r, 0L) + 1);
             }
+
+            boolean first = true;
+            for (Map.Entry<Resource, Long> entry : availableCounts.entrySet()) {
+                if (!first) sb.append(", ");
+                sb.append(entry.getKey()).append(":").append(entry.getValue());
+                first = false;
+            }
+
             sb.append("], selected: [");
-            for (int i = 0; i < selectedRewards.size(); i++) {
-                sb.append(selectedRewards.get(i));
-                if (i < selectedRewards.size() - 1) {
-                    sb.append(", ");
-                }
+            first = true;
+            for (Map.Entry<Resource, Integer> entry : selectedRewards.entrySet()) {
+                if (!first) sb.append(", ");
+                sb.append(entry.getKey()).append(":").append(entry.getValue());
+                first = false;
             }
             sb.append("]");
         } else {
@@ -150,7 +178,15 @@ public class SelectReward {
      * @return true if rewards remain, false otherwise
      */
     public boolean hasRemainingRewards() {
-        return player.isPresent() && selectedRewards.size() < availableRewards.size();
+        if (player.isEmpty()) {
+            return false;
+        }
+
+        int totalSelected = selectedRewards.values().stream()
+                .mapToInt(Integer::intValue)
+                .sum();
+
+        return totalSelected < availableRewards.size();
     }
 
     /**
@@ -173,20 +209,24 @@ public class SelectReward {
     }
 
     /**
-     * Get list of available rewards.
+     * Get map of available rewards with quantities.
      *
-     * @return List of available resources
+     * @return Map of resources to quantities
      */
-    public List<Resource> getAvailableRewards() {
-        return new ArrayList<>(availableRewards);
+    public Map<Resource, Integer> getAvailableRewards() {
+        Map<Resource, Integer> result = new HashMap<>();
+        for (Resource r : availableRewards) {
+            result.put(r, result.getOrDefault(r, 0) + 1);
+        }
+        return result;
     }
 
     /**
-     * Get list of already selected rewards.
+     * Get map of already selected rewards with quantities.
      *
-     * @return List of selected resources
+     * @return Map of resources to quantities
      */
-    public List<Resource> getSelectedRewards() {
-        return new ArrayList<>(selectedRewards);
+    public Map<Resource, Integer> getSelectedRewards() {
+        return new HashMap<>(selectedRewards);
     }
 }

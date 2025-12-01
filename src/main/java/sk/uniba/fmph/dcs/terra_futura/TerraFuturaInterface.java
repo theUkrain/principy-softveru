@@ -1,6 +1,10 @@
-package sk.uniba.fmph.dcs.terra_futura;
+package sk.uniba.fmph.dcs.terra_futura.Samostatne;
 
 import org.apache.commons.lang3.tuple.Pair;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,25 +1,21 @@
-package sk.uniba.fmph.dcs.terra_futura;
+package sk.uniba.fmph.dcs.terra_futura.Samostatne;
+
+import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.PileInterface;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-/**
- * Manages a pile of cards with visible and hidden cards.
- * Players can take visible cards or discard the oldest one.
- */
-public class Pile {
-    private static final int VISIBLE_CARDS_COUNT = 4;
-
-    private final List<Card> visibleCards;
-    private final List<Card> hiddenCards;
+public class Pile implements PileInterface {
+    private List<Card> allCards;
+    private List<Card> discardPile;
     private final Random random;
 
     /**
      * Constructor for production use with default random generator.
-     *
-     * @param allCards All cards to be distributed between visible and hidden
      */
     public Pile(List<Card> allCards) {
         this(allCards, new Random());
@@ -27,143 +23,80 @@ public class Pile {
 
     /**
      * Constructor for testing with controllable random generator.
-     *
-     * @param allCards All cards to be distributed between visible and hidden
-     * @param random Random generator for testing purposes
+     * Keeps the logic of shuffling the allCards immediately.
      */
     public Pile(List<Card> allCards, Random random) {
-        if (allCards.size() < VISIBLE_CARDS_COUNT) {
-            throw new IllegalArgumentException("Not enough cards for pile initialization");
-        }
-
         this.random = random;
-        this.visibleCards = new ArrayList<>();
-        this.hiddenCards = new ArrayList<>(allCards);
-
-        // Initialize visible cards with nulls
-        for (int i = 0; i < VISIBLE_CARDS_COUNT; i++) {
-            this.visibleCards.add(null);
-        }
-
-        // Fill visible cards from hidden
-        for (int i = 0; i < VISIBLE_CARDS_COUNT; i++) {
-            refillVisibleCard();
-        }
+        this.allCards = new ArrayList<>(allCards);
+        this.discardPile = new ArrayList<>();
+        // Shuffle using the provided random to maintain testability
+        Collections.shuffle(this.allCards, this.random);
     }
 
     /**
-     * Get a card at specified index from visible cards.
-     * Index 0 is the newest card, index 3 is the oldest.
-     *
-     * @param index Index of the card (0-3)
-     * @return Card at the index, or empty if index is invalid or no card available
+     * Refills the allCards pile from the discard pile.
      */
+    private void newPile() {
+        if (discardPile.isEmpty()) {
+            throw new ArrayIndexOutOfBoundsException("Pile is empty");
+        }
+
+        // Shuffle discard pile before moving to allCards
+        Collections.shuffle(discardPile, this.random);
+        allCards = new ArrayList<>(discardPile);
+        discardPile.clear();
+    }
+
+    @Override
     public Optional<Card> getCard(int index) {
-        if (index < 0 || index >= visibleCards.size()) {
-            return Optional.empty();
+        if (index < 0) {
+            index = 0;
         }
-        return Optional.ofNullable(visibleCards.get(index));
+
+        // If index is out of bounds, try to refill or cap the index
+        if (index >= allCards.size()) {
+            if (allCards.isEmpty()) {
+                newPile();
+            }
+            // Cap index at the last available card
+            index = allCards.size() - 1;
+        }
+
+        // Specific logic from the requirement: cap index at 4 if it exceeds 3
+        if (index > 3) {
+            index = 4;
+        }
+
+        // Get and REMOVE the card (simulating taking the card)
+        Card card = allCards.get(index);
+        allCards.remove(index);
+        return Optional.ofNullable(card);
     }
 
-    /**
-     * Take a card from visible cards at specified index.
-     * Removes the card and refills from hidden cards.
-     *
-     * @param index Index of the card to take (0-3)
-     * @return true if card was successfully taken, false otherwise
-     */
-    public boolean takeCard(int index) {
-        if (index < 0 || index >= visibleCards.size()) {
-            return false;
+    @Override
+    public void discardCard() {
+        if (allCards.isEmpty()) {
+            newPile();
         }
 
-        if (visibleCards.get(index) == null) {
-            return false;
-        }
-
-        visibleCards.set(index, null);
-        refillVisibleCard();
-        return true;
+        // Move the top card to the discard pile
+        discardPile.add(allCards.get(0));
+        allCards.remove(0);
     }
 
-    /**
-     * Remove the last (oldest) card from visible cards.
-     * The oldest card is at index 3.
-     */
-    public void removeLastCard() {
-        int lastIndex = visibleCards.size() - 1;
-        if (lastIndex >= 0 && visibleCards.get(lastIndex) != null) {
-            visibleCards.set(lastIndex, null);
-            refillVisibleCard();
-        }
-    }
-
-    /**
-     * Get current state of the pile as string.
-     * Format: "Pile[visible: [card1, card2, card3, card4], hidden: X]"
-     *
-     * @return String representation of pile state
-     */
-    public String state() {
+    @Override
+    public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Pile[visible: [");
 
-        for (int i = 0; i < visibleCards.size(); i++) {
-            Card card = visibleCards.get(i);
-            if (card != null) {
-                sb.append(card.state());
-            } else {
-                sb.append("null");
-            }
-            if (i < visibleCards.size() - 1) {
-                sb.append(", ");
-            }
+        // Display up to 4 cards to match the requested logic
+        for (int i = 0; i < (Math.min(allCards.size(), 4)); i++) {
+            sb.append("Card (").append(i).append("): ").append(allCards.get(i).toString()).append("\n");
         }
 
-        sb.append("], hidden: ").append(hiddenCards.size()).append("]");
         return sb.toString();
     }
 
-    /**
-     * Refill one visible card from hidden cards.
-     * Randomly selects a card from hidden cards if available.
-     */
-    private void refillVisibleCard() {
-        if (hiddenCards.isEmpty()) {
-            return;
-        }
-
-        // Find first null position in visible cards
-        for (int i = 0; i < visibleCards.size(); i++) {
-            if (visibleCards.get(i) == null) {
-                int randomIndex = random.nextInt(hiddenCards.size());
-                Card card = hiddenCards.remove(randomIndex);
-                visibleCards.set(i, card);
-                return;
-            }
-        }
-    }
-
-    /**
-     * Check if pile has any cards left (visible or hidden).
-     *
-     * @return true if pile has cards, false if empty
-     */
-    public boolean hasCards() {
-        for (Card card : visibleCards) {
-            if (card != null) {
-                return true;
-            }
-        }
-        return !hiddenCards.isEmpty();
-    }
-
-    /**
-     * Get count of hidden cards remaining.
-     *
-     * @return Number of hidden cards
-     */
-    public int getHiddenCardsCount() {
-        return hiddenCards.size();
-    }
+    // Note: The methods takeCard, hasCards, getHiddenCardsCount were removed
+    // because the logic you provided in the second snippet manages everything
+    // via getCard (which removes the item) and internal state management.
 }
