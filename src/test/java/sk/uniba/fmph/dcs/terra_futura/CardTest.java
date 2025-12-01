@@ -8,7 +8,6 @@ import org.junit.*;
 import org.junit.jupiter.api.Assertions;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.effects.SingleForSingle_v2;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardFactory;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
@@ -36,15 +35,18 @@ public class CardTest {
     public void pollutionLimitTest() {
         Card c = cards.get(3);
 
-        Assert.assertFalse(c.canPutResources(Map.of(Resource.POLLUTION, 4)));
+        Assert.assertFalse(c.canPutPollution(4));
 
-        c.putResources(Map.of(Resource.POLLUTION, 1));
-        c.putResources(Map.of(Resource.POLLUTION, 1));
-        c.putResources(Map.of(Resource.POLLUTION, 1));
+        c.putPollution(1);
+        c.putPollution(1);
+        c.putPollution(1);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            c.putResources(Map.of(Resource.POLLUTION, 1));
+            c.putPollution(1);
         });
+
+        Assertions.assertFalse(c.canGetPollution(100));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {c.getPollution(100);});
 
     }
 
@@ -53,7 +55,7 @@ public class CardTest {
 
         Card c = cards.get(1);
 
-        c.putResources(onePollution);
+        c.putPollution(1);
 
         Assertions.assertTrue(c.isOverPolluted());
         Assertions.assertFalse(c.canPutResources(Map.of()));
