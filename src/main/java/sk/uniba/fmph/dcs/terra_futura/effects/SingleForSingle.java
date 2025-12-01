@@ -24,7 +24,7 @@ public class SingleForSingle implements Effect {
     /*I need here Map<Resource, Integer> wantedResource
     so user tell me which one of suggested material he would want to get.
     Finish implementing execute*/
-    public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
+    public int execute(Card card, Map<Resource, List<Pair<Card, Integer>>> cards) {
         if (!card.canPutResources(guaranteedOutputs)) {
             return 0;
         }
