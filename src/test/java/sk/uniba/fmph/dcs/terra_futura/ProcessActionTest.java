@@ -91,11 +91,6 @@ public class ProcessActionTest {
         }
 
         @Override
-        public Map<Resource, Integer> takeResources() {
-            return null;
-        }
-
-        @Override
         public Map<Resource, Integer> getCurResources() {
             return null;
         }
@@ -161,10 +156,9 @@ public class ProcessActionTest {
         public Grid processedGrid = null;
 
         public TestProcessActionDeliver() {
-            super();
+            super(System.in);
         }
 
-        @Override
         public void process(Effect effect, Grid grid) {
             this.processedEffect = effect;
             this.processedGrid = grid;
@@ -254,7 +248,7 @@ public class ProcessActionTest {
         TestCard testCard2 = new TestCard();
         List<Pair<Card, Integer>> placement = List.of(Pair.of(testCard1, 2), Pair.of(testCard2, 3));
 
-        ProcessActionDeliver deliver = new ProcessActionDeliver();
+        ProcessActionDeliver deliver = new ProcessActionDeliver(System.in);
 
         deliver.placePollution(placement);
 

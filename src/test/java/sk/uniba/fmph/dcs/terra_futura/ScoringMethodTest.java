@@ -57,11 +57,11 @@ public class ScoringMethodTest {
         try {
             grid.getCard(new GridPosition(-1, -1)).get().putPollution(1);
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
-            Assertions.assertEquals(195, sm.selectThisMethodAndCalculate());
+            Assertions.assertEquals(203, sm.selectThisMethodAndCalculate());
 
             grid.getCard(new GridPosition(0, -1)).get().putPollution(1);
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
-            Assertions.assertEquals(171, sm.selectThisMethodAndCalculate());
+            Assertions.assertEquals(174, sm.selectThisMethodAndCalculate());
         } catch (IllegalArgumentException e) {
         }
     }

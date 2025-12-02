@@ -29,7 +29,7 @@ public class Game implements TerraFuturaInterface {
 
     private ProcessActionDeliver actionDeliver;
 
-    public Game(InputStream in){
+    public Game(InputStream in) {
         this.in = in;
         this.sc = new Scanner(in);
         index = 0;
@@ -37,25 +37,25 @@ public class Game implements TerraFuturaInterface {
         gameInit();
     }
 
-    public int playerCount(){
+    public int playerCount() {
         return players.size();
     }
 
-    public Player getPlayer(int ind){
+    public Player getPlayer(int ind) {
         return players.get(ind);
     }
 
-    public void gameInit(){
+    public void gameInit() {
         int n = sc.nextInt();
-        if(n < 2 || n > 4) throw new IllegalArgumentException("Unable to create a game for " + n + " players");
+        if (n < 2 || n > 4) throw new IllegalArgumentException("Unable to create a game for " + n + " players");
 
         gameInitPile();
 
         actionDeliver = new ProcessActionDeliver(in);
 
-        scoreTable = new TreeSet<>(new Comparator<Pair<Player, Integer>>(){
+        scoreTable = new TreeSet<>(new Comparator<Pair<Player, Integer>>() {
             @Override
-            public int compare(Pair<Player, Integer> obj1, Pair<Player, Integer> obj2){
+            public int compare(Pair<Player, Integer> obj1, Pair<Player, Integer> obj2) {
                 return obj1.getRight().compareTo(obj2.getRight());
             }
         });
@@ -66,25 +66,24 @@ public class Game implements TerraFuturaInterface {
         List<ScoringMethod> methods = gameInitScoringMethods();
         Collections.shuffle(methods);
 
-        for(int i=0; i<n; ++i){
+        for (int i = 0; i < n; ++i) {
             Grid g = new Grid();
             ActivationPattern pattern1 = patterns.get(i * 2);
             ActivationPattern pattern2 = patterns.get(i * 2 + 1);
 
-            ScoringMethod scorringMethod1 = methods.get(i * 2);
-            ScoringMethod scorringMethod2 = methods.get(i * 2 + 1);
+            ScoringMethod scoringMethod1 = methods.get(i * 2);
+            ScoringMethod scoringMethod2 = methods.get(i * 2 + 1);
 
-            Player player = new Player(requestName(), g, pattern1, pattern2, scorringMethod1, scorringMethod2);
+            Player player = new Player(requestName(), g, pattern1, pattern2, scoringMethod1, scoringMethod2);
             players.add(player);
         }
     }
 
-    private String requestName(){
-        String name = sc.nextLine();
-        return name;
+    private String requestName() {
+        return sc.nextLine();
     }
 
-    private void gameInitPile(){
+    private void gameInitPile() {
         ArrayList<Card> inputTier1 = new ArrayList<>();
         //TODO fill cards for tier 1
 
@@ -95,28 +94,28 @@ public class Game implements TerraFuturaInterface {
         tier2 = new Pile(inputTier2);
     }
 
-    private List<ActivationPattern> gameInitActivationPatterns(){
+    private List<ActivationPattern> gameInitActivationPatterns() {
         ArrayList<ActivationPattern> patterns = new ArrayList<>();
         //TODO fill activation patterns
 
         return patterns;
     }
 
-    private List<ScoringMethod> gameInitScoringMethods(){
+    private List<ScoringMethod> gameInitScoringMethods() {
         ArrayList<ScoringMethod> methods = new ArrayList<>();
         //TODO fill scoring methods
 
         return methods;
     }
 
-    public void gameStart(){
+    public void gameStart() {
         System.out.println("----------------< Terra Futura Game >----------------");
         gameMethod();
     }
 
-    private void gameMethod(){
+    private void gameMethod() {
         boolean firstRun = true;
-        while(true){
+        while (true) {
             Player curPlayer = players.get(index);
             System.out.println("--< Player`s " + (index + 1) + " turn >--");
 
@@ -125,56 +124,56 @@ public class Game implements TerraFuturaInterface {
             System.out.println(tier1.state());
             System.out.println(tier2.state());
             System.out.println("Would you like to discard any card? (y/n)");
-            if(sc.next().equalsIgnoreCase("y")) discardCard();
+            if (sc.next().equalsIgnoreCase("y")) discardCard();
 
             // Selecting card
             System.out.println("-- Select card");
-            if(firstRun){
+            if (firstRun) {
                 System.out.println("------------------------ Info ------------------------\n" +
-                                    "Indexes 1 to 4 correspond to cards you see\n" +
-                                    "Choosing index 0 you will select the next card in pile\n" +
-                                    "------------------------------------------------------");
+                        "Indexes 1 to 4 correspond to cards you see\n" +
+                        "Choosing index 0 you will select the next card in pile\n" +
+                        "------------------------------------------------------");
             }
             Card card = selectCard();
             System.out.println("Chosen card:\n" + card + "\n");
 
             // Puting card
             System.out.println("-- Putting card");
-            if(firstRun){
+            if (firstRun) {
                 System.out.println("------------------------ Info ------------------------\n" +
-                                    "Coordinates in game are given relative to centre\n" +
-                                    "Thus coordinates (-2, -2) and (2, 2) reference to\n" +
-                                    "Choosing index 0 you\n" +
-                                    "------------------------------------------------------");
+                        "Coordinates in game are given relative to centre\n" +
+                        "Thus coordinates (-2, -2) and (2, 2) reference to\n" +
+                        "Choosing index 0 you\n" +
+                        "------------------------------------------------------");
             }
             System.out.println(curPlayer.getGrid());
             Set<Card> activatedCards = putCard(curPlayer.getGrid(), card);
 
             // Activating cards
             System.out.println("-- Activating card");
-            if(firstRun){
+            if (firstRun) {
                 System.out.println("------------------------- Info -------------------------\n" +
-                                    "You will need to determine order of execution by\n" +
-                                    "inputing idexes one by one (starting from 1). You don`t\n" +
-                                    "need to activate every card. To stop inputing type -1\n" +
-                                    "--------------------------------------------------------");
+                        "You will need to determine order of execution by\n" +
+                        "inputing idexes one by one (starting from 1). You don`t\n" +
+                        "need to activate every card. To stop inputing type -1\n" +
+                        "--------------------------------------------------------");
             }
-            executeActivatedCards(activatedCards, curPlayer.getGrid());
 
+            executeActivatedCards(activatedCards, curPlayer.getGrid());
 
             index = (index + 1) % players.size();
             firstRun = false;
-            if(finishConditionCheck()) break;
+            if (finishConditionCheck()) break;
         }
 
         gameFinish();
 
     }
 
-    private void gameFinish(){
+    private void gameFinish() {
         System.out.println("-------- Final activation --------");
 
-        for(int i=0; i<players.size(); ++i){
+        for (int i = 0; i < players.size(); ++i) {
             System.out.println("--< Player`s " + (i + 1) + " turn >--");
 
             // Select activation pattern
@@ -190,19 +189,19 @@ public class Game implements TerraFuturaInterface {
         }
     }
 
-    private void selectActPattern(Player player){
+    private void selectActPattern(Player player) {
         System.out.println("Your activation patterns:");
         System.out.println(player.getFirstActivationPattern());
         System.out.println(player.getSecondActivationPattern());
 
         System.out.println("Select pattern to use: (1 or 2)");
         int choice = sc.nextInt();
-        if(choice != 1 && choice != 2){
+        if (choice != 1 && choice != 2) {
             System.out.println("Invalid pattern choice");
             selectActPattern(player);
             return;
         }
-        switch(choice){
+        switch (choice) {
             case 1:
                 player.selectFirstActivationPattern();
                 break;
@@ -213,19 +212,19 @@ public class Game implements TerraFuturaInterface {
         }
     }
 
-    private int selectScoringMethod(Player player){
+    private int selectScoringMethod(Player player) {
         System.out.println("Your activation patterns:");
         System.out.println(player.getFirstScoringMethod());
         System.out.println(player.getSecondScoringMethod());
 
         System.out.println("Select pattern to use: (1 or 2)");
         int choice = sc.nextInt();
-        if(choice != 1 && choice != 2){
+        if (choice != 1 && choice != 2) {
             System.out.println("Invalid method choice");
             return selectScoringMethod(player);
         }
         int points = 0;
-        switch(choice){
+        switch (choice) {
             case 1:
                 points = player.selectFirstScoringMethod();
                 break;
@@ -237,21 +236,21 @@ public class Game implements TerraFuturaInterface {
         return points;
     }
 
-    private void discardCard(){
+    private void discardCard() {
         System.out.println("From which pile? (1 or 2)");
         int pile = sc.nextInt();
 
-        if(pile < 1 && pile > 2){
+        if (pile < 1 && pile > 2) {
             System.out.println("Insufficient pile number");
             System.out.println("Would you like to abbort? (y/n)");
-            if(sc.next().equalsIgnoreCase("y")){
+            if (sc.next().equalsIgnoreCase("y")) {
                 return;
             }
             discardCard();
             return;
         }
 
-        switch(pile){
+        switch (pile) {
             case 1:
                 tier1.discardCard();
                 break;
@@ -266,11 +265,11 @@ public class Game implements TerraFuturaInterface {
         System.out.println(tier2.state());
     }
 
-    private Card selectCard(){
+    private Card selectCard() {
         System.out.println("From which pile? (1 or 2)");
         int pile = sc.nextInt();
 
-        if(pile < 1 && pile > 2){
+        if (pile < 1 && pile > 2) {
             System.out.println("Insufficient pile number");
             return selectCard();
         }
@@ -278,18 +277,18 @@ public class Game implements TerraFuturaInterface {
         System.out.println("Which card? (0 to 4)");
         int ind = sc.nextInt();
 
-        if(ind < 0 || ind > 4){
+        if (ind < 0 || ind > 4) {
             System.out.println("Isufficient card index");
             return selectCard();
         }
 
-        if(ind == 0){
+        if (ind == 0) {
             ind = 5;
-        }else --ind;
+        } else --ind;
 
         Card card = null;
 
-        switch(pile){
+        switch (pile) {
             case 1:
                 card = (tier1.getCard(ind)).get();
                 break;
@@ -302,25 +301,25 @@ public class Game implements TerraFuturaInterface {
         return card;
     }
 
-    private Set<Card> putCard(Grid grid, Card card){
+    private Set<Card> putCard(Grid grid, Card card) {
         System.out.println(grid);
         System.out.print("Select coordinate X: (-2 to 2)");
         int x = sc.nextInt();
-        if(x < -2 || x > 2){
+        if (x < -2 || x > 2) {
             System.out.println("Insufficient X coordinate");
             return putCard(grid, card);
         }
 
         System.out.print("Select coordinate Y: (-2 to 2)");
         int y = sc.nextInt();
-        if(y < -2 || y > 2){
+        if (y < -2 || y > 2) {
             System.out.println("Insufficient Y coordinate");
             return putCard(grid, card);
         }
 
         GridPosition coordinate = new GridPosition(x, y);
 
-        if(!grid.canPutCard(coordinate)){
+        if (!grid.canPutCard(coordinate)) {
             System.out.println("Unable to put card there");
             return putCard(grid, card);
         }
@@ -329,20 +328,20 @@ public class Game implements TerraFuturaInterface {
         return activatedCards;
     }
 
-    private void executeActivatedCards(Set<Card> ac, Grid g){
+    private void executeActivatedCards(Set<Card> ac, Grid g) {
         List<Card> activatedCards = new ArrayList<>(ac);
         int i = 0;
-        for(Card c: activatedCards){
+        for (Card c : activatedCards) {
             System.out.println(++i + ":\n" + c);
         }
         System.out.println("Select order of execution");
         List<Card> pattern = new ArrayList<>();
-        while(true){
+        while (true) {
             int ind = sc.nextInt();
-            if(ind == -1) break;
-            if(ind <= 0 || ind > activatedCards.size()) continue;
+            if (ind == -1) break;
+            if (ind <= 0 || ind > activatedCards.size()) continue;
 
-            if(pattern.contains(activatedCards.get(ind))){
+            if (pattern.contains(activatedCards.get(ind))) {
                 System.out.println("Already in execution order");
                 continue;
             }
@@ -352,23 +351,23 @@ public class Game implements TerraFuturaInterface {
 
         System.out.println("Starting execution");
 
-        for(Card c: pattern){
+        for (Card c : pattern) {
             executeCard(c, g);
         }
     }
 
-    private void executeCard(Card card, Grid g){
+    private void executeCard(Card card, Grid g) {
         System.out.println(card);
         Effect effect = card.getUpper();
-        if(card.getLower() != null){
+        if (card.getLower() != null) {
             System.out.println("Which effect to execute? (1 or 2)");
             int choice = sc.nextInt();
-            if(choice != 1 && choice != 2){
+            if (choice != 1 && choice != 2) {
                 System.out.println("Invalid effect choice");
                 executeCard(card, g);
                 return;
             }
-            switch(choice){
+            switch (choice) {
                 case 1:
                     effect = card.getUpper();
                     break;
@@ -379,18 +378,18 @@ public class Game implements TerraFuturaInterface {
             }
         }
 
-        try{
+        try {
             actionDeliver.process(effect, g);
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("Error: " + e.getMessage() + "\nTry again");
             executeCard(card, g);
             return;
         }
     }
 
-    private boolean finishConditionCheck(){
-        for(Player player: players){
-            if(!player.getGrid().isFull()){
+    private boolean finishConditionCheck() {
+        for (Player player : players) {
+            if (!player.getGrid().isFull()) {
                 return false;
             }
         }
