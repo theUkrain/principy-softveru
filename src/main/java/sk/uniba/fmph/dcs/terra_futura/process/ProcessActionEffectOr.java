@@ -17,6 +17,10 @@ public class ProcessActionEffectOr extends ProcessAction {
         this.grid = grid;
     }
 
+    /**
+     *
+     * @return activates card and make corresponding actions
+     */
     @Override
     public int activateCard() {
         EffectOr effectCasted = (EffectOr) effect;

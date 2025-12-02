@@ -20,39 +20,39 @@ public class Player {
         this.scoringMethod2 = scoringMethod2;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public int selectFirstScoringMethod(){
+    public int selectFirstScoringMethod() {
         return scoringMethod1.selectThisMethodAndCalculate();
     }
 
-    public ScoringMethod getFirstScoringMethod(){
+    public ScoringMethod getFirstScoringMethod() {
         return scoringMethod1;
     }
 
-    public int selectSecondScoringMethod(){
+    public int selectSecondScoringMethod() {
         return scoringMethod2.selectThisMethodAndCalculate();
     }
 
-    public ScoringMethod getSecondScoringMethod(){
+    public ScoringMethod getSecondScoringMethod() {
         return scoringMethod2;
     }
 
-    public void selectFirstActivationPattern(){
+    public void selectFirstActivationPattern() {
         activationPattern1.select();
     }
 
-    public ActivationPattern getFirstActivationPattern(){
+    public ActivationPattern getFirstActivationPattern() {
         return activationPattern1;
     }
 
-    public void selectSecondActivationPattern(){
+    public void selectSecondActivationPattern() {
         activationPattern2.select();
     }
 
-    public ActivationPattern getSecondActivationPattern(){
+    public ActivationPattern getSecondActivationPattern() {
         return activationPattern2;
     }
 

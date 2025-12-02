@@ -15,6 +15,7 @@ public class Grid implements GridInterface, InterfaceActivateGrid {
     private static final int MAX_GRID_DIMENSION = 3;
 
     private Card[][] field;
+    private int cardQuantity = 0;
     private GridPosition topLeft, bottomRight;
     private List<GridPosition> pattern;
 
@@ -28,6 +29,7 @@ public class Grid implements GridInterface, InterfaceActivateGrid {
         }
 
         field[CENTER_OFFSET][CENTER_OFFSET] = CardFactory.startCard();
+        cardQuantity++;
         topLeft = new GridPosition(0, 0);
         bottomRight = new GridPosition(0, 0);
     }
@@ -76,6 +78,7 @@ public class Grid implements GridInterface, InterfaceActivateGrid {
             throw new IllegalArgumentException("Cannot put card");
         }
 
+        cardQuantity++;
         int row = CENTER_OFFSET + coordinate.getY();
         int col = CENTER_OFFSET + coordinate.getX();
         field[row][col] = card;
@@ -138,6 +141,14 @@ public class Grid implements GridInterface, InterfaceActivateGrid {
         }
 
         return ans;
+    }
+
+    /**
+     * @return whether grid contiains 9 cards or not
+     */
+    @Override
+    public boolean isFull() {
+        return cardQuantity == 9;
     }
 
     @Override

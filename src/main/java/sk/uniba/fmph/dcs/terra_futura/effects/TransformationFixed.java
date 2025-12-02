@@ -21,6 +21,10 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
         this.generatedPollution = generatedPollution;
     }
 
+    /**
+     * takes resources from card
+     * @param cards
+     */
     public void resourceRetrivier(Map<Resource, List<Pair<Card, Integer>>> cards){
         for(Resource r: cards.keySet()){
             for(Pair<Card, Integer> p: cards.get(r)){
@@ -78,6 +82,10 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
         return true;
     }
 
+    /**
+     * used in visitor pattern in outer logic
+     * @param deliver
+     */
     @Override
     public void apply(ProcessActionDeliver deliver) {
         deliver.process((TransformationFixed) this);

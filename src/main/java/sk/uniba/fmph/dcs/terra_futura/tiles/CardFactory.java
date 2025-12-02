@@ -41,16 +41,29 @@ public class CardFactory {
         return card;
     }
 
+    /**
+     *
+     * @param cardSource
+     * @return instance of card with pollution effect
+     */
     public static Card pollutionTransferCard(CardSource cardSource) {
         Card card = card(4, new PollutionTransfer(), null, cardSource);
         return card;
     }
 
+    /**
+     *
+     * @return an instance of starting card
+     */
     public static Card startCard() {
         ConcreteCard card = new ConcreteCard(1, new EffectOr(new RawMaterialProducer(Resource.UNIVERSAL), new RawMaterialProducer(Resource.MONEY)), new AssistanceEffect(), null);
         return card;
     }
 
+    /**
+     *
+     * used in testing and debugging
+     */
     public static void reset() {
         counterI = 0;
         counterII = 0;

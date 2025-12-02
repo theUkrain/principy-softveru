@@ -8,6 +8,10 @@ public class ProcessActionRawMaterialProducer extends ProcessAction {
         super(effect);
     }
 
+    /**
+     *
+     * @return activates card and make corresponding actions
+     */
     @Override
     public int activateCard() {
         RawMaterialProducer effectCasted = ((RawMaterialProducer)effect);

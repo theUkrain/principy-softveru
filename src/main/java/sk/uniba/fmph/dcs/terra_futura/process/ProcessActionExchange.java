@@ -21,6 +21,10 @@ public class ProcessActionExchange extends ProcessAction{
         this.output = output;
     }
 
+    /**
+     *
+     * @return activates card and make corresponding actions
+     */
     @Override
     public int activateCard() {
         Exchange effectCasted = (Exchange) effect;

@@ -17,6 +17,10 @@ public class ProcessActionTransformationFixed extends ProcessAction {
         this.cards = cards;
     }
 
+    /**
+     *
+     * @return activates card and make corresponding actions
+     */
     @Override
     public int activateCard() {
         TransformationFixed effectCasted = ((TransformationFixed)effect);

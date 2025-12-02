@@ -17,6 +17,10 @@ public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends 
         this.grid = grid;
     }
 
+    /**
+     *
+     * @return activates card and make corresponding actions
+     */
     @Override
     public int activateCard() {
         AssistanceEffect effectCasted = (AssistanceEffect) effect;

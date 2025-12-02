@@ -14,7 +14,10 @@ public class ProcessActionPollutionTransfer extends ProcessAction {
         super(effect);
         this.cards = cards;
     }
-
+    /**
+     *
+     * @return activates card and make corresponding actions
+     */
     @Override
     public int activateCard() {
         PollutionTransfer effectCasted = (PollutionTransfer) effect;

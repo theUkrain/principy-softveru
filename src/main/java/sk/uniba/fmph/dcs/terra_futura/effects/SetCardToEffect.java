@@ -25,7 +25,7 @@ public abstract class SetCardToEffect implements Effect {
 
     /**
      *
-     * @return instance of card that bounds
+     * @return instance of card that is used in outer logic
      */
     public Card getCard() {
         return card;
