@@ -8,12 +8,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
@@ -46,10 +49,8 @@ public class Game implements TerraFuturaInterface {
         effect.execute();
     }
 
-    public void process(TransformationFixed effect){
-        // Map<Resource, List<Pair<Card, Integer>>> cards
+    private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requieredRes){
         Map<Resource, List<Pair<Card, Integer>>> taken = new HashMap<>();
-        Map<Resource, Integer> requieredRes = effect.getRequiredInputs();
 
         for(int dx = -2; dx<=2; ++dx){
             for(int dy = -2; dy<=2; ++dy){
@@ -86,7 +87,11 @@ public class Game implements TerraFuturaInterface {
                 }
             }
         }
-        effect.execute(taken);
+        return taken;
+    }
+
+    public void process(TransformationFixed effect){
+        effect.execute(requestResourceMap(effect.getRequiredInputs()));
     }
 
     public void process(Exchange effect){
@@ -103,5 +108,41 @@ public class Game implements TerraFuturaInterface {
 
     public void process(PollutionTransfer effect){
 
+    }
+
+    @Override
+    public void takeCard(int playerId, CardSource source, GridPosition destination) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'takeCard'");
+    }
+
+    @Override
+    public boolean discardLastCardFromDeck(int playerId, Deck deck) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'discardLastCardFromDeck'");
+    }
+
+    @Override
+    public void selectReward(int playerId, Resource resource) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectReward'");
+    }
+
+    @Override
+    public boolean turnFinished(int playerId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'turnFinished'");
+    }
+
+    @Override
+    public boolean selectActivationPattern(int playerId, int card) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectActivationPattern'");
+    }
+
+    @Override
+    public boolean selectScoring(int playerId, int card) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectScoring'");
     }
 }
