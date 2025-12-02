@@ -18,12 +18,9 @@ import java.util.Map;
 
 public class CardTest {
 
-    private List<Card> cards;
-    private Map<Resource, Integer> onePollution = Map.of(Resource.POLLUTION, 1);
+    private static List<Card> cards;
 
-
-    @Before
-    public void setup() {
+    static {
         cards = new ArrayList<>();
         for(int i = 0; i < 10; i++) {
             Card card = CardFactory.card(i, null, null, new CardSource(i, Deck.I));
