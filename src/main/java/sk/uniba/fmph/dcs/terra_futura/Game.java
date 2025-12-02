@@ -171,7 +171,7 @@ public class Game implements TerraFuturaInterface {
 
     }
 
-    private void gameFinish(){
+    private void gameFinish(){ 
         System.out.println("-------- Final activation --------");
 
         for(int i=0; i<players.size(); ++i){
