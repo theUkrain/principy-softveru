@@ -16,7 +16,7 @@ public class ProcessActionDeliver {
     private Scanner sc;
     private Grid grid;
 
-    public ProcessActionDeliver(Game game) {
+    public ProcessActionDeliver() {
         this.sc = new Scanner(System.in);
     }
 

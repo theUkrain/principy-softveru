@@ -246,4 +246,5 @@ public class CardFactory {
             return resources;
         }
     }
+
 }

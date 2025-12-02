@@ -7,6 +7,10 @@ public abstract class SetCardToEffect implements Effect {
     protected boolean set = false;
 
     public void setCard(Card card) {
+        if (card == null) {
+            return;
+        }
+
         if (set) {
             throw new IllegalStateException("setCard() can be called only once");
         }

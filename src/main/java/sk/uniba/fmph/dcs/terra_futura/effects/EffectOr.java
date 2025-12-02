@@ -10,7 +10,7 @@ import java.util.List;
 
 public class EffectOr extends SetCardToEffect {
 
-    private List<Effect> effectList = new ArrayList<>();
+    private List<SetCardToEffect> effectList = new ArrayList<>();
 
     public EffectOr(SetCardToEffect e1, SetCardToEffect e2) {
         effectList.add(e1);
@@ -26,8 +26,8 @@ public class EffectOr extends SetCardToEffect {
             if(effect.getCard() != card){
                 throw new IllegalArgumentException("Effect cannot be with not with EffectOr card");
             }
+            this.effectList.add(effect);
         }
-        this.effectList = effectList;
     }
 
     public List<Effect> getEffectList() {
