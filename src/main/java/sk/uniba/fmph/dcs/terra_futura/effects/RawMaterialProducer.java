@@ -1,7 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
 import java.util.Map;
 
@@ -35,26 +35,35 @@ public class RawMaterialProducer extends SetCardToEffect {
 
     /**
      *
-     * @param game
+     * @param deliver
      */
     @Override
-    public void apply(Game game) {
-        game.process(this);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((RawMaterialProducer) this);
     }
 
     /**
      *
-     * @return
+     * @return string representation of effects
      */
     @Override
     public String toString() {
         return "Generates resource " + guaranteedOutputs;
     }
 
+    /**
+     *
+     * @return resource that is produced by this producer
+     */
     public Resource getGuaranteedOutputs(){
         return guaranteedOutputs;
     }
 
+    /**
+     *
+     * @param obj
+     * @return whether object is equal to this or not
+     */
     @Override
     public boolean equals(Object obj){
         if(this == obj){

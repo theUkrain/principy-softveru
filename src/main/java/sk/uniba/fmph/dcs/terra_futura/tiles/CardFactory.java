@@ -56,7 +56,6 @@ public class CardFactory {
         counterII = 0;
     }
 
-
     private static class ConcreteCard implements Card {
 
         private Map<Resource, Integer> resources;
@@ -79,10 +78,24 @@ public class CardFactory {
 
             if (upper != null) {
                 this.upper.setCard(this);
+
+                if(upper instanceof EffectOr) {
+                    ((EffectOr) upper).getEffectList().forEach(e -> {
+                        if( e!= null && e instanceof SetCardToEffect) ((SetCardToEffect) e).setCard(this);
+                    });
+                }
+
             }
 
             if (lower != null) {
                 this.lower.setCard(this);
+
+                if(lower instanceof EffectOr) {
+                    ((EffectOr) lower).getEffectList().forEach(e -> {
+                        if( e != null && e instanceof SetCardToEffect) ((SetCardToEffect) e).setCard(this);
+                    });
+                }
+
             }
 
             this.pollutionSpaces = pollutionSpaces;
@@ -93,8 +106,6 @@ public class CardFactory {
         }
 
         public Map<Resource, Integer> getCurResources() {
-            if(!canGetResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources.toString() +
-                    "\n" +  "can't be get from card already filled with :" + "\n"  + this.resources + "\n");
             return Collections.unmodifiableMap(this.resources);
         }
 
@@ -222,11 +233,13 @@ public class CardFactory {
 
         @Override
         public String toString() {
-            return "resources: " + this.resources + '\n' +
+            return "resources: " + this.resources.toString() + '\n' +
                     "pollution spaces: " + pollutionSpaces + '\n' +
                     "upper effect: " + ( upper != null ? upper.toString() : "none") + '\n' +
                     "lower effect: " + ( lower != null ? lower.toString() : "none") + '\n' +
+                    "given index : " + cardSource.getIndex() + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
+
 }

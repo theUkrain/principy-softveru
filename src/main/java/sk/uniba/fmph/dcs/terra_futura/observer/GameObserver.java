@@ -5,7 +5,6 @@ import java.util.Map;
 
 /**
  * GameObserver manages notification distribution to registered observers
- * Implements Observer Pattern for game state updates
  * Each player can have their own observer that receives personalized
  * game state updates when the game state changes
  */
@@ -37,7 +36,6 @@ public class GameObserver {
     /**
      * Unregister an observer for a specific player
      * Does nothing if player has no registered observer
-     *
      * @param playerId ID of the player
      */
     public void unregisterObserver(int playerId) {

@@ -8,4 +8,5 @@ public interface GridInterface {
     boolean canPutCard(GridPosition coordinate);
     Set<Card> putCard(GridPosition coordinate, Card card);
     Set<Card> getActivatedCards();
+    boolean isFull();
 }

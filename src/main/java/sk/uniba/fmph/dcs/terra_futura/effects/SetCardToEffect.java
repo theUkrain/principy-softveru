@@ -6,7 +6,15 @@ public abstract class SetCardToEffect implements Effect {
     protected Card card;
     protected boolean set = false;
 
+    /**
+     * bounds specific effect to card
+     * @param card
+     */
     public void setCard(Card card) {
+        if (card == null) {
+            return;
+        }
+
         if (set) {
             throw new IllegalStateException("setCard() can be called only once");
         }
@@ -15,6 +23,10 @@ public abstract class SetCardToEffect implements Effect {
         set = true;
     }
 
+    /**
+     *
+     * @return instance of card that bounds
+     */
     public Card getCard() {
         return card;
     }

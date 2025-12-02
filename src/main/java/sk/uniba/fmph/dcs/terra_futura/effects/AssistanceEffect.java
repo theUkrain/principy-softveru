@@ -1,7 +1,7 @@
 
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
 public class AssistanceEffect extends SetCardToEffect {
 
@@ -28,17 +28,29 @@ public class AssistanceEffect extends SetCardToEffect {
         return false;
     }
 
-
+    /**
+     * used for visitor pattern in outer logic
+     * @param deliver
+     */
     @Override
-    public void apply(Game game) {
-        game.process(this);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((AssistanceEffect) this);
     }
 
+    /**
+     *
+     * @return description of effect
+     */
     @Override
     public String toString() {
         return "This is assistance effect";
     }
 
+    /**
+     *
+     * @param obj
+     * @return whether object is equal to this or not
+     */
     @Override
     public boolean equals(Object obj){
         if(this == obj){

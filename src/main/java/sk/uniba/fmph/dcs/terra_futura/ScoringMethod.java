@@ -6,6 +6,7 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.*;
 
 import java.util.*;
 
@@ -30,7 +31,7 @@ public class ScoringMethod {
                 position = new GridPosition(i, j);
                 card = grid.getCard(position);
                 if (card.isPresent()) {
-                    if(card.get().canGetResources(Map.of())){
+                    if (card.get().canGetResources(Map.of())) {
                         Map<Resource, Integer> resources = card.get().getCurResources();
                         for (Resource r : resources.keySet()) {
                             if (!allResources.containsKey(r)) {

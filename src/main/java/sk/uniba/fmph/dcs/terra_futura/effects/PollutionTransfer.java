@@ -1,13 +1,17 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
 
 public class PollutionTransfer extends SetCardToEffect implements CopyableEffect {
 
+    /**
+     * Executes corresponding effect
+     * @param cards
+     */
     public void execute(List<Pair<Card, Integer>> cards) {
         int commulatedPollution = 0;
         for (Pair<Card, Integer> p : cards) {
@@ -29,16 +33,28 @@ public class PollutionTransfer extends SetCardToEffect implements CopyableEffect
         }
     }
 
+    /**
+     *
+     * @return whether this class can assistance or not
+     */
     @Override
     public boolean canProvideAssistance() {
         return true;
     }
 
+    /**
+     * used in visitor pattern in outer logic
+     * @param deliver
+     */
     @Override
-    public void apply(Game game) {
-        game.process(this);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((PollutionTransfer) this);
     }
 
+    /**
+     *
+     * @return string representation of effects
+     */
     @Override
     public String toString() {
         return "This effect will get up to 4 pollutions " +
@@ -46,11 +62,20 @@ public class PollutionTransfer extends SetCardToEffect implements CopyableEffect
                 "on card that is being under this effect";
     }
 
+    /**
+     *
+     * @param obj
+     * @return whether object is equal to this or not
+     */
     @Override
     public boolean equals(Object obj) {
         return (obj instanceof PollutionTransfer);
     }
 
+    /**
+     *
+     * @return copy of effect used in outer logic
+     */
     @Override
     public Effect copy() {
         return new PollutionTransfer();
