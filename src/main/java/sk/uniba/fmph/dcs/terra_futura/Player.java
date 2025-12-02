@@ -9,8 +9,6 @@ public class Player {
     ScoringMethod scoringMethod1;
     ScoringMethod scoringMethod2;
 
-
-
     public Player(Grid grid, ActivationPattern activationPattern1, ActivationPattern activationPattern2,
                   ScoringMethod scoringMethod1, ScoringMethod scoringMethod2) {
         
@@ -35,5 +33,9 @@ public class Player {
 
     public void selectSecondActivationPattern(){
         activationPattern2.select();
+    }
+
+    public Grid getGrid() {
+        return grid;
     }
 }
