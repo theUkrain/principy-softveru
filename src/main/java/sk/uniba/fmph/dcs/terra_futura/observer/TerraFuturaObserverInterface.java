@@ -12,4 +12,5 @@ public interface TerraFuturaObserverInterface {
 
     void write(String message);
 
+    void close();
 }

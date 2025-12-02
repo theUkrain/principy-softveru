@@ -1,19 +1,18 @@
-package sk.uniba.fmph.dcs.terra_futura;
+package sk.uniba.fmph.dcs.terra_futura.Samostatne;
 
 import java.io.InputStream;
 import java.util.*;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import sk.uniba.fmph.dcs.terra_futura.*;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
 
 public class Game implements TerraFuturaInterface {
     private Set<Pair<Player, Integer>> scoreTable;

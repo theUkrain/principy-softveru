@@ -2,9 +2,9 @@ package sk.uniba.fmph.dcs.terra_futura.process;
 
 
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends ProcessAction {
     private final T effectAnotherPlayer;

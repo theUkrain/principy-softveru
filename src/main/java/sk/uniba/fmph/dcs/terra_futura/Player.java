@@ -1,6 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
 
 public class Player {
     private String name;

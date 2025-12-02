@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.*;
 
 import java.util.ArrayList;

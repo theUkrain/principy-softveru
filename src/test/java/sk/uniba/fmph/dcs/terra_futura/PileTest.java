@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Pile;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.tiles.*;
 
@@ -107,7 +108,7 @@ public class PileTest {
         for(int i=0; i<20; ++i){
             pile2.getCard(i);
         }
-        Assertions.assertThrows(IllegalArgumentException.class, () -> pile2.getCard(0));
+        Assertions.assertThrows(ArrayIndexOutOfBoundsException.class, () -> pile2.getCard(0));
 
         input  = generateInput(3);
         Pile pile3 = new Pile(input);

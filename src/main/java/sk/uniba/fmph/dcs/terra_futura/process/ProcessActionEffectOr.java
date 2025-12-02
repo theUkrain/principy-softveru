@@ -1,9 +1,9 @@
 package sk.uniba.fmph.dcs.terra_futura.process;
 
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.effects.EffectOr;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class ProcessActionEffectOr extends ProcessAction {
     private final int whatEffectToTrigger;

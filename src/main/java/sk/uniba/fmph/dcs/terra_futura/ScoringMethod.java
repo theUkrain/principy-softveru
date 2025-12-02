@@ -3,10 +3,9 @@ package sk.uniba.fmph.dcs.terra_futura;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Points;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Samostatne.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.*;
 
 import java.util.*;
 
