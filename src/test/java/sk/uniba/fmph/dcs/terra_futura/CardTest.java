@@ -2,9 +2,9 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.*;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
@@ -26,6 +26,11 @@ public class CardTest {
             Card card = CardFactory.card(i, null, null, new CardSource(i, Deck.I));
             cards.add(card);
         }
+    }
+
+    @After
+    public void reset(){
+        CardFactory.reset();
     }
 
     @Test

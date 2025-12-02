@@ -31,8 +31,6 @@ public interface Card {
 
     void putPollution(int amount);
 
-    Map<Resource, Integer> takeResources();
-
     //TODO
 
     /**

@@ -248,10 +248,6 @@ public class CardFactory {
                     "given index : " + cardSource.getIndex() + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
-
-        @Override
-        public Map<Resource, Integer> takeResources() {
-            return resources;
-        }
     }
+
 }

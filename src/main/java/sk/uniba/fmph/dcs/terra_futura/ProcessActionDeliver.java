@@ -9,18 +9,16 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridInterface;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
+import java.io.InputStream;
 import java.util.*;
 
 public class ProcessActionDeliver {
 
-    private final Game this.game = game ;
-    private Game game;
     private Scanner sc;
     private Grid grid;
 
-    public ProcessActionDeliver(Game game) {
-         this.game = game ;
-         this.sc = new Scanner(System.in);
+    public ProcessActionDeliver(InputStream in) {
+        this.sc = new Scanner(in);
     }
 
     private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requiredRes, Grid grid) {
@@ -34,7 +32,7 @@ public class ProcessActionDeliver {
                 if (optional.isEmpty()) continue;
 
                 Card card = optional.get();
-                Map<Resource, Integer> available = card.takeResources();
+                Map<Resource, Integer> available = card.getCurResources();
 
                 List<Resource> matching = available.keySet().stream().filter(requiredRes::containsKey).toList();
 
@@ -158,7 +156,7 @@ public class ProcessActionDeliver {
     }
 
     public void process(AssistanceEffect effect) {
-        
+
     }
 
     public void process(PollutionTransfer effect) {
@@ -237,5 +235,25 @@ public class ProcessActionDeliver {
 
             card.putPollution(info.getRight());
         }
+    }
+
+    public Card askForPollutionToGet(Grid grid) {
+        for (int dx = -2; dx <= 2; dx++){
+            for (int dy = -2; dy <= 2; dy++){
+                GridPosition pos = new GridPosition(dx, dy);
+                Optional<Card> optional = grid.getCard(pos);
+
+                if(optional.isEmpty()) continue;
+
+                System.out.println("Card: " + optional.get());
+                System.out.println("Transfer pollution from this card? (y/n)");
+
+                if(!sc.next().equalsIgnoreCase("y")) continue;
+
+                return optional.get();
+            }
+        }
+
+        throw new IllegalArgumentException("You have to choose a card");
     }
 }

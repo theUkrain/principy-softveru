@@ -137,16 +137,20 @@ public class EffectsTest {
     @Test
     @DisplayName("EffectOr test")
     public void testEffectOr() {
-        Effect e1 = new TransformationFixed(Map.of(), Map.of(), 0);
-        Effect e2 = new RawMaterialProducer(Resource.UNIVERSAL);
+        SetCardToEffect e1 = new TransformationFixed(Map.of(), Map.of(), 0);
+        SetCardToEffect e2 = new RawMaterialProducer(Resource.UNIVERSAL);
 
         EffectOr effect = new EffectOr(e1, e2);
 
         Assertions.assertEquals(effect.execute(0), e1);
         Assertions.assertEquals(effect.execute(1), e2);
 
+        e1 = new TransformationFixed(Map.of(), Map.of(), 0);
+        e2 = new RawMaterialProducer(Resource.UNIVERSAL);
+        SetCardToEffect e3 = new RawMaterialProducer(Resource.YELLOW);
+
         e2 = new EffectOr(e1, e2);
-        effect = new EffectOr(e2, e1);
+        effect = new EffectOr(e2, e3);
 
         Assertions.assertEquals(effect.execute(0), e2);
     }

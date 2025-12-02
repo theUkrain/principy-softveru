@@ -10,7 +10,6 @@ public class ProcessActionEffectOr extends ProcessAction {
     private final ProcessActionDeliver deliver;
     private final Grid grid;
 
-    // TODO Game reference for casting inner effect
     public ProcessActionEffectOr(Effect effect, int whatEffectToTrigger, ProcessActionDeliver deliver, Grid grid) {
         super(effect);
         this.whatEffectToTrigger = whatEffectToTrigger;

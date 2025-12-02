@@ -1,9 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.Map;
 
@@ -14,6 +12,10 @@ public class RawMaterialProducer extends SetCardToEffect {
         this.guaranteedOutputs = guaranteedOutputs;
     }
 
+
+    /**
+     * method that puts corresponding material on user card
+     */
     public void execute() {
         if (!card.canPutResources(Map.of(guaranteedOutputs, 1))) {
             throw new IllegalStateException("Can't put resources");
@@ -22,16 +24,28 @@ public class RawMaterialProducer extends SetCardToEffect {
         card.putResources(Map.of(guaranteedOutputs, 1));
     }
 
+    /**
+     *
+     * @return can effect be executed via assistance effect
+     */
     @Override
     public boolean canProvideAssistance() {
         return false;
     }
 
+    /**
+     *
+     * @param game
+     */
     @Override
     public void apply(ProcessActionDeliver deliver) {
         deliver.process((RawMaterialProducer) this);
     }
 
+    /**
+     *
+     * @return
+     */
     @Override
     public String toString() {
         return "Generates resource " + guaranteedOutputs;
