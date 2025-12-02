@@ -3,6 +3,8 @@ package sk.uniba.fmph.dcs.terra_futura;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
@@ -14,6 +16,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
 
 public class Game implements TerraFuturaInterface {
+    private Set<Pair<Player, Integer>> scoreTable;
     private Scanner sc;
     private InputStream in;
     private GameState state;
@@ -34,6 +37,14 @@ public class Game implements TerraFuturaInterface {
         gameInit();
     }
 
+    public int playerCount(){
+        return players.size();
+    }
+
+    public Player getPlayer(int ind){
+        return players.get(ind);
+    }
+
     public void gameInit(){
         int n = sc.nextInt();
         if(n < 2 || n > 4) throw new IllegalArgumentException("Unable to create a game for " + n + " players");
@@ -41,6 +52,13 @@ public class Game implements TerraFuturaInterface {
         gameInitPile();
 
         actionDeliver = new ProcessActionDeliver(in);
+
+        scoreTable = new TreeSet<>(new Comparator<Pair<Player, Integer>>(){
+            @Override
+            public int compare(Pair<Player, Integer> obj1, Pair<Player, Integer> obj2){
+                return obj1.getRight().compareTo(obj2.getRight());
+            }
+        });
 
         List<ActivationPattern> patterns = gameInitActivationPatterns();
         Collections.shuffle(patterns);
@@ -56,9 +74,14 @@ public class Game implements TerraFuturaInterface {
             ScoringMethod scorringMethod1 = methods.get(i * 2);
             ScoringMethod scorringMethod2 = methods.get(i * 2 + 1);
 
-            Player player = new Player(g, pattern1, pattern2, scorringMethod1, scorringMethod2);
+            Player player = new Player(requestName(), g, pattern1, pattern2, scorringMethod1, scorringMethod2);
             players.add(player);
         }
+    }
+
+    private String requestName(){
+        String name = sc.nextLine();
+        return name;
     }
 
     private void gameInitPile(){
@@ -95,6 +118,7 @@ public class Game implements TerraFuturaInterface {
         boolean firstRun = true;
         while(true){
             Player curPlayer = players.get(index);
+            System.out.println("--< Player`s " + (index + 1) + " turn >--");
 
             // Card discard
             System.out.println("-- Discard card");
@@ -148,11 +172,69 @@ public class Game implements TerraFuturaInterface {
     }
 
     private void gameFinish(){
-        System.out.println("---- Final activation ----");
+        System.out.println("-------- Final activation --------");
 
-        for(Player player: players){
-            // System.out.pritntln();
+        for(int i=0; i<players.size(); ++i){
+            System.out.println("--< Player`s " + (i + 1) + " turn >--");
+
+            // Select activation pattern
+            System.out.println("-- Select pattern");
+            selectActPattern(players.get(i));
+            Set<Card> activatedCards = players.get(i).getGrid().getActivatedCards();
+            executeActivatedCards(activatedCards, players.get(i).getGrid());
+
+            // Select Scoring Method
+            System.out.println("-- Select scoring pattern");
+            int points = selectScoringMethod(players.get(i));
+            scoreTable.add(Pair.of(players.get(i), points));
         }
+    }
+
+    private void selectActPattern(Player player){
+        System.out.println("Your activation patterns:");
+        System.out.println(player.getFirstActivationPattern());
+        System.out.println(player.getSecondActivationPattern());
+
+        System.out.println("Select pattern to use: (1 or 2)");
+        int choice = sc.nextInt();
+        if(choice != 1 && choice != 2){
+            System.out.println("Invalid pattern choice");
+            selectActPattern(player);
+            return;
+        }
+        switch(choice){
+            case 1:
+                player.selectFirstActivationPattern();
+                break;
+
+            case 2:
+                player.selectSecondActivationPattern();
+                break;
+        }
+    }
+
+    private int selectScoringMethod(Player player){
+        System.out.println("Your activation patterns:");
+        System.out.println(player.getFirstScoringMethod());
+        System.out.println(player.getSecondScoringMethod());
+
+        System.out.println("Select pattern to use: (1 or 2)");
+        int choice = sc.nextInt();
+        if(choice != 1 && choice != 2){
+            System.out.println("Invalid method choice");
+            return selectScoringMethod(player);
+        }
+        int points = 0;
+        switch(choice){
+            case 1:
+                points = player.selectFirstScoringMethod();
+                break;
+
+            case 2:
+                points = player.selectSecondScoringMethod();
+                break;
+        }
+        return points;
     }
 
     private void discardCard(){
