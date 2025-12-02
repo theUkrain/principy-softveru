@@ -23,14 +23,27 @@ public class EffectOr extends SetCardToEffect {
         this.effectList = effectList;
     }
 
+    /**
+     * method to get list of effects
+     * @return list of effects, that are in this composite effect
+     */
     public List<Effect> getEffectList() {
         return Collections.unmodifiableList(this.effectList);
     }
 
+    /**
+     *
+     * @param whatEffectToTrigger
+     * @return instance of effect that would be processed by outer logic
+     */
     public Effect execute(int whatEffectToTrigger) {
         return effectList.get(whatEffectToTrigger);
     }
 
+    /**
+     *
+     * @return does this effect can provide assistance
+     */
     @Override
     public boolean canProvideAssistance(){
         for (Effect effect : effectList) {
@@ -46,6 +59,10 @@ public class EffectOr extends SetCardToEffect {
         deliver.process((EffectOr) this);
     }
 
+    /**
+     *
+     * @return string representation of effects that are in this composite effect
+     */
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("This composite effect is consist of ");
@@ -56,6 +73,12 @@ public class EffectOr extends SetCardToEffect {
         return sb.toString();
     }
 
+
+    /**
+     *
+     * @param obj
+     * @return obj is equal to our object
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -78,6 +101,10 @@ public class EffectOr extends SetCardToEffect {
         return true;
     }
 
+    /**
+     * Override of hashcode method
+     * @return hash code
+     */
     @Override
     public int hashCode() {
         return Objects.hash(effectList);

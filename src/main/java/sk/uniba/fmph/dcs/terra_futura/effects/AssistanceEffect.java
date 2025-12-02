@@ -5,6 +5,12 @@ import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
 public class AssistanceEffect extends SetCardToEffect {
 
+    /**
+     *
+     * @param effectOfAnoutherPlayer - effect of another player that will be executed according to games rules
+     * @return - instance of effect, that will be processed by outer logic
+     * @param <T> - generalized to make possible to use other player effect in outer logic
+     */
     public <T extends Effect & CopyableEffect> T execute(T effectOfAnoutherPlayer) {
         if (effectOfAnoutherPlayer.canProvideAssistance()) {
             return effectOfAnoutherPlayer;
@@ -13,10 +19,15 @@ public class AssistanceEffect extends SetCardToEffect {
         return null;
     }
 
+    /**
+     *
+     * @return can effect be executed via assistance effect
+     */
     @Override
     public boolean canProvideAssistance() {
         return false;
     }
+
 
     @Override
     public void apply(ProcessActionDeliver deliver) {
