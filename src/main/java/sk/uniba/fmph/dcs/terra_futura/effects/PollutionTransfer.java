@@ -37,8 +37,8 @@ public class PollutionTransfer extends SetCardToEffect implements CopyableEffect
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((PollutionTransfer) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((PollutionTransfer) this);
     }
 
     @Override

@@ -137,8 +137,8 @@ public class EffectsTest {
     @Test
     @DisplayName("EffectOr test")
     public void testEffectOr() {
-        Effect e1 = new TransformationFixed(Map.of(), Map.of(), 0);
-        Effect e2 = new RawMaterialProducer(Resource.UNIVERSAL);
+        SetCardToEffect e1 = new TransformationFixed(Map.of(), Map.of(), 0);
+        SetCardToEffect e2 = new RawMaterialProducer(Resource.UNIVERSAL);
 
         EffectOr effect = new EffectOr(e1, e2);
 
