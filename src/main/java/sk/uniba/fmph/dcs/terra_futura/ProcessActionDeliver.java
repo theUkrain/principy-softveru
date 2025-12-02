@@ -6,9 +6,9 @@ import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.process.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
-import sk.uniba.fmph.dcs.terra_futura.tiles.GridInterface;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
+import java.io.InputStream;
 import java.util.*;
 
 public class ProcessActionDeliver {
@@ -16,8 +16,8 @@ public class ProcessActionDeliver {
     private Scanner sc;
     private Grid grid;
 
-    public ProcessActionDeliver() {
-        this.sc = new Scanner(System.in);
+    public ProcessActionDeliver(InputStream in) {
+        this.sc = new Scanner(in);
     }
 
     private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requiredRes, Grid grid){
@@ -31,7 +31,7 @@ public class ProcessActionDeliver {
                 if(optional.isEmpty()) continue;
 
                 Card card = optional.get();
-                Map<Resource, Integer> available = card.takeResources();
+                Map<Resource, Integer> available = card.getCurResources();
 
                 List<Resource> matching = available.keySet().stream().filter(requiredRes::containsKey).toList();
 
