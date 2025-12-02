@@ -23,7 +23,6 @@ public class AssistanceEffect extends SetCardToEffect {
      *
      * @return can effect be executed via assistance effect
      */
-
     @Override
     public boolean canProvideAssistance() {
         return false;
