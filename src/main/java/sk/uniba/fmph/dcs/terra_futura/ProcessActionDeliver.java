@@ -6,20 +6,21 @@ import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.process.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridInterface;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 import java.util.*;
 
 public class ProcessActionDeliver {
-    private Game game;
+
     private Scanner sc;
+    private Grid grid;
 
     public ProcessActionDeliver(Game game) {
-        this.game = game;
         this.sc = new Scanner(System.in);
     }
 
-    private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requieredRes, Grid grid){
+    private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requiredRes, Grid grid){
         Map<Resource, List<Pair<Card, Integer>>> taken = new HashMap<>();
 
         for(int dx = -2; dx<=2; ++dx){
@@ -32,7 +33,7 @@ public class ProcessActionDeliver {
                 Card card = optional.get();
                 Map<Resource, Integer> available = card.takeResources();
 
-                List<Resource> matching = available.keySet().stream().filter(requieredRes::containsKey).toList();
+                List<Resource> matching = available.keySet().stream().filter(requiredRes::containsKey).toList();
 
                 if(matching.isEmpty()) continue;
 
@@ -43,7 +44,7 @@ public class ProcessActionDeliver {
 
                 for(Resource res: matching){
                     int maxAvailable = available.get(res);
-                    int maxRequired = requieredRes.get(res);
+                    int maxRequired = requiredRes.get(res);
 
                     System.out.println("Resource: " + res + " | Available: " + maxAvailable + " | Required: " + maxRequired);
                     System.out.println("How many to take? ");
@@ -62,26 +63,29 @@ public class ProcessActionDeliver {
     }
 
     public void process(Effect effect, Grid grid) {
-        effect.apply(this, grid);
+        this.grid = grid;
+        effect.apply(this);
+        this.grid = null;
     }
 
-    public void process(RawMaterialProducer effect, Grid grid){
+    public void process(RawMaterialProducer effect){
         ProcessActionRawMaterialProducer processAction = new ProcessActionRawMaterialProducer(effect);
-        int generatedPollution = processAction.activateCard();
     }
 
-    public void process(TransformationFixed effect, Grid grid){
+    public void process(TransformationFixed effect){
         ProcessActionTransformationFixed processAction = new ProcessActionTransformationFixed(effect, requestResourceMap(effect.getRequiredInputs(), grid));
         int generatedPollution = processAction.activateCard();
 
         askPlacePollution(generatedPollution, processAction, grid);
     }
 
-    public void process(Exchange effect, Grid grid){
-
+    public void process(Exchange effect){
+        System.out.println(effect.toString());
+        System.out.println("Input one of avaible inputs:");
+        Map<Resource, List<Pair<Integer, Card>>> input;
     }
 
-    public void process(EffectOr effect, Grid grid){
+    public void process(EffectOr effect){
         System.out.println("What effect would you like to use? (0-" + (effect.getEffectList().size() - 1) + ") ");
         int index = sc.nextInt();
 
@@ -89,13 +93,14 @@ public class ProcessActionDeliver {
         int generatedPollution = processAction.activateCard();
 
         askPlacePollution(generatedPollution, processAction, grid);
+
     }
 
-    public void process(AssistanceEffect effect, Grid grid){
+    public void process(AssistanceEffect effect){
         // TODO pollution transfer effect fix
     }
 
-    public void process(PollutionTransfer effect, Grid grid) {
+    public void process(PollutionTransfer effect) {
         List<Pair<Card, Integer>> params = new ArrayList<>();
 
         for (int dx = -2; dx <= 2; dx++) {
@@ -106,7 +111,7 @@ public class ProcessActionDeliver {
                 if (optional.isEmpty()) continue;
 
                 System.out.println("Card: " + optional.get());
-                System.out.println("Transfer polution from this card? (y/n)");
+                System.out.println("Transfer pollution from this card? (y/n)");
 
                 if (!sc.next().equalsIgnoreCase("y")) continue;
 
@@ -139,7 +144,7 @@ public class ProcessActionDeliver {
                 if(optional.isEmpty()) continue;
 
                 System.out.println("Card: " + optional.get());
-                System.out.println("Transfer polution to this card? (y/n)");
+                System.out.println("Transfer pollution to this card? (y/n)");
 
                 if(!sc.next().equalsIgnoreCase("y")) continue;
 

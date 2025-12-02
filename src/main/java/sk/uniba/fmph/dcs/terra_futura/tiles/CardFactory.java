@@ -92,7 +92,6 @@ public class CardFactory {
         }
 
         public Map<Resource, Integer> getCurResources() {
-            System.out.println(curPollution);
             return Collections.unmodifiableMap(this.resources);
         }
 

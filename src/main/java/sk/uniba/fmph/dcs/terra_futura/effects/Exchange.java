@@ -58,11 +58,9 @@ public class Exchange extends SetCardToEffect {
                     "\n doesn't support output: " + output.toString());
 
         input.forEach( (r,d) -> {
-
             d.forEach( (p) -> {
                 if(!(p.getValue().canGetResources(Map.of(r, p.getKey())))) throw new IllegalArgumentException("card: \n" + p.getValue() + "can't provide " + p.getKey() + " of " + r + "\n");
             });
-
         });
 
         input.forEach((r, d) -> {
