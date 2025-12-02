@@ -1,9 +1,7 @@
 
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class AssistanceEffect extends SetCardToEffect {
 

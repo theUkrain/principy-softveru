@@ -1,6 +1,10 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class Pile implements PileInterface {
     private List<Card> active;
@@ -26,7 +30,7 @@ public class Pile implements PileInterface {
 
         if(index > 4) index = 4;
 
-        if(index >= active.size()) return Optional.empty();
+        if(index >= active.size()) index = active.size()-1;
 
         return Optional.ofNullable(active.remove(index));
 
@@ -39,6 +43,14 @@ public class Pile implements PileInterface {
 
         discard.add(active.removeFirst());
 
+    }
+
+    public String state(){
+        ArrayList<Card> cur = new ArrayList<>();
+        for(int i=0; i < active.size() && i < 4; ++i){
+            cur.add(active.get(i));
+        }
+        return cur.toString();
     }
 
     @Override

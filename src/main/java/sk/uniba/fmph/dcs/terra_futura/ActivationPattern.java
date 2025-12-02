@@ -42,7 +42,7 @@ public final class ActivationPattern {
         return this.selected;
     }
 
-
+    @Override
     public String toString() {
         JSONArray patternList = new JSONArray();
         for (GridPosition position : pattern) {

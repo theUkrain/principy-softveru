@@ -1,8 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.Objects;
 import java.util.ArrayList;
