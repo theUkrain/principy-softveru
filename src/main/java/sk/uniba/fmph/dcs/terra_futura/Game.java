@@ -17,7 +17,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
-public class Game implements TerraFuturaInterface {
+public class Game {//implements TerraFuturaInterface {
     private Scanner sc;
     private InputStream in;
     private OutputStream out;
