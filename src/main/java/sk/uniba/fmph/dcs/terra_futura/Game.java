@@ -59,7 +59,7 @@ public class Game {//implements TerraFuturaInterface {
                 if(optional.isEmpty()) continue;
 
                 Card card = optional.get();
-                Map<Resource, Integer> available = card.takeResources();
+                Map<Resource, Integer> available = card.getCurResources();
 
                 List<Resource> matching = available.keySet().stream().filter(requieredRes::containsKey).toList();
 

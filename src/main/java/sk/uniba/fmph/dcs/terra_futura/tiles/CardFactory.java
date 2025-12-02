@@ -51,6 +51,10 @@ public class CardFactory {
         return card;
     }
 
+    public static void reset() {
+        counterI = 0;
+        counterII = 0;
+    }
 
 
     private static class ConcreteCard implements Card {
@@ -89,7 +93,8 @@ public class CardFactory {
         }
 
         public Map<Resource, Integer> getCurResources() {
-            System.out.println(curPollution);
+            if(!canGetResources(resources)) throw new IllegalArgumentException("Resources: " + "\n" + resources.toString() +
+                    "\n" +  "can't be get from card already filled with :" + "\n"  + this.resources + "\n");
             return Collections.unmodifiableMap(this.resources);
         }
 
@@ -222,11 +227,6 @@ public class CardFactory {
                     "upper effect: " + ( upper != null ? upper.toString() : "none") + '\n' +
                     "lower effect: " + ( lower != null ? lower.toString() : "none") + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
-        }
-
-        @Override
-        public Map<Resource, Integer> takeResources() {
-            return resources;
         }
     }
 }

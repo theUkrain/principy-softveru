@@ -1,6 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 import org.apache.commons.lang3.tuple.Pair;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Points;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
@@ -10,7 +11,7 @@ import java.util.*;
 
 public class ScoringMethod {
     private Grid grid;
-    public Points pointsPerResource;
+    public Points pointsPerResource = new Points();
     private List<Pair<Resource, Integer>> combination;
     private int pointsPerCombination;
 
@@ -29,12 +30,12 @@ public class ScoringMethod {
                 position = new GridPosition(i, j);
                 card = grid.getCard(position);
                 if (card.isPresent()) {
-                    Map<Resource, Integer> resources = card.get().takeResources();
+                    Map<Resource, Integer> resources = card.get().getCurResources();
                     for (Resource r : resources.keySet()) {
-                        if (allResources.containsKey(r)) {
-                            allResources.put(r, allResources.get(r) + 1);
-                        } else {
+                        if (!allResources.containsKey(r)) {
                             allResources.put(r, resources.get(r));
+                        } else {
+                            allResources.put(r, allResources.get(r) + resources.get(r));
                         }
                     }
                 }
@@ -63,7 +64,7 @@ public class ScoringMethod {
     @Override
     public String toString() {
         StringBuilder res = new StringBuilder();
-        res.append("This scoring method for");
+        res.append("This scoring method for ");
         boolean isFirst = true;
         for (Pair<Resource, Integer> p : combination) {
             if (isFirst) {
