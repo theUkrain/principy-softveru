@@ -181,8 +181,8 @@ public class Exchange extends SetCardToEffect {
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((Exchange) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((Exchange) this);
     }
 
 
