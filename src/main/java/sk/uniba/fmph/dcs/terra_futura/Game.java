@@ -1,16 +1,12 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.*;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
-import sk.uniba.fmph.dcs.terra_futura.process.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
@@ -20,7 +16,6 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
 public class Game implements TerraFuturaInterface {
     private Scanner sc;
     private InputStream in;
-    private OutputStream out;
     private GameState state;
 
     private List<Player> players;
@@ -29,9 +24,10 @@ public class Game implements TerraFuturaInterface {
     private Pile tier1;
     private Pile tier2;
 
-    public Game(InputStream in, OutputStream out){
+    private ProcessActionDeliver actionDeliver;
+
+    public Game(InputStream in){
         this.in = in;
-        this.out = out;
         this.sc = new Scanner(in);
         index = 0;
 
@@ -43,6 +39,8 @@ public class Game implements TerraFuturaInterface {
         if(n < 2 || n > 4) throw new IllegalArgumentException("Unable to create a game for " + n + " players");
 
         gameInitPile();
+
+        actionDeliver = new ProcessActionDeliver(in);
 
         List<ActivationPattern> patterns = gameInitActivationPatterns();
         Collections.shuffle(patterns);
@@ -89,12 +87,14 @@ public class Game implements TerraFuturaInterface {
     }
 
     public void gameStart(){
+        System.out.println("----------------< Terra Futura Game >----------------");
         gameMethod();
     }
 
     private void gameMethod(){
         boolean firstRun = true;
         while(true){
+            Player curPlayer = players.get(index);
 
             // Card discard
             System.out.println("-- Discard card");
@@ -106,17 +106,52 @@ public class Game implements TerraFuturaInterface {
             // Selecting card
             System.out.println("-- Select card");
             if(firstRun){
-                System.out.println("------------------------ Info ------------------------\nIndexes 1 to 4 correspond to cards you see\nChoosing index 0 you will select the next card in pile\n------------------------------------------------------");
+                System.out.println("------------------------ Info ------------------------\n" +
+                                    "Indexes 1 to 4 correspond to cards you see\n" +
+                                    "Choosing index 0 you will select the next card in pile\n" +
+                                    "------------------------------------------------------");
             }
             Card card = selectCard();
             System.out.println("Chosen card:\n" + card + "\n");
 
-            //  Puting card
+            // Puting card
             System.out.println("-- Putting card");
-            
+            if(firstRun){
+                System.out.println("------------------------ Info ------------------------\n" +
+                                    "Coordinates in game are given relative to centre\n" +
+                                    "Thus coordinates (-2, -2) and (2, 2) reference to\n" +
+                                    "Choosing index 0 you\n" +
+                                    "------------------------------------------------------");
+            }
+            System.out.println(curPlayer.getGrid());
+            Set<Card> activatedCards = putCard(curPlayer.getGrid(), card);
+
+            // Activating cards
+            System.out.println("-- Activating card");
+            if(firstRun){
+                System.out.println("------------------------- Info -------------------------\n" +
+                                    "You will need to determine order of execution by\n" +
+                                    "inputing idexes one by one (starting from 1). You don`t\n" +
+                                    "need to activate every card. To stop inputing type -1\n" +
+                                    "--------------------------------------------------------");
+            }
+            executeActivatedCards(activatedCards, curPlayer.getGrid());
+
 
             index = (index + 1) % players.size();
             firstRun = false;
+            if(finishConditionCheck()) break;
+        }
+
+        gameFinish();
+
+    }
+
+    private void gameFinish(){
+        System.out.println("---- Final activation ----");
+
+        for(Player player: players){
+            // System.out.pritntln();
         }
     }
 
@@ -125,7 +160,7 @@ public class Game implements TerraFuturaInterface {
         int pile = sc.nextInt();
 
         if(pile < 1 && pile > 2){
-            System.out.println("Isufficient pile number");
+            System.out.println("Insufficient pile number");
             System.out.println("Would you like to abbort? (y/n)");
             if(sc.next().equalsIgnoreCase("y")){
                 return;
@@ -154,7 +189,7 @@ public class Game implements TerraFuturaInterface {
         int pile = sc.nextInt();
 
         if(pile < 1 && pile > 2){
-            System.out.println("Isufficient pile number");
+            System.out.println("Insufficient pile number");
             return selectCard();
         }
 
@@ -168,7 +203,7 @@ public class Game implements TerraFuturaInterface {
 
         if(ind == 0){
             ind = 5;
-        }
+        }else --ind;
 
         Card card = null;
 
@@ -183,6 +218,101 @@ public class Game implements TerraFuturaInterface {
         }
 
         return card;
+    }
+
+    private Set<Card> putCard(Grid grid, Card card){
+        System.out.println(grid);
+        System.out.print("Select coordinate X: (-2 to 2)");
+        int x = sc.nextInt();
+        if(x < -2 || x > 2){
+            System.out.println("Insufficient X coordinate");
+            return putCard(grid, card);
+        }
+
+        System.out.print("Select coordinate Y: (-2 to 2)");
+        int y = sc.nextInt();
+        if(y < -2 || y > 2){
+            System.out.println("Insufficient Y coordinate");
+            return putCard(grid, card);
+        }
+
+        GridPosition coordinate = new GridPosition(x, y);
+
+        if(!grid.canPutCard(coordinate)){
+            System.out.println("Unable to put card there");
+            return putCard(grid, card);
+        }
+
+        Set<Card> activatedCards = grid.putCard(coordinate, card);
+        return activatedCards;
+    }
+
+    private void executeActivatedCards(Set<Card> ac, Grid g){
+        List<Card> activatedCards = new ArrayList<>(ac);
+        int i = 0;
+        for(Card c: activatedCards){
+            System.out.println(++i + ":\n" + c);
+        }
+        System.out.println("Select order of execution");
+        List<Card> pattern = new ArrayList<>();
+        while(true){
+            int ind = sc.nextInt();
+            if(ind == -1) break;
+            if(ind <= 0 || ind > activatedCards.size()) continue;
+
+            if(pattern.contains(activatedCards.get(ind))){
+                System.out.println("Already in execution order");
+                continue;
+            }
+
+            pattern.add(activatedCards.get(ind));
+        }
+
+        System.out.println("Starting execution");
+
+        for(Card c: pattern){
+            executeCard(c, g);
+        }
+    }
+
+    private void executeCard(Card card, Grid g){
+        System.out.println(card);
+        Effect effect = card.getUpper();
+        if(card.getLower() != null){
+            System.out.println("Which effect to execute? (1 or 2)");
+            int choice = sc.nextInt();
+            if(choice != 1 && choice != 2){
+                System.out.println("Invalid effect choice");
+                executeCard(card, g);
+                return;
+            }
+            switch(choice){
+                case 1:
+                    effect = card.getUpper();
+                    break;
+
+                case 2:
+                    effect = card.getLower();
+                    break;
+            }
+        }
+
+        try{
+            actionDeliver.process(effect, g);
+        }catch(Exception e){
+            System.out.println("Error: " + e.getMessage() + "\nTry again");
+            executeCard(card, g);
+            return;
+        }
+    }
+
+    private boolean finishConditionCheck(){
+        for(Player player: players){
+            if(!player.getGrid().isFull()){
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

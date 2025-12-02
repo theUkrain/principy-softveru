@@ -1,8 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
-
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;

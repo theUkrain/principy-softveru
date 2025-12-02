@@ -2,7 +2,6 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.*;
 
 import org.junit.jupiter.api.Assertions;

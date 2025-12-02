@@ -1,9 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.Map;
 
@@ -28,8 +26,8 @@ public class RawMaterialProducer extends SetCardToEffect {
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((RawMaterialProducer) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((RawMaterialProducer) this);
     }
 
     @Override

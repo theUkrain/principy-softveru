@@ -1,10 +1,8 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.List;
 
@@ -37,8 +35,8 @@ public class PollutionTransfer extends SetCardToEffect implements CopyableEffect
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((PollutionTransfer) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((PollutionTransfer) this);
     }
 
     @Override

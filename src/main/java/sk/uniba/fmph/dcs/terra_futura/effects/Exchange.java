@@ -3,10 +3,8 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -184,8 +182,8 @@ public class Exchange extends SetCardToEffect {
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((Exchange) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((Exchange) this);
     }
 
 

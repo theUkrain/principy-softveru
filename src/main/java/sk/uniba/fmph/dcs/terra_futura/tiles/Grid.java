@@ -16,6 +16,8 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
 
     private List<GridPosition> pattern;
 
+    private int numCards = 0;
+
     public Grid(){
         field = new Card[5][5];
         for(int i = 0; i<field.length; ++i){
@@ -24,6 +26,7 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
             }
         }
         field[2][2] = CardFactory.startCard();
+        ++numCards;
         topLeft = new GridPosition(0, 0);
         bottomRight = new GridPosition(0, 0);
     }
@@ -57,6 +60,7 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
     public Set<Card> putCard(GridPosition coordinate, Card card){
         if(!canPutCard(coordinate)) throw new IllegalArgumentException("Cannot put card");
         field[2 + coordinate.getY()][2 + coordinate.getX()] = card;
+        ++numCards;
         if(coordinate.getX() < topLeft.getX()){
             topLeft = new GridPosition(coordinate.getX(), topLeft.getY());
         }
@@ -117,6 +121,11 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
     @Override
     public void setActivationPattern(Collection<GridPosition> pattern) {
         this.pattern = new ArrayList<>(pattern);
+    }
+
+    @Override
+    public boolean isFull() {
+        return !(numCards<9);
     }
 
 }

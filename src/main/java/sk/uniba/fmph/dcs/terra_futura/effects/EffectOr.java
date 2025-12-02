@@ -1,8 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.Objects;
 import java.util.ArrayList;
@@ -41,8 +39,8 @@ public class EffectOr extends SetCardToEffect {
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((EffectOr) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((EffectOr) this);
     }
 
     public String toString(){

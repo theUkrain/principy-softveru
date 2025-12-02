@@ -8,15 +8,15 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
+import java.io.InputStream;
 import java.util.*;
 
 public class ProcessActionDeliver {
-    private Game game;
     private Scanner sc;
+    private Grid grid;
 
-    public ProcessActionDeliver(Game game) {
-        this.game = game;
-        this.sc = new Scanner(System.in);
+    public ProcessActionDeliver(InputStream in) {
+        this.sc = new Scanner(in);
     }
 
     private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requieredRes, Grid grid){
@@ -62,26 +62,27 @@ public class ProcessActionDeliver {
     }
 
     public void process(Effect effect, Grid grid) {
-        effect.apply(this, grid);
+        this.grid = grid;
+        effect.apply(this);
     }
 
-    public void process(RawMaterialProducer effect, Grid grid){
+    public void process(RawMaterialProducer effect){
         ProcessActionRawMaterialProducer processAction = new ProcessActionRawMaterialProducer(effect);
-        int generatedPollution = processAction.activateCard();
+        processAction.activateCard();
     }
 
-    public void process(TransformationFixed effect, Grid grid){
+    public void process(TransformationFixed effect){
         ProcessActionTransformationFixed processAction = new ProcessActionTransformationFixed(effect, requestResourceMap(effect.getRequiredInputs(), grid));
         int generatedPollution = processAction.activateCard();
 
         askPlacePollution(generatedPollution, processAction, grid);
     }
 
-    public void process(Exchange effect, Grid grid){
+    public void process(Exchange effect){
 
     }
 
-    public void process(EffectOr effect, Grid grid){
+    public void process(EffectOr effect){
         System.out.println("What effect would you like to use? (0-" + (effect.getEffectList().size() - 1) + ") ");
         int index = sc.nextInt();
 
@@ -91,11 +92,11 @@ public class ProcessActionDeliver {
         askPlacePollution(generatedPollution, processAction, grid);
     }
 
-    public void process(AssistanceEffect effect, Grid grid){
+    public void process(AssistanceEffect effect){
         // TODO pollution transfer effect fix
     }
 
-    public void process(PollutionTransfer effect, Grid grid) {
+    public void process(PollutionTransfer effect) {
         List<Pair<Card, Integer>> params = new ArrayList<>();
 
         for (int dx = -2; dx <= 2; dx++) {
