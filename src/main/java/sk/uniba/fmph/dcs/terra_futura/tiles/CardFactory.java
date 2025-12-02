@@ -241,4 +241,5 @@ public class CardFactory {
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
     }
+
 }
