@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
-import sk.uniba.fmph.dcs.terra_futura.process.ProcessAction;
-import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionEffectOr;
-import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionPollutionTransfer;
-import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionTransformationFixed;
+import sk.uniba.fmph.dcs.terra_futura.process.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
@@ -47,13 +47,14 @@ public class Game implements TerraFuturaInterface {
     }
 
     public void process(RawMaterialProducer effect){
-        effect.execute();
+        ProcessActionRawMaterialProducer processAction = new ProcessActionRawMaterialProducer(effect);
+        int generatedPollution = processAction.activateCard();
+
+        placePollution(generatedPollution, processAction);
     }
 
-    public void process(TransformationFixed effect){
-        // Map<Resource, List<Pair<Card, Integer>>> cards
+    private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requieredRes){
         Map<Resource, List<Pair<Card, Integer>>> taken = new HashMap<>();
-        Map<Resource, Integer> requieredRes = effect.getRequiredInputs();
 
         for(int dx = -2; dx<=2; ++dx){
             for(int dy = -2; dy<=2; ++dy){
@@ -91,7 +92,11 @@ public class Game implements TerraFuturaInterface {
             }
         }
 
-        ProcessActionTransformationFixed processAction = new ProcessActionTransformationFixed(effect, taken);
+        return taken;
+    }
+
+    public void process(TransformationFixed effect){
+        ProcessActionTransformationFixed processAction = new ProcessActionTransformationFixed(effect, requestResourceMap(effect.getRequiredInputs()));
         int generatedPollution = processAction.activateCard();
 
         placePollution(generatedPollution, processAction);
@@ -115,20 +120,20 @@ public class Game implements TerraFuturaInterface {
 
     }
 
-    public void process(PollutionTransfer effect){
+    public void process(PollutionTransfer effect) {
         List<Pair<Card, Integer>> params = new ArrayList<>();
 
-        for (int dx = -2; dx <= 2; dx++){
-            for (int dy = -2; dy <= 2; dy++){
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
                 GridPosition pos = new GridPosition(dx, dy);
                 Optional<Card> optional = curPlayer.getCard(pos);
 
-                if(optional.isEmpty()) continue;
+                if (optional.isEmpty()) continue;
 
                 System.out.println("Card: " + optional.get());
                 System.out.println("Transfer polution from this card? (y/n)");
 
-                if(!sc.next().equalsIgnoreCase("y")) continue;
+                if (!sc.next().equalsIgnoreCase("y")) continue;
 
                 System.out.println("Enter count of pollution to move: ");
 
@@ -138,11 +143,42 @@ public class Game implements TerraFuturaInterface {
                 params.add(Pair.of(card, count));
             }
         }
+    }
 
-        ProcessActionPollutionTransfer processAction = new ProcessActionPollutionTransfer(effect, params);
-        int generatedPollution = processAction.activateCard();
+    @Override
+    public void takeCard(int playerId, CardSource source, GridPosition destination) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'takeCard'");
+    }
 
-        placePollution(generatedPollution, processAction);
+    @Override
+    public boolean discardLastCardFromDeck(int playerId, Deck deck) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'discardLastCardFromDeck'");
+    }
+
+    @Override
+    public void selectReward(int playerId, Resource resource) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectReward'");
+    }
+
+    @Override
+    public boolean turnFinished(int playerId) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'turnFinished'");
+    }
+
+    @Override
+    public boolean selectActivationPattern(int playerId, int card) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectActivationPattern'");
+    }
+
+    @Override
+    public boolean selectScoring(int playerId, int card) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'selectScoring'");
     }
 
     private void placePollution(int generatedPollution, ProcessAction processAction) {
