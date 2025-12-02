@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProcessActionTransformationFixed extends ProcessAction {
-    private Map<Resource, List<Pair<Card, Integer>>> cards;
+    private final Map<Resource, List<Pair<Card, Integer>>> cards;
 
     public ProcessActionTransformationFixed(Effect effect, Map<Resource, List<Pair<Card, Integer>>> cards) {
         super(effect);

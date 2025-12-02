@@ -13,6 +13,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessAction;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionEffectOr;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionPollutionTransfer;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionTransformationFixed;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
@@ -86,7 +90,11 @@ public class Game implements TerraFuturaInterface {
                 }
             }
         }
-        effect.execute(taken);
+
+        ProcessActionTransformationFixed processAction = new ProcessActionTransformationFixed(effect, taken);
+        int generatedPollution = processAction.activateCard();
+
+        placePollution(generatedPollution, processAction);
     }
 
     public void process(Exchange effect){
@@ -94,7 +102,13 @@ public class Game implements TerraFuturaInterface {
     }
 
     public void process(EffectOr effect){
+        System.out.println("What effect would you like to use? (0-" + (effect.getEffectList().size() - 1) + ") ");
+        int index = sc.nextInt();
 
+        ProcessActionEffectOr processAction = new ProcessActionEffectOr(effect, index, this);
+        int generatedPollution = processAction.activateCard();
+
+        placePollution(generatedPollution, processAction);
     }
 
     public void process(AssistanceEffect effect){
@@ -102,6 +116,70 @@ public class Game implements TerraFuturaInterface {
     }
 
     public void process(PollutionTransfer effect){
+        List<Pair<Card, Integer>> params = new ArrayList<>();
 
+        for (int dx = -2; dx <= 2; dx++){
+            for (int dy = -2; dy <= 2; dy++){
+                GridPosition pos = new GridPosition(dx, dy);
+                Optional<Card> optional = curPlayer.getCard(pos);
+
+                if(optional.isEmpty()) continue;
+
+                System.out.println("Card: " + optional.get());
+                System.out.println("Transfer polution from this card? (y/n)");
+
+                if(!sc.next().equalsIgnoreCase("y")) continue;
+
+                System.out.println("Enter count of pollution to move: ");
+
+                int count = sc.nextInt();
+                Card card = optional.get();
+
+                params.add(Pair.of(card, count));
+            }
+        }
+
+        ProcessActionPollutionTransfer processAction = new ProcessActionPollutionTransfer(effect, params);
+        int generatedPollution = processAction.activateCard();
+
+        placePollution(generatedPollution, processAction);
+    }
+
+    private void placePollution(int generatedPollution, ProcessAction processAction) {
+        if (generatedPollution <= 0) return;
+
+        System.out.println("Generated pollution: " + generatedPollution);
+        System.out.println("You have to put your pollution");
+
+        List<Pair<Card, Integer>> params = new ArrayList<>();
+
+        for (int dx = -2; dx <= 2; dx++){
+            for (int dy = -2; dy <= 2; dy++){
+                GridPosition pos = new GridPosition(dx, dy);
+                Optional<Card> optional = curPlayer.getCard(pos);
+
+                if(optional.isEmpty()) continue;
+
+                System.out.println("Card: " + optional.get());
+                System.out.println("Transfer polution to this card? (y/n)");
+
+                if(!sc.next().equalsIgnoreCase("y")) continue;
+
+                System.out.println("Enter count of pollution to move: ");
+
+                int count = sc.nextInt();
+                Card card = optional.get();
+
+                generatedPollution -= count;
+
+                if (generatedPollution < 0) {
+                    throw new IllegalArgumentException("You already put full pollution");
+                }
+
+                params.add(Pair.of(card, count));
+            }
+        }
+
+        processAction.placePollution(params);
     }
 }

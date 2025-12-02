@@ -9,7 +9,7 @@ import sk.uniba.fmph.dcs.terra_futura.effects.SetCardToEffect;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends ProcessAction {
-    private T effectAnotherPlayer;
+    private final T effectAnotherPlayer;
     private Game game;
 
     public ProcessActionAssistance(Effect effect, T effectAnotherPlayer, Game game) {
@@ -30,7 +30,7 @@ public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends 
         SetCardToEffect newEffect = (SetCardToEffect) result.copy();
         newEffect.setCard(card);
 
-        game.process((Effect) newEffect);
+        game.process(newEffect);
 
         return 0;
     }
