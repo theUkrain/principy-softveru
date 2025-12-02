@@ -4,21 +4,27 @@ import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Exchange extends SetCardToEffect {
 
     private Set<Set<Pair<Resource, Integer>>> inputs;
 
+    private Set<Set<Pair<Resource, Integer>>> inputsContainingUniversal;
+
     private Set<Set<Pair<Resource, Integer>>> outputs;
 
-    private int generatedPollution;
-
     public Exchange(Set<Set<Pair<Resource, Integer>>> inputs, Set<Set<Pair<Resource, Integer>>> outputs) {
-        this.inputs = inputs;
-        this.outputs = outputs;
+        this.inputs = new HashSet<>(inputs);
+
+        for(Set<Pair<Resource, Integer>> input : inputs) {
+            for(Pair<Resource, Integer> resourceQuantity : input) {
+                if(resourceQuantity.getKey() == Resource.UNIVERSAL) inputsContainingUniversal.add(input);
+                else this.inputs.add(input);
+            }
+        }
+
+        this.outputs = new HashSet<>(outputs);
     }
 
     /**
@@ -26,20 +32,29 @@ public class Exchange extends SetCardToEffect {
      * @param output <Resource, Amount> expected to get.
      */
 
-    public int execute(Map<Pair<Resource, Integer>, Card> input, Set<Pair<Resource, Integer>> output) {
+    public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
 
-        if (outputs.contains(output)) {
+        if (!outputs.contains(output)) {
+
+            for (Set<Pair<Resource, Integer>> possibleInput : inputs) {
+                for (Pair<Resource, Integer> resourceRequired : possibleInput) {
+                    if () {
+
+                    }
+                }
+            }
+
             throw new UnsupportedOperationException("Effect with possible outputs: \n" + outputs.toString() +
                     "\n doesn't support output: " + output.toString());
         }
 
-        if (inputs.contains(inputs)) {
+        if (!inputs.contains(input)) {
             throw new UnsupportedOperationException("Effect with possible inputs: \n" + inputs.toString() +
                     "\n doesn't support input: " + input.toString());
         }
 
 
-        for (Pair<Resource, Integer> resourcesRequest : input.keySet()) {
+        for (List<Pair<Integer, Card>> resourcesRequest : input.keySet()) {
 
             Map<Resource, Integer> requestDetails = Map.of(resourcesRequest.getKey(), resourcesRequest.getValue());
 
@@ -59,8 +74,14 @@ public class Exchange extends SetCardToEffect {
 
         Map<Resource, Integer> resourcesToPut = new HashMap<>();
 
+        int generatedPollution = 0;
+
         for (Pair<Resource, Integer> resource : output) {
+
+            if (resource.getKey() == Resource.POLLUTION) generatedPollution = resource.getValue();
+
             resourcesToPut.put(resource.getKey(), resource.getValue());
+
         }
 
         this.card.putResources(resourcesToPut);
