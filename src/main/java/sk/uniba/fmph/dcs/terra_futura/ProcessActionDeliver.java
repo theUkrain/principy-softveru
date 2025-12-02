@@ -76,14 +76,68 @@ public class ProcessActionDeliver {
         ProcessActionTransformationFixed processAction = new ProcessActionTransformationFixed(effect, requestResourceMap(effect.getRequiredInputs(), grid));
         int generatedPollution = processAction.activateCard();
 
-        askPlacePollution(generatedPollution, processAction, grid);
+        askPlacePollution(generatedPollution, grid);
     }
 
     public void process(Exchange effect){
-        System.out.println(effect.toString());
-        System.out.println("Input one of available inputs:");
-        Map<Resource, List<Pair<Integer, Card>>> input;
-        
+        System.out.println("Enter one of available inputs and it's distribution among your cards:\n");
+
+        int i = 0;
+
+        for (Set<Pair<Resource, Integer>> input : effect.getInputs()) {
+            System.out.println("Input " + ++i + ":");
+            System.out.println(input);
+        }
+
+        Map<Resource, List<Pair<Integer, Card>>> input = new HashMap<>();
+
+        for (int dx = -2; dx <= 2; ++dx) {
+            for (int dy = -2; dy <= 2; ++dy) {
+                GridPosition pos = new GridPosition(dx, dy);
+                Optional<Card> optional = grid.getCard(pos);
+
+                if (optional.isEmpty()) continue;
+
+                Card card = optional.get();
+
+                System.out.println("Card: " + card);
+                System.out.println("Use this cards resources? (y/n)");
+
+                if (!sc.next().equalsIgnoreCase("y")) continue;
+
+                Map<Resource, Integer> cardRes = card.getCurResources();
+
+                for (Resource r : cardRes.keySet()) {
+
+                    System.out.println("How much of " + r + "take?\n");
+
+                    int amount = sc.nextInt();
+
+                    if (!input.keySet().contains(r)) input.put(r, List.of(Pair.of(amount, card)));
+                    else input.get(r).add(Pair.of(amount, card));
+                }
+            }
+        }
+
+        Set<Pair<Resource, Integer>> res = new HashSet<>(); //OUTPUT!!!!
+
+        System.out.println("Enter one of available outputs:\n");
+
+         i = 0;
+
+         for(Set<Pair<Resource, Integer>> output : effect.getOutputs()) {
+             System.out.println("Output " + ++i +":\n" );
+             System.out.println(output);
+         }
+
+         for(Resource r : Resource.values()) {
+             System.out.println("How much " + r + "to put in output? \n");
+             res.add(Pair.of(r, sc.nextInt()));
+         }
+
+         ProcessActionExchange processAction = new ProcessActionExchange(effect, input, res);
+         int generatedPollution = processAction.activateCard();
+         askPlacePollution(generatedPollution, grid);
     }
 
     public void process(EffectOr effect){
@@ -93,7 +147,7 @@ public class ProcessActionDeliver {
         ProcessActionEffectOr processAction = new ProcessActionEffectOr(effect, index, this, grid);
         int generatedPollution = processAction.activateCard();
 
-        askPlacePollution(generatedPollution, processAction, grid);
+        askPlacePollution(generatedPollution, grid);
 
     }
 
@@ -129,7 +183,7 @@ public class ProcessActionDeliver {
         processAction.activateCard();
     }
 
-    private void askPlacePollution(int generatedPollution, ProcessAction processAction, Grid grid) {
+    private void askPlacePollution(int generatedPollution, Grid grid) {
         if (generatedPollution <= 0) return;
 
         System.out.println("Generated pollution: " + generatedPollution);

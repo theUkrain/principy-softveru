@@ -12,13 +12,11 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProcessActionExchange extends ProcessAction{
-    private Grid grid;
     private final Map<Resource, List<Pair<Integer, Card>>> input;
     private final Set<Pair<Resource, Integer>> output;
 
-    public ProcessActionExchange(Effect effect, Grid grid, Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
+    public ProcessActionExchange(Effect effect, Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
         super(effect);
-        this.grid = grid;
         this.input = input;
         this.output = output;
     }
