@@ -70,6 +70,7 @@ public class ProcessActionDeliver {
 
     public void process(RawMaterialProducer effect){
         ProcessActionRawMaterialProducer processAction = new ProcessActionRawMaterialProducer(effect);
+        processAction.activateCard();
     }
 
     public void process(TransformationFixed effect){
