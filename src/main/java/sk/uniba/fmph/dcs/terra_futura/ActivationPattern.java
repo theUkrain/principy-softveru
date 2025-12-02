@@ -43,7 +43,7 @@ public final class ActivationPattern {
     }
 
 
-    public String state() {
+    public String toString() {
         JSONArray patternList = new JSONArray();
         for (GridPosition position : pattern) {
             JSONObject pair = new JSONObject();
