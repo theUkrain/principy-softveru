@@ -9,14 +9,23 @@ import java.util.List;
 
 public class EffectOr extends SetCardToEffect {
 
-    private List<Effect> effectList = new ArrayList<>();
+    private List<SetCardToEffect> effectList = new ArrayList<>();
 
-    public EffectOr(Effect e1, Effect e2) {
+    public EffectOr(SetCardToEffect e1, SetCardToEffect e2) {
         effectList.add(e1);
         effectList.add(e2);
+
+        e1.setCard(card);
+        e2.setCard(card);
     }
 
-    public EffectOr(List<Effect> effectList) {
+
+    public EffectOr(List<SetCardToEffect> effectList) {
+        for(SetCardToEffect effect : effectList){
+            if(effect.getCard() != card){
+                throw new IllegalArgumentException("Effect cannot be with not with EffectOr card");
+            }
+        }
         this.effectList = effectList;
     }
 
@@ -40,7 +49,7 @@ public class EffectOr extends SetCardToEffect {
 
     @Override
     public void apply(Game game) {
-        game.process(this);
+        game.process((EffectOr) this);
     }
 
     public String toString(){
