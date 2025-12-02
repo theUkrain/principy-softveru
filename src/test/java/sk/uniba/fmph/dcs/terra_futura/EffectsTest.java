@@ -1,7 +1,8 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -190,5 +191,98 @@ public class EffectsTest {
         card3.putPollution(2);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> ((PollutionTransfer)toTransfer.getUpper()).execute(List.of(Pair.of(card3, 2))));
+    }
+
+    @Test
+    @DisplayName("Exchange test")
+    public void testExchange() {
+
+        Card card = CardFactory.card(2, null, null, new CardSource(0, Deck.I));
+        Card card1 = CardFactory.card(2, null, null, new CardSource(1, Deck.II));
+        Card card2 = CardFactory.card(2, null, null, new CardSource(2, Deck.II));
+
+        card1.putResources(Map.of(Resource.RED, 2));
+        card1.putResources(Map.of(Resource.YELLOW, 1));
+
+
+        card2.putResources(Map.of(Resource.RED, 1));
+        card2.putResources(Map.of(Resource.GREEN, 2));
+
+        Set<Set<Pair<Resource, Integer>>> inputs = new HashSet<>();
+        inputs.add((Set.of(new ImmutablePair<>(Resource.RED, 2),
+                new ImmutablePair<Resource, Integer>(Resource.YELLOW, 1) ) ));
+
+        inputs.add((Set.of(new ImmutablePair<>(Resource.RED, 1),
+                new ImmutablePair<Resource, Integer>(Resource.GREEN, 2) ) ));
+
+
+        Set<Set<Pair<Resource, Integer>>> outputs = new HashSet<>();
+        outputs.add((Set.of(new ImmutablePair<>(Resource.CAR, 2),
+                new ImmutablePair<Resource, Integer>(Resource.POLLUTION, 1) ) ));
+
+        outputs.add((Set.of(new ImmutablePair<>(Resource.POLLUTION, 2),
+                new ImmutablePair<Resource, Integer>(Resource.UNIVERSAL, 1) ) ));
+
+
+        Exchange exchange = new Exchange(inputs, outputs);
+
+        Map<Resource, List<Pair<Integer, Card>>> input1 = Map.ofEntries(Map.entry(Resource.RED, List.of(new ImmutablePair<>(2, card1))), Map.entry(Resource.YELLOW, List.of( new ImmutablePair<>(1, card1))));
+
+        Map<Resource, List<Pair<Integer, Card>>> input2 = Map.ofEntries(Map.entry(Resource.RED, List.of(new ImmutablePair<>(1, card2))), Map.entry(Resource.GREEN, List.of( new ImmutablePair<>(2, card2))));
+
+        Map<Resource, List<Pair<Integer, Card>>> input3 = Map.ofEntries(Map.entry(Resource.RED, List.of(new ImmutablePair<>(1, card2))), Map.entry(Resource.YELLOW, List.of( new ImmutablePair<>(2, card2))));
+
+        Set<Pair<Resource, Integer>> output1 = Set.of( Pair.of(Resource.CAR, 2), Pair.of(Resource.POLLUTION, 1) );
+
+        Set<Pair<Resource, Integer>> output2 = Set.of( Pair.of(Resource.POLLUTION, 2), Pair.of(Resource.CAR, 1) );
+
+        Set<Pair<Resource, Integer>> output3 = Set.of( Pair.of(Resource.POLLUTION, 2), Pair.of(Resource.RED, 1) );
+
+
+
+        exchange.setCard(card);
+
+        exchange.execute(input1, output1);
+
+        Assertions.assertTrue(card.canGetResources(Map.ofEntries( Map.entry(Resource.CAR, 2))));
+
+        card.getResources((Map.ofEntries( Map.entry(Resource.CAR, 2))));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () ->{exchange.execute(input2, output2);});
+
+        Assertions.assertTrue(card.getCurResources().equals(Map.of()));
+
+        Assertions.assertTrue(exchange.execute(input2 , output3) == 2);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> { exchange.execute(input3, output2);});
+
+
+
+        Map<Resource, List<Pair<Integer, Card>>> inputWrong = Map.ofEntries(Map.entry(Resource.GEAR, List.of(new ImmutablePair<>(10000, card2))), Map.entry(Resource.YELLOW, List.of( new ImmutablePair<>(2, card2))));
+
+        Set<Pair<Resource, Integer>> outputWrong = Set.of( Pair.of(Resource.CAR, 2), Pair.of(Resource.POLLUTION, 1000) );
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> exchange.execute(inputWrong, output2));
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> exchange.execute(input2, outputWrong));
+
+
+
+        Map<Resource, List<Pair<Integer, Card>>> input4 = Map.ofEntries(Map.entry(Resource.RED, List.of(new ImmutablePair<>(1, card1))), Map.entry(Resource.GREEN, List.of( new ImmutablePair<>(2, card2))));
+
+        Set<Pair<Resource, Integer>> output4 = Set.of( Pair.of(Resource.CAR, 2), Pair.of(Resource.POLLUTION, 1) );
+
+        card1.putResources(Map.of(Resource.RED, 1));
+        card2.putResources(Map.of(Resource.GREEN, 2));
+
+        exchange.execute(input4, output4);
+
+        Assertions.assertTrue(card1.getCurResources().equals(Map.of()));
+
+    }
+
+    @After
+    public void clear(){
+        CardFactory.reset();
     }
 }

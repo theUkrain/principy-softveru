@@ -1,18 +1,21 @@
 package sk.uniba.fmph.dcs.terra_futura.process;
 
-import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.effects.EffectOr;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class ProcessActionEffectOr extends ProcessAction {
     private final int whatEffectToTrigger;
-    private final Game game;
+    private final ProcessActionDeliver deliver;
+    private Grid grid;
 
     // TODO Game reference for casting inner effect
-    public ProcessActionEffectOr(Effect effect, int whatEffectToTrigger, Game game) {
+    public ProcessActionEffectOr(Effect effect, int whatEffectToTrigger, ProcessActionDeliver deliver, Grid grid) {
         super(effect);
         this.whatEffectToTrigger = whatEffectToTrigger;
-        this.game = game;
+        this.deliver = deliver;
+        this.grid = grid;
     }
 
     @Override
@@ -20,7 +23,7 @@ public class ProcessActionEffectOr extends ProcessAction {
         EffectOr effectCasted = (EffectOr) effect;
         Effect innerEffect = effectCasted.execute(whatEffectToTrigger);
 
-        game.process(innerEffect);
+        deliver.process(innerEffect, grid);
 
         return 0;
     }
