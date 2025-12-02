@@ -81,8 +81,9 @@ public class ProcessActionDeliver {
 
     public void process(Exchange effect){
         System.out.println(effect.toString());
-        System.out.println("Input one of avaible inputs:");
+        System.out.println("Input one of available inputs:");
         Map<Resource, List<Pair<Integer, Card>>> input;
+        
     }
 
     public void process(EffectOr effect){

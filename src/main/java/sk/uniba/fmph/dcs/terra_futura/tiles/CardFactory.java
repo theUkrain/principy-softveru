@@ -78,10 +78,24 @@ public class CardFactory {
 
             if (upper != null) {
                 this.upper.setCard(this);
+
+                if(upper instanceof EffectOr) {
+                    ((EffectOr) upper).getEffectList().forEach(e -> {
+                        if( e!= null && e instanceof SetCardToEffect) ((SetCardToEffect) e).setCard(this);
+                    });
+                }
+
             }
 
             if (lower != null) {
                 this.lower.setCard(this);
+
+                if(lower instanceof EffectOr) {
+                    ((EffectOr) lower).getEffectList().forEach(e -> {
+                        if( e != null && e instanceof SetCardToEffect) ((SetCardToEffect) e).setCard(this);
+                    });
+                }
+
             }
 
             this.pollutionSpaces = pollutionSpaces;
