@@ -51,7 +51,10 @@ public class CardFactory {
         return card;
     }
 
-
+    public static void reset() {
+        counterI = 0;
+        counterII = 0;
+    }
 
     private static class ConcreteCard implements Card {
 
