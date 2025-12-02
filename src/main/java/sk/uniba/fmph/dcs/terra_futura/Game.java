@@ -29,7 +29,7 @@ public class Game implements TerraFuturaInterface {
     private List<Grid> players;
     private int ind;
     private Grid curPlayer;
-
+    public Game() {}
     public Game(InputStream in, OutputStream out){
         this.in = in;
         this.out = out;
@@ -37,7 +37,7 @@ public class Game implements TerraFuturaInterface {
         this.sc = new Scanner(in);
 
         players = new ArrayList<>();
-        int ind=0;
+        int ind = 0;
 
         curPlayer = players.get(ind);
     }
@@ -56,8 +56,8 @@ public class Game implements TerraFuturaInterface {
     private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requieredRes){
         Map<Resource, List<Pair<Card, Integer>>> taken = new HashMap<>();
 
-        for(int dx = -2; dx<=2; ++dx){
-            for(int dy = -2; dy<=2; ++dy){
+        for(int dx = -2; dx <= 2; ++dx){
+            for(int dy = -2; dy <= 2; ++dy){
                 GridPosition pos = new GridPosition(dx, dy);
                 Optional<Card> optional = curPlayer.getCard(pos);
 
@@ -117,7 +117,7 @@ public class Game implements TerraFuturaInterface {
     }
 
     public void process(AssistanceEffect effect){
-
+        // TODO
     }
 
     public void process(PollutionTransfer effect) {
