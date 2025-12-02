@@ -1,12 +1,14 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Exchange extends SetCardToEffect {
 
@@ -18,18 +20,20 @@ public class Exchange extends SetCardToEffect {
 
     public Exchange(Set<Set<Pair<Resource, Integer>>> inputs, Set<Set<Pair<Resource, Integer>>> outputs) {
 
+        simpleInputs = new HashSet<>();
+        simpleOutputs = new HashSet<>();
+
+        complexInputs = new HashSet<>();
+        complexOutputs = new HashSet<>();
+
         for(Set<Pair<Resource, Integer>> input : inputs) {
-            for(Pair<Resource, Integer> resourceQuantity : input) {
-                if(resourceQuantity.getKey() == Resource.UNIVERSAL) complexInputs.add(input);
-                else this.simpleInputs.add(input);
-            }
+            if(resourceAmountInInput(Resource.UNIVERSAL, input) > 0) complexInputs.add(input);
+            else simpleInputs.add(input);
         }
 
         for(Set<Pair<Resource, Integer>> output : outputs) {
-            for(Pair<Resource, Integer> resourceQuantity : output) {
-                if(resourceQuantity.getKey() == Resource.UNIVERSAL) complexOutputs.add(output);
-                else this.simpleOutputs.add(output);
-            }
+            if(resourceAmountInInput(Resource.UNIVERSAL, output) > 0) complexOutputs.add(output);
+            else simpleOutputs.add(output);
         }
 
     }
@@ -41,37 +45,35 @@ public class Exchange extends SetCardToEffect {
 
     public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
 
-        if(!((resourceAmountInInput(Resource.UNIVERSAL, mergedInput(input)) > 0 &&
-        complexEntryCanBeCowered(input, complexInputs)) || entryCanBeCovered(input, simpleInputs)))
+        for(Resource r : input.keySet()) if(r == Resource.UNIVERSAL) throw new IllegalArgumentException("Input/output of exchange effect should be specified directly without universal materials.");
+
+        if(!(entryCanBeCovered(input, simpleInputs) || complexEntryCanBeCowered(input, complexInputs)))
             throw new IllegalArgumentException("Effect: \n" + this.toString() +
                     "\n doesn't support input: " + input.toString());
 
-        if(!((resourceAmountInInput(Resource.UNIVERSAL, output) > 0 &&
-                complexEntryCanBeCowered(output, complexOutputs)) || entryCanBeCovered(output, complexOutputs)))
+        if(!(entryCanBeCovered(output, simpleOutputs) || complexEntryCanBeCowered(output, complexOutputs)))
             throw new IllegalArgumentException("Effect: " + this.toString() +
                     "\n doesn't support output: " + output.toString());
 
-        for (Resource r : input.keySet()) {
+        input.forEach( (r,d) -> {
 
-            for(Pair<Integer, Card> resourcesRequested : input.get(r)) {
-                if(!resourcesRequested.getValue().canGetResources(Map.of(r, resourcesRequested.getKey())))
-                    throw new IllegalArgumentException("card: \n" + resourcesRequested.getValue() + "can't provide "
-                            + resourcesRequested.getKey() + " of " + r + "\n" );
-            }
+            d.forEach( (p) -> {
+                if(!(p.getValue().canGetResources(Map.of(r, p.getKey())))) throw new IllegalArgumentException("card: \n" + p.getValue() + "can't provide " + p.getKey() + " of " + r + "\n");
+            });
 
-        }
+        });
 
-        for (Resource r : input.keySet()) {
-
-            for(Pair<Integer, Card> resourcesRequested :input.get(r)) {
-                resourcesRequested.getValue().getResources(Map.of(r, resourcesRequested.getKey()));
-            }
-
-        }
+        input.forEach((r, d) -> {
+            d.forEach(p -> {
+                p.getValue().getResources(Map.of(r, p.getKey()));
+            });
+        });
 
         Map<Resource, Integer> resourcesToPut = new HashMap<>();
 
         for (Pair<Resource, Integer> resource : output) {
+
+            if(resource.getKey() == Resource.POLLUTION) continue;
 
             resourcesToPut.put(resource.getKey(), resource.getValue());
 
@@ -101,35 +103,53 @@ public class Exchange extends SetCardToEffect {
     }
 
     private boolean complexEntryCanBeCowered(Set<Pair<Resource, Integer>> mergedInput, Set<Set<Pair<Resource, Integer>>> coverage) {
-        for(Set<Pair<Resource, Integer>> complexInput : coverage) {
 
-            Set<Pair<Resource, Integer>> unCoveredByNonComplex = new HashSet<>();
+        for(Set<Pair<Resource, Integer>> complexEntry : coverage) {
 
-            for(Pair<Resource, Integer> resourceIntegerPair : complexInput ) {
-                unCoveredByNonComplex.add(new ImmutablePair<>(resourceIntegerPair.getKey(),
-                        resourceAmountInInput(resourceIntegerPair.getKey(),mergedInput) -
-                                resourceAmountInInput(resourceIntegerPair.getKey(),complexInput)));
+            Map<Resource, Integer> entryToMap = entryToMap(complexEntry);
+
+            Map<Resource, Integer> unCoveredByNonComplex = new HashMap<>(entryToMap(mergedInput));
+
+            unCoveredByNonComplex.replaceAll( (r, a) -> a - entryToMap.getOrDefault(r, 0));
+
+             AtomicReference<AtomicBoolean> hasNegativeEntry = new AtomicReference<>(new AtomicBoolean(false));
+
+            unCoveredByNonComplex.values().forEach( a ->{
+                if(a < 0) hasNegativeEntry.set(new AtomicBoolean(true));
+            });
+
+            if(hasNegativeEntry.get().get()) continue;
+
+            unCoveredByNonComplex.entrySet().removeIf((e) -> e.getValue() == 0);
+
+            Set<Resource> r = unCoveredByNonComplex.keySet();
+
+            if(r.contains(Resource.GEAR) || r.contains(Resource.CAR) ||
+            r.contains(Resource.BULB) || r.contains(Resource.POLLUTION) ||
+                    r.contains(Resource.MONEY)) continue;
+
+            int uncoveredResourcesLLeft = 0;
+
+            for(int amount : unCoveredByNonComplex.values()) {
+                uncoveredResourcesLLeft += amount;
             }
 
-
-            boolean hasNonPrimitiveResources = false;
-
-            for(Pair<Resource, Integer> resourceIntegerPair : unCoveredByNonComplex) {
-                if(resourceIntegerPair.getKey() == Resource.GEAR ||
-                        resourceIntegerPair.getKey() == Resource.CAR ||
-                        resourceIntegerPair.getKey() == Resource.BULB ||
-                        resourceIntegerPair.getKey() == Resource.POLLUTION) hasNonPrimitiveResources = true;
-
-                if(hasNonPrimitiveResources) break;
-
-            }
-
-            if(hasNonPrimitiveResources) continue;
-
-            if (unCoveredByNonComplex.size()  <= resourceAmountInInput(Resource.UNIVERSAL, complexInput)) return true;
-
+            if (uncoveredResourcesLLeft == resourceAmountInInput(Resource.UNIVERSAL, complexEntry)) return true;
         }
+
         return false;
+    }
+
+    private Map<Resource, Integer> entryToMap(Set<Pair<Resource, Integer>> entry) {
+
+        Map<Resource, Integer> res = new HashMap<>();
+
+        for(Pair<Resource, Integer> resourceIntegerPair : entry) {
+            res.put(resourceIntegerPair.getKey(), resourceIntegerPair.getValue());
+        }
+
+        return res;
+
     }
 
     private int resourceAmountInInput(Resource resource, Set<Pair<Resource, Integer>> input) {
@@ -158,6 +178,11 @@ public class Exchange extends SetCardToEffect {
     @Override
     public boolean canProvideAssistance() {
         return true;
+    }
+
+    @Override
+    public void apply(Game game) {
+        game.process(this);
     }
 
 
