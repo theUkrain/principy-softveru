@@ -1,6 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Game;
 
 import java.util.Map;
 
@@ -22,6 +23,11 @@ public class RawMaterialProducer extends SetCardToEffect {
     @Override
     public boolean canProvideAssistance() {
         return false;
+    }
+
+    @Override
+    public void apply(Game game) {
+        game.process(this);
     }
 
     @Override

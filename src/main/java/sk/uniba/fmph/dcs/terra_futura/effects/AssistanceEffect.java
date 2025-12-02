@@ -1,6 +1,8 @@
 
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
+import sk.uniba.fmph.dcs.terra_futura.Game;
+
 public class AssistanceEffect extends SetCardToEffect {
 
     public <T extends Effect & CopyableEffect> T execute(T effectOfAnoutherPlayer) {
@@ -17,15 +19,20 @@ public class AssistanceEffect extends SetCardToEffect {
     }
 
     @Override
+    public void apply(Game game) {
+        game.process(this);
+    }
+
+    @Override
     public String toString() {
         return "This is assistance effect";
     }
 
     @Override
     public boolean equals(Object obj){
-        if(obj instanceof AssistanceEffect) {
+        if(this == obj){
             return true;
         }
-        return false;
+        return obj instanceof AssistanceEffect;
     }
 }

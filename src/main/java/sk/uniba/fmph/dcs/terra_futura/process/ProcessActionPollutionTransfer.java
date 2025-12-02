@@ -8,7 +8,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import java.util.List;
 
 public class ProcessActionPollutionTransfer extends ProcessAction {
-    private List<Pair<Card, Integer>> cards;
+    private final List<Pair<Card, Integer>> cards;
 
     public ProcessActionPollutionTransfer(Effect effect, List<Pair<Card, Integer>> cards) {
         super(effect);
