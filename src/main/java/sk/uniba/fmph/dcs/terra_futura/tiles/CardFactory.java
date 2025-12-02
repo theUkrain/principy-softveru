@@ -78,10 +78,24 @@ public class CardFactory {
 
             if (upper != null) {
                 this.upper.setCard(this);
+
+                if(upper instanceof EffectOr) {
+                    ((EffectOr) upper).getEffectList().forEach(e -> {
+                        if( e!= null && e instanceof SetCardToEffect) ((SetCardToEffect) e).setCard(this);
+                    });
+                }
+
             }
 
             if (lower != null) {
                 this.lower.setCard(this);
+
+                if(lower instanceof EffectOr) {
+                    ((EffectOr) lower).getEffectList().forEach(e -> {
+                        if( e != null && e instanceof SetCardToEffect) ((SetCardToEffect) e).setCard(this);
+                    });
+                }
+
             }
 
             this.pollutionSpaces = pollutionSpaces;
@@ -92,7 +106,6 @@ public class CardFactory {
         }
 
         public Map<Resource, Integer> getCurResources() {
-            System.out.println(curPollution);
             return Collections.unmodifiableMap(this.resources);
         }
 
@@ -227,10 +240,6 @@ public class CardFactory {
                     "given index : " + cardSource.getIndex() + '\n' +
                     "source deck: " + cardSource.getSourceDeck() + '\n';
         }
-
-        @Override
-        public Map<Resource, Integer> takeResources() {
-            return resources;
-        }
     }
+
 }

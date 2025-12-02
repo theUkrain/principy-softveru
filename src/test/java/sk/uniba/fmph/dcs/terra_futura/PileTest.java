@@ -80,11 +80,6 @@ public class PileTest {
 
         @Override
         public void putPollution(int amount) {}
-
-        @Override
-        public Map<Resource, Integer> takeResources() {
-            return null;
-        }
     }
 
     private List<Card> generateInput(int n){
@@ -112,7 +107,7 @@ public class PileTest {
         for(int i=0; i<20; ++i){
             pile2.getCard(i);
         }
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> pile2.getCard(0));
+        Assertions.assertThrows(IllegalArgumentException.class, () -> pile2.getCard(0));
 
         input  = generateInput(3);
         Pile pile3 = new Pile(input);

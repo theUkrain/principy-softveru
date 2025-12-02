@@ -56,11 +56,9 @@ public class Exchange extends SetCardToEffect {
                     "\n doesn't support output: " + output.toString());
 
         input.forEach( (r,d) -> {
-
             d.forEach( (p) -> {
                 if(!(p.getValue().canGetResources(Map.of(r, p.getKey())))) throw new IllegalArgumentException("card: \n" + p.getValue() + "can't provide " + p.getKey() + " of " + r + "\n");
             });
-
         });
 
         input.forEach((r, d) -> {
@@ -186,6 +184,19 @@ public class Exchange extends SetCardToEffect {
         deliver.process((Exchange) this);
     }
 
+    public Set<Set<Pair<Resource, Integer>>> getInputs() {
+        Set<Set<Pair<Resource, Integer>>> inputs = new HashSet<>();
+        inputs.addAll(simpleInputs);
+        inputs.addAll(complexInputs);
+        return inputs;
+    }
+
+    public Set<Set<Pair<Resource, Integer>>> getOutputs() {
+        Set<Set<Pair<Resource, Integer>>> outputs = new HashSet<>();
+        outputs.addAll(simpleOutputs);
+        outputs.addAll(complexOutputs);
+        return outputs;
+    }
 
     @Override
     public boolean equals(Object o) {

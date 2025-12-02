@@ -2,10 +2,7 @@ package sk.uniba.fmph.dcs.terra_futura.process;
 
 
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
-import sk.uniba.fmph.dcs.terra_futura.effects.AssistanceEffect;
-import sk.uniba.fmph.dcs.terra_futura.effects.CopyableEffect;
-import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
-import sk.uniba.fmph.dcs.terra_futura.effects.SetCardToEffect;
+import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
@@ -33,7 +30,16 @@ public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends 
         SetCardToEffect newEffect = (SetCardToEffect) result.copy();
         newEffect.setCard(card);
 
-        deliver.process(newEffect, grid);
+        if (newEffect instanceof PollutionTransfer) {
+            Card cardFrom = deliver.askForPollutionToGet(grid);
+            cardFrom.getPollution(1);
+            card.putPollution(1);
+        }
+
+        else {
+            deliver.process(newEffect, grid);
+        }
+
 
         return 0;
     }
