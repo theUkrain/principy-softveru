@@ -81,8 +81,8 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((TransformationFixed) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((TransformationFixed) this);
     }
 
     @Override

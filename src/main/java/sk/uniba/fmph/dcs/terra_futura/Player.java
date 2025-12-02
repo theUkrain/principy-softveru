@@ -11,7 +11,7 @@ public class Player {
 
     public Player(Grid grid, ActivationPattern activationPattern1, ActivationPattern activationPattern2,
                   ScoringMethod scoringMethod1, ScoringMethod scoringMethod2) {
-        
+
         this.grid = grid;
         this.activationPattern1 = activationPattern1;
         this.activationPattern2 = activationPattern2;
@@ -19,19 +19,19 @@ public class Player {
         this.scoringMethod2 = scoringMethod2;
     }
 
-    public int selectFirstScoringMethod(){
+    public int selectFirstScoringMethod() {
         return scoringMethod1.selectThisMethodAndCalculate();
     }
 
-    public int selectSecondScoringMethod(){
+    public int selectSecondScoringMethod() {
         return scoringMethod2.selectThisMethodAndCalculate();
     }
 
-    public void selectFirstActivationPattern(){
+    public void selectFirstActivationPattern() {
         activationPattern1.select();
     }
 
-    public void selectSecondActivationPattern(){
+    public void selectSecondActivationPattern() {
         activationPattern2.select();
     }
 

@@ -16,7 +16,7 @@ public class Points {
             entry(Resource.CAR, 6),
             entry(Resource.POLLUTION, -1));
 
-    public int getPoints(Resource resource){
+    public int getPoints(Resource resource) {
         return basicScoring.get(resource);
     }
 

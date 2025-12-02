@@ -5,13 +5,12 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.effects.Exchange;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ProcessActionExchange extends ProcessAction{
+public class ProcessActionExchange extends ProcessAction {
     private final Map<Resource, List<Pair<Integer, Card>>> input;
     private final Set<Pair<Resource, Integer>> output;
 

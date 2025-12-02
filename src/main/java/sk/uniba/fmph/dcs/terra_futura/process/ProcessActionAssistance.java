@@ -12,7 +12,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends ProcessAction {
     private final T effectAnotherPlayer;
     private ProcessActionDeliver deliver;
-    private Grid grid;
+    private final Grid grid;
 
     public ProcessActionAssistance(Effect effect, T effectAnotherPlayer, ProcessActionDeliver deliver, Grid grid) {
         super(effect);

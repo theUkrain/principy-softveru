@@ -28,8 +28,8 @@ public class RawMaterialProducer extends SetCardToEffect {
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((RawMaterialProducer) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((RawMaterialProducer) this);
     }
 
     @Override

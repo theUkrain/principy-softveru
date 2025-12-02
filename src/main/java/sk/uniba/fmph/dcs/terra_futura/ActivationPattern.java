@@ -15,14 +15,16 @@ public final class ActivationPattern {
 
     public ActivationPattern(final InterfaceActivateGrid grid, final Collection<GridPosition> pattern) {
 
-        for(GridPosition position : pattern) if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) throw new ArrayIndexOutOfBoundsException();
+        for (GridPosition position : pattern)
+            if (position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1)
+                throw new ArrayIndexOutOfBoundsException();
 
         this.grid = grid;
         this.pattern = new ArrayList<>(pattern);  // copy the pattern
         this.selected = false;
 
-        for(GridPosition position : pattern) {
-            if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) {
+        for (GridPosition position : pattern) {
+            if (position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) {
                 throw new ArrayIndexOutOfBoundsException();
             }
         }
@@ -35,7 +37,6 @@ public final class ActivationPattern {
         this.grid.setActivationPattern(this.pattern);
         this.selected = true;
     }
-
 
 
     public boolean isSelected() {

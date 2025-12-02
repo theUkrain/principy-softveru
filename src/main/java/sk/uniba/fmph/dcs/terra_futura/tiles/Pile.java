@@ -6,7 +6,7 @@ public class Pile implements PileInterface {
     private List<Card> active;
     private List<Card> discard;
 
-    public Pile(Collection<Card> input){
+    public Pile(Collection<Card> input) {
         active = new ArrayList<>(input);
         discard = new ArrayList<>();
         Collections.shuffle(active);
@@ -22,11 +22,11 @@ public class Pile implements PileInterface {
     @Override
     public Optional<Card> getCard(int index) {
 
-        if(active.isEmpty()) refill();
+        if (active.isEmpty()) refill();
 
-        if(index > 4) index = 4;
+        if (index > 4) index = 4;
 
-        if(index >= active.size()) return Optional.empty();
+        if (index >= active.size()) return Optional.empty();
 
         return Optional.ofNullable(active.remove(index));
 
@@ -35,14 +35,14 @@ public class Pile implements PileInterface {
     @Override
     public void discardCard() {
 
-        if(active.isEmpty()) return;
+        if (active.isEmpty()) return;
 
         discard.add(active.removeFirst());
 
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Active:\n");
         for (Card c : active) sb.append(" ").append(c).append("\n");

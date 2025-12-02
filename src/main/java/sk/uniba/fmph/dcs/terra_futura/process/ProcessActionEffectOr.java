@@ -8,7 +8,7 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 public class ProcessActionEffectOr extends ProcessAction {
     private final int whatEffectToTrigger;
     private final ProcessActionDeliver deliver;
-    private Grid grid;
+    private final Grid grid;
 
     // TODO Game reference for casting inner effect
     public ProcessActionEffectOr(Effect effect, int whatEffectToTrigger, ProcessActionDeliver deliver, Grid grid) {

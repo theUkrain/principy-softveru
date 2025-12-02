@@ -10,7 +10,7 @@ public class ProcessActionRawMaterialProducer extends ProcessAction {
 
     @Override
     public int activateCard() {
-        RawMaterialProducer effectCasted = ((RawMaterialProducer)effect);
+        RawMaterialProducer effectCasted = ((RawMaterialProducer) effect);
         effectCasted.execute();
 
         return 0;

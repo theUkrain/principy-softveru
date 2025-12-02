@@ -30,14 +30,14 @@ public class Game implements TerraFuturaInterface {
     private int ind;
     private Grid curPlayer;
 
-    public Game(InputStream in, OutputStream out){
+    public Game(InputStream in, OutputStream out) {
         this.in = in;
         this.out = out;
 
         this.sc = new Scanner(in);
 
         players = new ArrayList<>();
-        int ind=0;
+        int ind = 0;
 
         curPlayer = players.get(ind);
     }

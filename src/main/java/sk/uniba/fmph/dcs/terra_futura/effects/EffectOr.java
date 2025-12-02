@@ -41,8 +41,8 @@ public class EffectOr extends SetCardToEffect {
     }
 
     @Override
-    public void apply(ProcessActionDeliver deliver, Grid grid) {
-        deliver.process((EffectOr) this, grid);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((EffectOr) this);
     }
 
     public String toString(){
