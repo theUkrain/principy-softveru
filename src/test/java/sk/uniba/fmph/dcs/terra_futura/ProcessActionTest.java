@@ -156,7 +156,7 @@ public class ProcessActionTest {
         public Grid processedGrid = null;
 
         public TestProcessActionDeliver() {
-            super(System.in);
+            super(System.in, null);
         }
 
         public void process(Effect effect, Grid grid) {
@@ -172,7 +172,7 @@ public class ProcessActionTest {
         @Override public void process(PollutionTransfer effect){}
     }
     @Test
-    @DisplayName("PocessActionRawMaterialProducer Test")
+    @DisplayName("ProcessActionRawMaterialProducer Test")
     public void rawMaterialProducerTest() {
         Resource testResource = Resource.GREEN;
         TestRawMaterialProducer testProducer = new TestRawMaterialProducer(testResource);

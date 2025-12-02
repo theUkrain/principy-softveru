@@ -6,4 +6,9 @@ package sk.uniba.fmph.dcs.terra_futura.observer;
 public interface TerraFuturaObserverInterface {
 
     void notify(String gameState);
+
+    String read();
+
+    void write(String message);
+
 }

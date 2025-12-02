@@ -26,6 +26,16 @@ public class GameObserverTest {
             this.notificationCount++;
         }
 
+        @Override
+        public String read() {
+            return "";
+        }
+
+        @Override
+        public void write(String message) {
+
+        }
+
         public String getLastNotification() {
             return lastNotification;
         }

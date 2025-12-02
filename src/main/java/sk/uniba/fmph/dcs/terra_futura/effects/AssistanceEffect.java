@@ -7,13 +7,13 @@ public class AssistanceEffect extends SetCardToEffect {
 
     /**
      *
-     * @param effectOfAnoutherPlayer - effect of another player that will be executed according to games rules
+     * @param effectOfAnotherPlayer - effect of another player that will be executed according to games rules
      * @return - instance of effect, that will be processed by outer logic
      * @param <T> - generalized to make possible to use other player effect in outer logic
      */
-    public <T extends Effect & CopyableEffect> T execute(T effectOfAnoutherPlayer) {
-        if (effectOfAnoutherPlayer.canProvideAssistance()) {
-            return effectOfAnoutherPlayer;
+    public <T extends Effect & CopyableEffect> T execute(T effectOfAnotherPlayer) {
+        if (effectOfAnotherPlayer.canProvideAssistance()) {
+            return effectOfAnotherPlayer;
         }
 
         return null;

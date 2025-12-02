@@ -16,9 +16,11 @@ public class ProcessActionDeliver {
 
     private Scanner sc;
     private Grid grid;
+    private Game game;
 
-    public ProcessActionDeliver(InputStream in) {
+    public ProcessActionDeliver(InputStream in, Game game) {
         this.sc = new Scanner(in);
+        this.game = game;
     }
 
     private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requiredRes, Grid grid) {
@@ -156,6 +158,28 @@ public class ProcessActionDeliver {
     }
 
     public void process(AssistanceEffect effect) {
+        System.out.println("Select player, from who you will ask for assistance:");
+
+        int playerIndex = sc.nextInt();
+
+        Player assistPlayer =  game.getPlayer(playerIndex);
+
+        Grid grid = assistPlayer.getGrid();
+
+        for (int dx = -2; dx <= 2; ++dx) {
+            for (int dy = -2; dy <= 2; ++dy) {
+                GridPosition pos = new GridPosition(dx, dy);
+                Optional<Card> optional = grid.getCard(pos);
+
+                if (optional.isEmpty()) continue;
+
+                Card card = optional.get();
+
+                System.out.println("Card: " + card);
+                System.out.println("Request assist from this card? (y/n)");
+            }
+        }
+
 
     }
 

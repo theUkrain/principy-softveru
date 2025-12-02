@@ -51,4 +51,13 @@ public class Pile implements PileInterface {
         return sb.toString();
     }
 
+    public String state(){
+        ArrayList<Card> top = new ArrayList<>();
+        for(int i=0; i < active.size() && i < 4; i++){
+            top.add(active.get(i));
+        }
+        return top.toString();
+    }
+
+
 }

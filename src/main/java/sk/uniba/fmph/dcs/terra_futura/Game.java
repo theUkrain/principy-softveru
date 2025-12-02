@@ -51,7 +51,7 @@ public class Game implements TerraFuturaInterface {
 
         gameInitPile();
 
-        actionDeliver = new ProcessActionDeliver(in);
+        actionDeliver = new ProcessActionDeliver(in, this);
 
         scoreTable = new TreeSet<>(new Comparator<Pair<Player, Integer>>() {
             @Override

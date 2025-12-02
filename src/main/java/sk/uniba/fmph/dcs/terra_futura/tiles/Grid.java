@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public class Grid implements InterfaceActivateGrid {
+public class Grid implements InterfaceActivateGrid, GridInterface {
     private Card[][] grid;
 
     private GridPosition topRight, bottomLeft;
@@ -95,6 +95,21 @@ public class Grid implements InterfaceActivateGrid {
     }
 
     @Override
+    public boolean isFull() {
+
+        int occupied = 0;
+
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 5; j++) {
+                if(grid[i][j] != null) occupied++;
+            }
+        }
+
+        return occupied == 9;
+
+    }
+
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -111,6 +126,7 @@ public class Grid implements InterfaceActivateGrid {
 
         return sb.toString();
     }
+
 
     @Override
     public void setActivationPattern(Collection<GridPosition> pattern) {
