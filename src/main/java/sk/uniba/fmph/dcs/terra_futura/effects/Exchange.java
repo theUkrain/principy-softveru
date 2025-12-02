@@ -185,6 +185,19 @@ public class Exchange extends SetCardToEffect {
         deliver.process((Exchange) this);
     }
 
+    public Set<Set<Pair<Resource, Integer>>> getInputs() {
+        Set<Set<Pair<Resource, Integer>>> inputs = new HashSet<>();
+        inputs.addAll(simpleInputs);
+        inputs.addAll(complexInputs);
+        return inputs;
+    }
+
+    public Set<Set<Pair<Resource, Integer>>> getOutputs() {
+        Set<Set<Pair<Resource, Integer>>> outputs = new HashSet<>();
+        outputs.addAll(simpleOutputs);
+        outputs.addAll(complexOutputs);
+        return outputs;
+    }
 
     @Override
     public boolean equals(Object o) {
