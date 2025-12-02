@@ -16,7 +16,7 @@ public class ProcessActionDeliver {
     private Scanner sc;
     private Grid grid;
 
-    public ProcessActionDeliver(Game game) {
+    public ProcessActionDeliver() {
         this.sc = new Scanner(System.in);
     }
 
@@ -177,5 +177,25 @@ public class ProcessActionDeliver {
 
             card.putPollution(info.getRight());
         }
+    }
+
+    public Card askForPollutionToGet(Grid grid) {
+        for (int dx = -2; dx <= 2; dx++){
+            for (int dy = -2; dy <= 2; dy++){
+                GridPosition pos = new GridPosition(dx, dy);
+                Optional<Card> optional = grid.getCard(pos);
+
+                if(optional.isEmpty()) continue;
+
+                System.out.println("Card: " + optional.get());
+                System.out.println("Transfer pollution from this card? (y/n)");
+
+                if(!sc.next().equalsIgnoreCase("y")) continue;
+
+                return optional.get();
+            }
+        }
+
+        throw new IllegalArgumentException("You have to choose a card");
     }
 }
