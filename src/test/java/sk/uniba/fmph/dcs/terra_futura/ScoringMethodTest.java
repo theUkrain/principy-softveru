@@ -31,8 +31,8 @@ public class ScoringMethodTest {
                         , Map.entry(Resource.YELLOW, 1)
                         , Map.entry(Resource.MONEY, 1)
                         , Map.entry(Resource.BULB, 1)
-                        , Map.entry(Resource.CAR, 1)
-                        , Map.entry(Resource.GEAR, 2)));
+                        , Map.entry(Resource.GEAR, 2)
+                        , Map.entry(Resource.CAR, 1)));
                 if (i == 0 && j == 0) continue;
                 grid.putCard(new GridPosition(i, j), card);
             }
@@ -57,11 +57,11 @@ public class ScoringMethodTest {
         try {
             grid.getCard(new GridPosition(-1, -1)).get().putPollution(1);
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
-            Assertions.assertEquals(195, sm.selectThisMethodAndCalculate());
+            Assertions.assertEquals(203, sm.selectThisMethodAndCalculate());
 
             grid.getCard(new GridPosition(0, -1)).get().putPollution(1);
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
-            Assertions.assertEquals(171, sm.selectThisMethodAndCalculate());
+            Assertions.assertEquals(174, sm.selectThisMethodAndCalculate());
         } catch (IllegalArgumentException e) {
         }
     }

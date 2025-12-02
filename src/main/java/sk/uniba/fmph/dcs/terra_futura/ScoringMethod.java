@@ -30,12 +30,14 @@ public class ScoringMethod {
                 position = new GridPosition(i, j);
                 card = grid.getCard(position);
                 if (card.isPresent()) {
-                    Map<Resource, Integer> resources = card.get().getCurResources();
-                    for (Resource r : resources.keySet()) {
-                        if (!allResources.containsKey(r)) {
-                            allResources.put(r, resources.get(r));
-                        } else {
-                            allResources.put(r, allResources.get(r) + resources.get(r));
+                    if(card.get().canGetResources(Map.of())){
+                        Map<Resource, Integer> resources = card.get().getCurResources();
+                        for (Resource r : resources.keySet()) {
+                            if (!allResources.containsKey(r)) {
+                                allResources.put(r, resources.get(r));
+                            } else {
+                                allResources.put(r, allResources.get(r) + resources.get(r));
+                            }
                         }
                     }
                 }
