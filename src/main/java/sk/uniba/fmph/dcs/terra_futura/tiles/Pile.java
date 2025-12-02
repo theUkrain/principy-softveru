@@ -1,73 +1,63 @@
-
 package sk.uniba.fmph.dcs.terra_futura.tiles;
 
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-public class Pile implements PileInterface {
-    private List<Card> input;
+public class Pile implements PileInterface{
+    private List<Card> currentPile;
     private List<Card> discardPile;
 
-    public Pile(List<Card> input) {
-        this.input = input;
+    public Pile(List<Card> currentPile){
+        this.currentPile = currentPile;
         this.discardPile = new ArrayList<>();
-        Collections.shuffle(input);
+        Collections.shuffle(currentPile);
     }
 
-    private void newPile() {
+    private void putDiscardPileToCurrent(){
         Collections.shuffle(discardPile);
-        input = new ArrayList<>(discardPile);
-        discardPile.clear();
-
-        if (input.isEmpty()) {
-            throw new ArrayIndexOutOfBoundsException("Pile is empty");
-        }
+        currentPile = new ArrayList<>(discardPile);
+        discardPile = new ArrayList<>();
     }
 
-    public Optional<Card> getCard(int index) {
-        if (index < 0) {
+    @Override
+    public Optional<Card> getCard(int index){
+        if(index < 0){
             index = 0;
         }
-
-        if (index >= input.size()) {
-            if (input.isEmpty()) {
-                newPile();
+        if(index >= currentPile.size()){
+            if(currentPile.isEmpty()){
+                putDiscardPileToCurrent();
+                if(currentPile.isEmpty()){
+                    throw new IllegalArgumentException("Pile is gone");
+                }
             }
-
-            index = input.size() - 1;
         }
-
-        if (index > 3) {
-            index = 4;
-        }
-
-        Card card = input.get(index);
-        input.remove(index);
+        index = (currentPile.size() - 1) % 5;
+        Card card = currentPile.get(index);
+        currentPile.remove(index);
         return Optional.ofNullable(card);
     }
 
     @Override
-    public void discardCard() {
-        if (input.isEmpty()) {
-            newPile();
-        }
+    public void discardCard(){
+        discardPile.add(currentPile.getLast());
+        currentPile.removeLast();
 
-        discardPile.add(input.getFirst());
-        input.removeFirst();
+        if(currentPile.isEmpty()){
+            putDiscardPileToCurrent();
+        }
     }
 
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < (Math.min(input.size(), 4)); i++) {
-            sb.append("Card (" + i + "): " + input.get(i).toString() + "\n");
+    public String toString(){
+        StringBuilder out = new StringBuilder();
+        int boundary = Math.min(currentPile.size(), 4);
+        for(int i = 0; i< boundary; i++) {
+            out.append("Card on place");
+            out.append(i);
+            out.append(" is ");
+            out.append(currentPile.get(i).toString());
+            out.append("\n");
         }
-
-        return sb.toString();
+        return out.toString();
     }
 }

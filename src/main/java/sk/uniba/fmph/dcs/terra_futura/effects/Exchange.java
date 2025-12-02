@@ -4,6 +4,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.*;
@@ -160,6 +161,10 @@ public class Exchange extends SetCardToEffect {
         return true;
     }
 
+    @Override
+    public void apply(Game game) {
+        game.process(this);
+    }
 
     @Override
     public boolean equals(Object o) {
