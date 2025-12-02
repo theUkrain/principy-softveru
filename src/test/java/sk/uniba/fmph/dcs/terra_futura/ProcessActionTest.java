@@ -3,19 +3,15 @@ package sk.uniba.fmph.dcs.terra_futura;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.Game;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
-import sk.uniba.fmph.dcs.terra_futura.process.*;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionRawMaterialProducer;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionTransformationFixed;
+import sk.uniba.fmph.dcs.terra_futura.process.ProcessActionPollutionTransfer;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.CardFactory;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.*;
 
 public class ProcessActionTest {
@@ -31,10 +27,6 @@ public class ProcessActionTest {
 
         public void setCanPutPollution(boolean value) {
             this.canPutPollutionResult = value;
-        }
-
-        public void setCanGetResources(boolean value) {
-            this.canGetResourcesResult = value;
         }
 
         @Override
@@ -112,115 +104,6 @@ public class ProcessActionTest {
         }
     }
 
-    class TestGame extends Game {
-        public Effect processedEffect = null;
-
-        public TestGame() {
-            super();
-        }
-
-        public TestGame(InputStream in, OutputStream out) {
-            super(in, out);
-        }
-
-        @Override
-        public void process(TransformationFixed effect) {
-        }
-
-        @Override
-        public void process(Exchange effect) {
-        }
-
-        @Override
-        public void process(EffectOr effect) {
-            this.processedEffect = effect;
-        }
-
-        @Override
-        public void process(AssistanceEffect effect) {
-        }
-
-        @Override
-        public void process(PollutionTransfer effect) {
-        }
-    }
-
-    class ConcreteProcessAction extends ProcessAction {
-        public ConcreteProcessAction(Effect effect) {
-            super(effect);
-        }
-
-        @Override
-        public int activateCard() {
-            return 0;
-        }
-    }
-    /*
-    @Test
-    @DisplayName("ProcessAction Test")
-    public void putPollutionTest() {
-        TestCard testCard1 = new TestCard();
-        TestCard testCard2 = new TestCard();
-        List<Pair<Card, Integer>> placement = List.of(Pair.of(testCard1, 2), Pair.of(testCard2, 3));
-        ConcreteProcessAction action = new ConcreteProcessAction(null);
-        action.placePollution(placement);
-
-        Assertions.assertEquals(1, testCard1.putPollutionCount, "put should be evoked in testCard1");
-        Assertions.assertEquals(2, testCard1.receivedPollution, "expected pollution in testCard1: 2, your: " + testCard1.receivedPollution);
-        Assertions.assertEquals(1, testCard2.putPollutionCount, "put should be evoked in testCard2");
-        Assertions.assertEquals(3, testCard2.receivedPollution, "expected pollution in testCard1: 3, your: " + testCard2.receivedPollution);
-    }
-*/
-
-    // TODO rewrite EffectOr
-    /*
-    @Test
-    @DisplayName("ProcessActionEffectOr Test")
-    public void EffectOrTest() {
-        SetCardToEffect testEffect1 = new SetCardToEffect() {
-            public boolean wasCalled = false;
-
-            @Override
-            public boolean canProvideAssistance() {
-                return false;
-            }
-
-            @Override
-            public void apply(Game game) {
-                this.wasCalled = true;
-            }
-        };
-        SetCardToEffect testEffect2 = new RawMaterialProducer(Resource.MONEY) {
-            public boolean wasCalled = false;
-
-            @Override
-            public boolean canProvideAssistance() {
-                return false;
-            }
-
-            @Override
-            public void apply(Game game) {
-                this.wasCalled = true;
-                game.process((RawMaterialProducer) this);
-            }
-        };
-
-        EffectOr testEffectOr = new EffectOr(testEffect1, testEffect2);
-
-        TestGame testGame = new TestGame();
-        TestCard testCard1 = new TestCard();
-        testEffectOr.setCard(testCard1);
-        ProcessActionEffectOr action = new ProcessActionEffectOr(testEffectOr, 1, testGame);
-
-        int pollution = action.activateCard();
-
-        Assertions.assertEquals(0, pollution,
-                        "Should return 0, your: " + pollution);
-        Assertions.assertSame(testEffect2, testGame.processedEffect,
-                        "TestGame should get second Effect (index 1)");
-    }
-*/
-
     class TestRawMaterialProducer extends RawMaterialProducer {
         public boolean wasCalled = false;
 
@@ -239,62 +122,21 @@ public class ProcessActionTest {
         }
     }
 
+    class TestTransformationFixed extends TransformationFixed {
+        public boolean wasCalled = false;
+        private final int pollutionToReturn;
 
-    @Test
-    @DisplayName("PocessActionRawMaterialProducer Test")
-    public void rawMaterialProducerTest() {
-        Resource testResource = Resource.GREEN;
-        TestRawMaterialProducer testProducer = new TestRawMaterialProducer(testResource);
-
-        testProducer.setCard(new TestCard());
-
-        ProcessActionRawMaterialProducer action = new ProcessActionRawMaterialProducer(testProducer);
-
-        int pollution = action.activateCard();
-
-        Assertions.assertTrue(testProducer.wasCalled,
-                "testProducer was not called");
-        
-        Assertions.assertEquals(0, pollution,
-                "activateCard() should 0, yours: " + pollution);
-    }
-
-    @Test
-    @DisplayName("ProcessActionTransformationFixed Test")
-    public void transformationFixedTest() {
-        class TestTransformationFixed extends TransformationFixed {
-            public boolean wasCalled = false;
-            private final int pollutionToReturn;
-
-            public TestTransformationFixed(int pollutionToReturn) {
-                super(Map.of(Resource.RED, 1), Map.of(Resource.MONEY, 1), pollutionToReturn);
-                this.pollutionToReturn = pollutionToReturn;
-            }
-
-            @Override
-            public int execute(Map<Resource, List<Pair<Card, Integer>>> cards) {
-                wasCalled = true;
-                return pollutionToReturn;
-            }
+        public TestTransformationFixed(int pollutionToReturn) {
+            super(Map.of(Resource.RED, 1), Map.of(Resource.MONEY, 1), pollutionToReturn);
+            this.pollutionToReturn = pollutionToReturn;
         }
 
-        int expectedPollution = 5;
-        TestTransformationFixed testEffect = new TestTransformationFixed(expectedPollution);
-
-        Map<Resource, List<Pair<Card, Integer>>> testCard = Map.of(
-                Resource.RED, List.of(Pair.of(new TestCard(), 1))
-        );
-
-        ProcessActionTransformationFixed action = new ProcessActionTransformationFixed(testEffect, testCard);
-
-        int actualPollution = action.activateCard();
-
-        Assertions.assertTrue(testEffect.wasCalled,
-                "execute() on TransformationFixed should be called");
-        Assertions.assertEquals(expectedPollution, actualPollution,
-                "activateCard() should return pollution, from execute()");
+        @Override
+        public int execute(Map<Resource, List<Pair<Card, Integer>>> cards) {
+            wasCalled = true;
+            return pollutionToReturn;
+        }
     }
-
 
     class TestPollutionTransfer extends PollutionTransfer {
         public boolean wasCalled = false;
@@ -310,6 +152,47 @@ public class ProcessActionTest {
         public void setCard(Card card) {
             super.setCard(card);
         }
+    }
+
+    @Test
+    @DisplayName("PocessActionRawMaterialProducer Test")
+    public void rawMaterialProducerTest() {
+        Resource testResource = Resource.GREEN;
+        TestRawMaterialProducer testProducer = new TestRawMaterialProducer(testResource);
+
+        testProducer.setCard(new TestCard());
+
+        ProcessActionRawMaterialProducer action = new ProcessActionRawMaterialProducer(testProducer);
+
+        int pollution = action.activateCard();
+
+        Assertions.assertTrue(testProducer.wasCalled,
+                "testProducer was not called");
+
+        Assertions.assertEquals(0, pollution,
+                "activateCard() should 0, yours: " + pollution);
+    }
+
+    @Test
+    @DisplayName("ProcessActionTransformationFixed Test")
+    public void transformationFixedTest() {
+        int expectedPollution = 5;
+        TestTransformationFixed testEffect = new TestTransformationFixed(expectedPollution);
+
+        Map<Resource, List<Pair<Card, Integer>>> testCard = Map.of(
+                Resource.RED, List.of(Pair.of(new TestCard(), 1))
+        );
+
+        testEffect.setCard(new TestCard());
+
+        ProcessActionTransformationFixed action = new ProcessActionTransformationFixed(testEffect, testCard);
+
+        int actualPollution = action.activateCard();
+
+        Assertions.assertTrue(testEffect.wasCalled,
+                "execute() on TransformationFixed should be called");
+        Assertions.assertEquals(expectedPollution, actualPollution,
+                "activateCard() should return pollution, from execute()");
     }
 
     @Test
@@ -340,5 +223,25 @@ public class ProcessActionTest {
         Assertions.assertEquals(0, pollution,
                 "activateCard() should return 0");
     }
-}
 
+    @Test
+    @DisplayName("ProcessActionDeliver placePollution Test")
+    public void placePollutionDeliverTest() {
+        TestCard testCard1 = new TestCard();
+        TestCard testCard2 = new TestCard();
+        List<Pair<Card, Integer>> placement = List.of(Pair.of(testCard1, 2), Pair.of(testCard2, 3));
+
+        class testGame extends Game {
+            public testGame() { super(System.in, System.out); }
+        }
+
+        ProcessActionDeliver deliver = new ProcessActionDeliver(new testGame());
+
+        deliver.placePollution(placement);
+
+        Assertions.assertEquals(1, testCard1.putPollutionCount, "put should be evoked in testCard1");
+        Assertions.assertEquals(2, testCard1.receivedPollution, "expected pollution in testCard1: 2, your: " + testCard1.receivedPollution);
+        Assertions.assertEquals(1, testCard2.putPollutionCount, "put should be evoked in testCard2");
+        Assertions.assertEquals(3, testCard2.receivedPollution, "expected pollution in testCard1: 3, your: " + testCard2.receivedPollution);
+    }
+}

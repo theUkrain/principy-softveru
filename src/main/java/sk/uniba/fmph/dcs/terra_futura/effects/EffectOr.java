@@ -1,6 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
 import java.util.Objects;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class EffectOr extends SetCardToEffect {
 
-    private List<SetCardToEffect> effectList = new ArrayList<>();
+    private List<Effect> effectList = new ArrayList<>();
 
     public EffectOr(SetCardToEffect e1, SetCardToEffect e2) {
         effectList.add(e1);
@@ -48,8 +49,8 @@ public class EffectOr extends SetCardToEffect {
     }
 
     @Override
-    public void apply(Game game) {
-        game.process((EffectOr) this);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((EffectOr) this);
     }
 
     public String toString(){

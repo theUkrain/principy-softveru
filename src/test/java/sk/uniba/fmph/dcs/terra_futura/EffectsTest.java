@@ -2,6 +2,7 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -278,5 +279,10 @@ public class EffectsTest {
 
         Assertions.assertTrue(card1.getCurResources().equals(Map.of()));
 
+    }
+
+    @After
+    public void clear(){
+        CardFactory.reset();
     }
 }

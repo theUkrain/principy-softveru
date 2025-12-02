@@ -3,7 +3,9 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.*;
 
@@ -79,8 +81,8 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
     }
 
     @Override
-    public void apply(Game game) {
-        game.process(this);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((TransformationFixed) this);
     }
 
     @Override

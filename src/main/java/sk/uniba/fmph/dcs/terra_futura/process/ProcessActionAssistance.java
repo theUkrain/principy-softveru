@@ -1,20 +1,23 @@
 package sk.uniba.fmph.dcs.terra_futura.process;
 
 
-import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.effects.AssistanceEffect;
 import sk.uniba.fmph.dcs.terra_futura.effects.CopyableEffect;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.effects.SetCardToEffect;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends ProcessAction {
     private final T effectAnotherPlayer;
-    private Game game;
+    private ProcessActionDeliver deliver;
+    private Grid grid;
 
-    public ProcessActionAssistance(Effect effect, T effectAnotherPlayer, Game game) {
+    public ProcessActionAssistance(Effect effect, T effectAnotherPlayer, ProcessActionDeliver deliver, Grid grid) {
         super(effect);
         this.effectAnotherPlayer = effectAnotherPlayer;
+        this.grid = grid;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends 
         SetCardToEffect newEffect = (SetCardToEffect) result.copy();
         newEffect.setCard(card);
 
-        game.process(newEffect);
+        deliver.process(newEffect, grid);
 
         return 0;
     }

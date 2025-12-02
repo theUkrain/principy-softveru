@@ -2,62 +2,53 @@ package sk.uniba.fmph.dcs.terra_futura.tiles;
 
 import java.util.*;
 
-public class Pile implements PileInterface{
-    private List<Card> currentPile;
-    private List<Card> discardPile;
+public class Pile implements PileInterface {
+    private List<Card> active;
+    private List<Card> discard;
 
-    public Pile(List<Card> currentPile){
-        this.currentPile = currentPile;
-        this.discardPile = new ArrayList<>();
-        Collections.shuffle(currentPile);
+    public Pile(Collection<Card> input){
+        active = new ArrayList<>(input);
+        discard = new ArrayList<>();
+        Collections.shuffle(active);
     }
 
-    private void putDiscardPileToCurrent(){
-        Collections.shuffle(discardPile);
-        currentPile = new ArrayList<>(discardPile);
-        discardPile = new ArrayList<>();
-    }
-
-    @Override
-    public Optional<Card> getCard(int index){
-        if(index < 0){
-            index = 0;
-        }
-        if(index >= currentPile.size()){
-            if(currentPile.isEmpty()){
-                putDiscardPileToCurrent();
-                if(currentPile.isEmpty()){
-                    throw new IllegalArgumentException("Pile is gone");
-                }
-            }
-        }
-        index = (currentPile.size() - 1) % 5;
-        Card card = currentPile.get(index);
-        currentPile.remove(index);
-        return Optional.ofNullable(card);
+    private void refill() {
+        List<Card> temp = active;
+        Collections.shuffle(discard);
+        active = discard;
+        discard = temp;
     }
 
     @Override
-    public void discardCard(){
-        discardPile.add(currentPile.getLast());
-        currentPile.removeLast();
+    public Optional<Card> getCard(int index) {
 
-        if(currentPile.isEmpty()){
-            putDiscardPileToCurrent();
-        }
+        if(active.isEmpty()) refill();
+
+        if(index > 4) index = 4;
+
+        if(index >= active.size()) return Optional.empty();
+
+        return Optional.ofNullable(active.remove(index));
+
+    }
+
+    @Override
+    public void discardCard() {
+
+        if(active.isEmpty()) return;
+
+        discard.add(active.removeFirst());
+
     }
 
     @Override
     public String toString(){
-        StringBuilder out = new StringBuilder();
-        int boundary = Math.min(currentPile.size(), 4);
-        for(int i = 0; i< boundary; i++) {
-            out.append("Card on place");
-            out.append(i);
-            out.append(" is ");
-            out.append(currentPile.get(i).toString());
-            out.append("\n");
-        }
-        return out.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("Active:\n");
+        for (Card c : active) sb.append(" ").append(c).append("\n");
+        sb.append("Discard:\n");
+        for (Card c : discard) sb.append(" ").append(c).append("\n");
+        return sb.toString();
     }
+
 }

@@ -4,7 +4,9 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.Game;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,11 +58,9 @@ public class Exchange extends SetCardToEffect {
                     "\n doesn't support output: " + output.toString());
 
         input.forEach( (r,d) -> {
-
             d.forEach( (p) -> {
                 if(!(p.getValue().canGetResources(Map.of(r, p.getKey())))) throw new IllegalArgumentException("card: \n" + p.getValue() + "can't provide " + p.getKey() + " of " + r + "\n");
             });
-
         });
 
         input.forEach((r, d) -> {
@@ -99,7 +99,7 @@ public class Exchange extends SetCardToEffect {
 
         Set<Pair<Resource, Integer>> mergedInput = mergedInput(entry);
 
-        return complexEntryCanBeCowered(mergedInput, coverage);
+       return complexEntryCanBeCowered(mergedInput, coverage);
     }
 
     private boolean complexEntryCanBeCowered(Set<Pair<Resource, Integer>> mergedInput, Set<Set<Pair<Resource, Integer>>> coverage) {
@@ -112,7 +112,7 @@ public class Exchange extends SetCardToEffect {
 
             unCoveredByNonComplex.replaceAll( (r, a) -> a - entryToMap.getOrDefault(r, 0));
 
-            AtomicReference<AtomicBoolean> hasNegativeEntry = new AtomicReference<>(new AtomicBoolean(false));
+             AtomicReference<AtomicBoolean> hasNegativeEntry = new AtomicReference<>(new AtomicBoolean(false));
 
             unCoveredByNonComplex.values().forEach( a ->{
                 if(a < 0) hasNegativeEntry.set(new AtomicBoolean(true));
@@ -125,7 +125,7 @@ public class Exchange extends SetCardToEffect {
             Set<Resource> r = unCoveredByNonComplex.keySet();
 
             if(r.contains(Resource.GEAR) || r.contains(Resource.CAR) ||
-                    r.contains(Resource.BULB) || r.contains(Resource.POLLUTION) ||
+            r.contains(Resource.BULB) || r.contains(Resource.POLLUTION) ||
                     r.contains(Resource.MONEY)) continue;
 
             int uncoveredResourcesLLeft = 0;
@@ -181,8 +181,8 @@ public class Exchange extends SetCardToEffect {
     }
 
     @Override
-    public void apply(Game game) {
-        game.process(this);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process((Exchange) this);
     }
 
 
