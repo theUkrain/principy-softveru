@@ -7,13 +7,16 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ScoringMethod {
-    private Grid grid;
     public Points pointsPerResource = new Points();
-    private List<Pair<Resource, Integer>> combination;
-    private int pointsPerCombination;
+    private final Grid grid;
+    private final List<Pair<Resource, Integer>> combination;
+    private final int pointsPerCombination;
 
     public ScoringMethod(Grid grid, List<Pair<Resource, Integer>> combination, int pointsPerCombination) {
         this.grid = grid;

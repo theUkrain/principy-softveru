@@ -1,28 +1,30 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.json.JSONObject;
-import org.json.JSONArray;
-import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
-
-public final class ActivationPattern {
-    private ArrayList<GridPosition> pattern;
+public class ActivationPattern {
+    private final ArrayList<GridPosition> pattern;
     private boolean selected;
-    private InterfaceActivateGrid grid;
+    private final InterfaceActivateGrid grid;
 
     public ActivationPattern(final InterfaceActivateGrid grid, final Collection<GridPosition> pattern) {
 
-        for(GridPosition position : pattern) if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) throw new ArrayIndexOutOfBoundsException();
+        for (GridPosition position : pattern)
+            if (position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1)
+                throw new ArrayIndexOutOfBoundsException();
 
         this.grid = grid;
         this.pattern = new ArrayList<>(pattern);  // copy the pattern
         this.selected = false;
 
-        for(GridPosition position : pattern) {
-            if(position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) {
+        for (GridPosition position : pattern) {
+            if (position.getX() > 1 || position.getY() > 1 || position.getX() < -1 || position.getY() < -1) {
                 throw new ArrayIndexOutOfBoundsException();
             }
         }
@@ -35,7 +37,6 @@ public final class ActivationPattern {
         this.grid.setActivationPattern(this.pattern);
         this.selected = true;
     }
-
 
 
     public boolean isSelected() {

@@ -111,7 +111,9 @@ public class Grid implements GridInterface, InterfaceActivateGrid{
 
                 if (card.isPresent()) {
                     sb.append("X: " + i + ", Y:" + j + ": " + card.get().toString());
+                    sb.append("X: " + i + ", Y:" + j + ": " + card.get().toString());
                 }
+
             }
         }
 

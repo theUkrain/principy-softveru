@@ -6,6 +6,10 @@ public abstract class SetCardToEffect implements Effect {
     protected Card card;
     protected boolean set = false;
 
+    public Card getCard() {
+        return card;
+    }
+
     public void setCard(Card card) {
         if (card == null) {
             return;
@@ -17,9 +21,5 @@ public abstract class SetCardToEffect implements Effect {
 
         this.card = card;
         set = true;
-    }
-
-    public Card getCard() {
-        return card;
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ProcessActionExchange extends ProcessAction{
+public class ProcessActionExchange extends ProcessAction {
     private final Map<Resource, List<Pair<Integer, Card>>> input;
     private final Set<Pair<Resource, Integer>> output;
 

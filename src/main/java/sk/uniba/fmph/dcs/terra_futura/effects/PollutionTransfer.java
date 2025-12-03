@@ -22,9 +22,7 @@ public class PollutionTransfer extends SetCardToEffect implements CopyableEffect
                 p.getLeft().getPollution(p.getRight());
             }
             card.putPollution(commulatedPollution);
-        }
-
-        else {
+        } else {
             throw new IllegalArgumentException("Cant put more pollution");
         }
     }
@@ -36,7 +34,7 @@ public class PollutionTransfer extends SetCardToEffect implements CopyableEffect
 
     @Override
     public void apply(ProcessActionDeliver deliver) {
-        deliver.process((PollutionTransfer) this);
+        deliver.process(this);
     }
 
     @Override

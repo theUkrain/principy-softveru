@@ -1,7 +1,8 @@
 package sk.uniba.fmph.dcs.terra_futura.tiles;
+
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 
-public  class CardSource {
+public class CardSource {
     private final byte index;
     private final Deck source;
 
@@ -9,12 +10,12 @@ public  class CardSource {
         if (index < 0) {
             throw new IllegalArgumentException("Index must be between 0 and 3");
         }
-        this.index = (byte)index;
+        this.index = (byte) index;
         this.source = source;
     }
 
     public int getIndex() {
-        return (int)index;
+        return (int) index;
     }
 
     public Deck getSourceDeck() {
@@ -23,7 +24,7 @@ public  class CardSource {
 
     @Override
     public String toString() {
-        return "Deck: " + source  + "\n" +
+        return "Deck: " + source + "\n" +
                 "Index: " + source + "\n ";
     }
 

@@ -1,21 +1,20 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.apache.commons.lang3.tuple.Pair;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
+import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
+import sk.uniba.fmph.dcs.terra_futura.tiles.*;
+
 import java.io.InputStream;
 import java.util.*;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
-import sk.uniba.fmph.dcs.terra_futura.effects.*;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
-import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
-
 public class Game implements TerraFuturaInterface {
     private Set<Pair<Player, Integer>> scoreTable;
-    private Scanner sc;
-    private InputStream in;
+    private final Scanner sc;
+    private final InputStream in;
     private GameState state;
 
     private List<Player> players;
@@ -26,10 +25,13 @@ public class Game implements TerraFuturaInterface {
 
     private ProcessActionDeliver actionDeliver;
 
+    private final InputStream input;
+
     public Game(InputStream in) {
         this.in = in;
         this.sc = new Scanner(in);
         index = 0;
+        this.input = in;
 
         gameInit();
     }
@@ -49,7 +51,7 @@ public class Game implements TerraFuturaInterface {
 
         gameInitPile();
 
-        actionDeliver = new ProcessActionDeliver(in);
+        actionDeliver = new ProcessActionDeliver(in, this);
 
         scoreTable = new TreeSet<>(new Comparator<Pair<Player, Integer>>() {
             @Override
@@ -73,6 +75,7 @@ public class Game implements TerraFuturaInterface {
             ScoringMethod scoringMethod2 = methods.get(i * 2 + 1);
 
             Player player = new Player(requestName(), g, pattern1, pattern2, scoringMethod1, scoringMethod2);
+            player.setObserver(new GameObserver(input, System.out, player));
             players.add(player);
         }
     }
@@ -184,6 +187,8 @@ public class Game implements TerraFuturaInterface {
             System.out.println("-- Select scoring pattern");
             int points = selectScoringMethod(players.get(i));
             scoreTable.add(Pair.of(players.get(i), points));
+
+            getPlayer(i).getObserver().close();
         }
     }
 
@@ -381,7 +386,6 @@ public class Game implements TerraFuturaInterface {
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage() + "\nTry again");
             executeCard(card, g);
-            return;
         }
     }
 

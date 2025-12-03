@@ -5,7 +5,9 @@ import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TransformationFixed extends SetCardToEffect implements CopyableEffect {
 
@@ -21,9 +23,9 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
         this.generatedPollution = generatedPollution;
     }
 
-    public void resourceRetrivier(Map<Resource, List<Pair<Card, Integer>>> cards){
-        for(Resource r: cards.keySet()){
-            for(Pair<Card, Integer> p: cards.get(r)){
+    public void resourceRetrivier(Map<Resource, List<Pair<Card, Integer>>> cards) {
+        for (Resource r : cards.keySet()) {
+            for (Pair<Card, Integer> p : cards.get(r)) {
                 p.getLeft().getResources(Map.of(r, p.getRight()));
             }
         }
@@ -44,9 +46,9 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
         recievedResources.put(Resource.YELLOW, 0);
         recievedResources.put(Resource.GREEN, 0);
 
-        for(Resource r: cards.keySet()){
-            for(Pair<Card, Integer> p: cards.get(r)){
-                if(p.getLeft().canGetResources(Map.of(r, p.getRight()))){
+        for (Resource r : cards.keySet()) {
+            for (Pair<Card, Integer> p : cards.get(r)) {
+                if (p.getLeft().canGetResources(Map.of(r, p.getRight()))) {
                     recievedResources.put(r, recievedResources.get(r) + p.getRight());
                 }
             }
@@ -62,8 +64,8 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
             }
         }
 
-        for(Resource r: recievedResources.keySet()){
-            if(requiredInputs.containsKey(r) && (recievedResources.get(r) < requiredInputs.get(r) || recievedResources.get(r) > requiredInputs.get(r))){
+        for (Resource r : recievedResources.keySet()) {
+            if (requiredInputs.containsKey(r) && (recievedResources.get(r) < requiredInputs.get(r) || recievedResources.get(r) > requiredInputs.get(r))) {
                 throw new IllegalStateException("Insufficient resources");
             }
         }
@@ -80,7 +82,7 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
 
     @Override
     public void apply(ProcessActionDeliver deliver) {
-        deliver.process((TransformationFixed) this);
+        deliver.process(this);
     }
 
     @Override
@@ -89,21 +91,21 @@ public class TransformationFixed extends SetCardToEffect implements CopyableEffe
                 + guaranteedOutputs + "with" + generatedPollution + "amount of pollution";
     }
 
-    public Map<Resource, Integer> getRequiredInputs(){
+    public Map<Resource, Integer> getRequiredInputs() {
         return requiredInputs;
     }
 
-    public Map<Resource, Integer> getGuaranteedOutputs(){
+    public Map<Resource, Integer> getGuaranteedOutputs() {
         return guaranteedOutputs;
     }
 
-    public int getGeneratedPollution(){
+    public int getGeneratedPollution() {
         return generatedPollution;
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(this == obj){
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
 

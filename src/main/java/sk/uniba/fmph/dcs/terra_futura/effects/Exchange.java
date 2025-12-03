@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Exchange extends SetCardToEffect {
 
-    private Set<Set<Pair<Resource, Integer>>> simpleInputs;
-    private Set<Set<Pair<Resource, Integer>>> complexInputs;
+    private final Set<Set<Pair<Resource, Integer>>> simpleInputs;
+    private final Set<Set<Pair<Resource, Integer>>> complexInputs;
 
-    private Set<Set<Pair<Resource, Integer>>> simpleOutputs;
-    private Set<Set<Pair<Resource, Integer>>> complexOutputs;
+    private final Set<Set<Pair<Resource, Integer>>> simpleOutputs;
+    private final Set<Set<Pair<Resource, Integer>>> complexOutputs;
 
     public Exchange(Set<Set<Pair<Resource, Integer>>> inputs, Set<Set<Pair<Resource, Integer>>> outputs) {
 
@@ -26,13 +26,13 @@ public class Exchange extends SetCardToEffect {
         complexInputs = new HashSet<>();
         complexOutputs = new HashSet<>();
 
-        for(Set<Pair<Resource, Integer>> input : inputs) {
-            if(resourceAmountInInput(Resource.UNIVERSAL, input) > 0) complexInputs.add(input);
+        for (Set<Pair<Resource, Integer>> input : inputs) {
+            if (resourceAmountInInput(Resource.UNIVERSAL, input) > 0) complexInputs.add(input);
             else simpleInputs.add(input);
         }
 
-        for(Set<Pair<Resource, Integer>> output : outputs) {
-            if(resourceAmountInInput(Resource.UNIVERSAL, output) > 0) complexOutputs.add(output);
+        for (Set<Pair<Resource, Integer>> output : outputs) {
+            if (resourceAmountInInput(Resource.UNIVERSAL, output) > 0) complexOutputs.add(output);
             else simpleOutputs.add(output);
         }
 
@@ -45,19 +45,22 @@ public class Exchange extends SetCardToEffect {
 
     public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
 
-        for(Resource r : input.keySet()) if(r == Resource.UNIVERSAL) throw new IllegalArgumentException("Input/output of exchange effect should be specified directly without universal materials.");
+        for (Resource r : input.keySet())
+            if (r == Resource.UNIVERSAL)
+                throw new IllegalArgumentException("Input/output of exchange effect should be specified directly without universal materials.");
 
-        if(!(entryCanBeCovered(input, simpleInputs) || complexEntryCanBeCowered(input, complexInputs)))
-            throw new IllegalArgumentException("Effect: \n" + this.toString() +
-                    "\n doesn't support input: " + input.toString());
+        if (!(entryCanBeCovered(input, simpleInputs) || complexEntryCanBeCowered(input, complexInputs)))
+            throw new IllegalArgumentException("Effect: \n" + this +
+                    "\n doesn't support input: " + input);
 
-        if(!(entryCanBeCovered(output, simpleOutputs) || complexEntryCanBeCowered(output, complexOutputs)))
-            throw new IllegalArgumentException("Effect: " + this.toString() +
+        if (!(entryCanBeCovered(output, simpleOutputs) || complexEntryCanBeCowered(output, complexOutputs)))
+            throw new IllegalArgumentException("Effect: " + this +
                     "\n doesn't support output: " + output.toString());
 
-        input.forEach( (r,d) -> {
-            d.forEach( (p) -> {
-                if(!(p.getValue().canGetResources(Map.of(r, p.getKey())))) throw new IllegalArgumentException("card: \n" + p.getValue() + "can't provide " + p.getKey() + " of " + r + "\n");
+        input.forEach((r, d) -> {
+            d.forEach((p) -> {
+                if (!(p.getValue().canGetResources(Map.of(r, p.getKey()))))
+                    throw new IllegalArgumentException("card: \n" + p.getValue() + "can't provide " + p.getKey() + " of " + r + "\n");
             });
         });
 
@@ -71,7 +74,7 @@ public class Exchange extends SetCardToEffect {
 
         for (Pair<Resource, Integer> resource : output) {
 
-            if(resource.getKey() == Resource.POLLUTION) continue;
+            if (resource.getKey() == Resource.POLLUTION) continue;
 
             resourcesToPut.put(resource.getKey(), resource.getValue());
 
@@ -93,43 +96,43 @@ public class Exchange extends SetCardToEffect {
         return coverage.contains(mergedInput);
     }
 
-    private boolean complexEntryCanBeCowered(Map<Resource, List<Pair<Integer, Card>>> entry,  Set<Set<Pair<Resource, Integer>>> coverage) {
+    private boolean complexEntryCanBeCowered(Map<Resource, List<Pair<Integer, Card>>> entry, Set<Set<Pair<Resource, Integer>>> coverage) {
 
         Set<Pair<Resource, Integer>> mergedInput = mergedInput(entry);
 
-       return complexEntryCanBeCowered(mergedInput, coverage);
+        return complexEntryCanBeCowered(mergedInput, coverage);
     }
 
 
     private boolean complexEntryCanBeCowered(Set<Pair<Resource, Integer>> mergedInput, Set<Set<Pair<Resource, Integer>>> coverage) {
 
-        for(Set<Pair<Resource, Integer>> complexEntry : coverage) {
+        for (Set<Pair<Resource, Integer>> complexEntry : coverage) {
 
             Map<Resource, Integer> entryToMap = entryToMap(complexEntry);
 
             Map<Resource, Integer> unCoveredByNonComplex = new HashMap<>(entryToMap(mergedInput));
 
-            unCoveredByNonComplex.replaceAll( (r, a) -> a - entryToMap.getOrDefault(r, 0));
+            unCoveredByNonComplex.replaceAll((r, a) -> a - entryToMap.getOrDefault(r, 0));
 
-             AtomicReference<AtomicBoolean> hasNegativeEntry = new AtomicReference<>(new AtomicBoolean(false));
+            AtomicReference<AtomicBoolean> hasNegativeEntry = new AtomicReference<>(new AtomicBoolean(false));
 
-            unCoveredByNonComplex.values().forEach( a ->{
-                if(a < 0) hasNegativeEntry.set(new AtomicBoolean(true));
+            unCoveredByNonComplex.values().forEach(a -> {
+                if (a < 0) hasNegativeEntry.set(new AtomicBoolean(true));
             });
 
-            if(hasNegativeEntry.get().get()) continue;
+            if (hasNegativeEntry.get().get()) continue;
 
             unCoveredByNonComplex.entrySet().removeIf((e) -> e.getValue() == 0);
 
             Set<Resource> r = unCoveredByNonComplex.keySet();
 
-            if(r.contains(Resource.GEAR) || r.contains(Resource.CAR) ||
-            r.contains(Resource.BULB) || r.contains(Resource.POLLUTION) ||
+            if (r.contains(Resource.GEAR) || r.contains(Resource.CAR) ||
+                    r.contains(Resource.BULB) || r.contains(Resource.POLLUTION) ||
                     r.contains(Resource.MONEY)) continue;
 
             int uncoveredResourcesLLeft = 0;
 
-            for(int amount : unCoveredByNonComplex.values()) {
+            for (int amount : unCoveredByNonComplex.values()) {
                 uncoveredResourcesLLeft += amount;
             }
 
@@ -143,7 +146,7 @@ public class Exchange extends SetCardToEffect {
 
         Map<Resource, Integer> res = new HashMap<>();
 
-        for(Pair<Resource, Integer> resourceIntegerPair : entry) {
+        for (Pair<Resource, Integer> resourceIntegerPair : entry) {
             res.put(resourceIntegerPair.getKey(), resourceIntegerPair.getValue());
         }
 
@@ -152,8 +155,8 @@ public class Exchange extends SetCardToEffect {
     }
 
     private int resourceAmountInInput(Resource resource, Set<Pair<Resource, Integer>> input) {
-        for(Pair<Resource, Integer> r : input) {
-            if(r.getKey() == resource) return r.getValue();
+        for (Pair<Resource, Integer> r : input) {
+            if (r.getKey() == resource) return r.getValue();
         }
         return 0;
     }
@@ -162,12 +165,12 @@ public class Exchange extends SetCardToEffect {
 
         Set<Pair<Resource, Integer>> mergedInput = new HashSet<>();
 
-        for(Resource r : input.keySet()) {
+        for (Resource r : input.keySet()) {
             int requiredR = 0;
-            for(Pair<Integer, Card> resourceAmountFromCard : input.get(r)) {
+            for (Pair<Integer, Card> resourceAmountFromCard : input.get(r)) {
                 requiredR += resourceAmountFromCard.getKey();
             }
-            if(requiredR == 0) continue;
+            if (requiredR == 0) continue;
             mergedInput.add(new MutablePair<>(r, requiredR));
         }
         return mergedInput;
@@ -181,7 +184,7 @@ public class Exchange extends SetCardToEffect {
 
     @Override
     public void apply(ProcessActionDeliver deliver) {
-        deliver.process((Exchange) this);
+        deliver.process(this);
     }
 
     public Set<Set<Pair<Resource, Integer>>> getInputs() {
