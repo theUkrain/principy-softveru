@@ -2,10 +2,10 @@ package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
-import java.util.Objects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class EffectOr extends SetCardToEffect {
 
@@ -25,6 +25,7 @@ public class EffectOr extends SetCardToEffect {
 
     /**
      * method to get list of effects
+     *
      * @return list of effects, that are in this composite effect
      */
     public List<Effect> getEffectList() {
@@ -32,7 +33,6 @@ public class EffectOr extends SetCardToEffect {
     }
 
     /**
-     *
      * @param whatEffectToTrigger
      * @return instance of effect that would be processed by outer logic
      */
@@ -41,11 +41,10 @@ public class EffectOr extends SetCardToEffect {
     }
 
     /**
-     *
      * @return does this effect can provide assistance
      */
     @Override
-    public boolean canProvideAssistance(){
+    public boolean canProvideAssistance() {
         for (Effect effect : effectList) {
             if (effect.canProvideAssistance()) {
                 return true;
@@ -56,17 +55,16 @@ public class EffectOr extends SetCardToEffect {
 
     @Override
     public void apply(ProcessActionDeliver deliver) {
-        deliver.process((EffectOr) this);
+        deliver.process(this);
     }
 
     /**
-     *
      * @return string representation of effects that are in this composite effect
      */
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("This composite effect is consist of ");
-        for(Effect effect : effectList){
+        for (Effect effect : effectList) {
             sb.append(effect.toString());
         }
 
@@ -75,7 +73,6 @@ public class EffectOr extends SetCardToEffect {
 
 
     /**
-     *
      * @param obj
      * @return obj is equal to our object
      */
@@ -90,11 +87,11 @@ public class EffectOr extends SetCardToEffect {
         }
 
         EffectOr other = (EffectOr) obj;
-        if(effectList.size() != other.effectList.size()){
+        if (effectList.size() != other.effectList.size()) {
             return false;
         }
-        for(int i = 0; i < effectList.size(); i++){
-            if(!effectList.get(i).equals(other.effectList.get(i))){
+        for (int i = 0; i < effectList.size(); i++) {
+            if (!effectList.get(i).equals(other.effectList.get(i))) {
                 return false;
             }
         }
@@ -103,6 +100,7 @@ public class EffectOr extends SetCardToEffect {
 
     /**
      * Override of hashcode method
+     *
      * @return hash code
      */
     @Override

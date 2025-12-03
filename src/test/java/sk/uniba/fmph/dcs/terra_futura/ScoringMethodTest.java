@@ -2,8 +2,8 @@ package sk.uniba.fmph.dcs.terra_futura;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
@@ -43,7 +43,7 @@ public class ScoringMethodTest {
     }
 
     @AfterEach
-    public void reset(){
+    public void reset() {
         CardFactory.reset();
     }
 
@@ -53,7 +53,7 @@ public class ScoringMethodTest {
     }
 
     @Test
-    public void testSubstractionByPollution() {
+    public void testSubtractionByPollution() {
         try {
             grid.getCard(new GridPosition(-1, -1)).get().putPollution(1);
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
@@ -92,17 +92,17 @@ public class ScoringMethodTest {
         try {
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
             Assertions.assertEquals(0, sm.selectThisMethodAndCalculate());
+        } catch (IllegalArgumentException e) {
         }
-        catch(IllegalArgumentException e){}
     }
 
     @Test
-    public void unEvenDistroOfBonus(){
-        grid.getCard(new GridPosition(-1,-2)).get().putResources(Map.of(Resource.CAR,2));
+    public void unEvenDistroOfBonus() {
+        grid.getCard(new GridPosition(-1, -2)).get().putResources(Map.of(Resource.CAR, 2));
         try {
             sm = new ScoringMethod(grid, combination, pointsPerCombination);
             Assertions.assertEquals(244, sm.selectThisMethodAndCalculate());
+        } catch (IllegalArgumentException e) {
         }
-        catch(IllegalArgumentException e){}
     }
 }

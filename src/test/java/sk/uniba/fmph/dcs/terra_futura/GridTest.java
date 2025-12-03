@@ -91,6 +91,6 @@ public class GridTest {
         Assertions.assertFalse(cards.contains(inputCards.get(2)));
         Assertions.assertFalse(cards.contains(inputCards.get(3)));
 
-        Assertions.assertTrue(cards.size() == 3);
+        Assertions.assertEquals(3, cards.size());
     }
 }

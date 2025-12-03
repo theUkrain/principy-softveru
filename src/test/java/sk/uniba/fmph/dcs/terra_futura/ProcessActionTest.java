@@ -11,217 +11,13 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ProcessActionTest {
 
-    class TestCard implements Card {
-        private boolean canPutPollutionResult = true;
-        public int putPollutionCount = 0;
-        public int receivedPollution = 0;
-        private Map<Resource, Integer> currentResources = new HashMap<>();
-
-        private boolean canGetResourcesResult = true;
-        public int getResourcesCallCount = 0;
-        public Map<Resource, Integer> receivedResources = new HashMap<>();
-
-        private final int pollutionSpaces = 10;
-        private int curPollution = 0;
-        private boolean isOverPollutedResult = false;
-
-        public void setCanPutPollution(boolean value) {
-            this.canPutPollutionResult = value;
-        }
-
-        public void setOverPolluted(boolean value) {
-            this.isOverPollutedResult = value;
-        }
-
-        public void setInitialResources(Map<Resource, Integer> initialResources) {
-            this.currentResources.putAll(initialResources);
-        }
-
-        public Map<Resource, Integer> takeResources() {
-            return currentResources;
-        }
-
-
-        @Override
-        public boolean canPutPollution(int amount) {
-            return canPutPollutionResult;
-        }
-
-        @Override
-        public void putPollution(int amount) {
-            putPollutionCount++;
-            receivedPollution += amount;
-        }
-
-        @Override
-        public boolean canGetResources(Map<Resource, Integer> resources) {
-            if (isOverPolluted()) return false;
-            for (Map.Entry<Resource, Integer> entry : resources.entrySet()) {
-                if (currentResources.getOrDefault(entry.getKey(), 0) < entry.getValue()) return false;
-            }
-            return canGetResourcesResult;
-        }
-
-        @Override
-        public void getResources(Map<Resource, Integer> resources) {
-            getResourcesCallCount++;
-            if (!canGetResources(resources)) throw new IllegalArgumentException("Cannot get resources.");
-            for (Map.Entry<Resource, Integer> entry : resources.entrySet()) {
-                currentResources.put(entry.getKey(), currentResources.get(entry.getKey()) - entry.getValue());
-            }
-            currentResources.entrySet().removeIf(e -> e.getValue() == 0);
-        }
-
-        @Override
-        public boolean canPutResources(Map<Resource, Integer> resources) {
-            return true;
-        }
-
-        @Override
-        public void putResources(Map<Resource, Integer> resources) {
-            for (Map.Entry<Resource, Integer> entry : resources.entrySet()) {
-                currentResources.merge(entry.getKey(), entry.getValue(), Integer::sum);
-            }
-        }
-
-        @Override
-        public boolean isOverPolluted() {
-            return isOverPollutedResult || curPollution >= pollutionSpaces;
-        }
-
-        @Override
-        public Effect getUpper() {
-            return null;
-        }
-
-        @Override
-        public Effect getLower() {
-            return null;
-        }
-
-        @Override
-        public CardSource getCardSource() {
-            return null;
-        }
-
-        @Override
-        public boolean canGetPollution(int amount) {
-            return true;
-        }
-
-        @Override
-        public void getPollution(int amount) {
-        }
-
-        @Override
-        public Map<Resource, Integer> getCurResources() {
-            return currentResources;
-        }
-
-        @Override
-        public boolean hasAssistance() {
-            return false;
-        }
-    }
-    class TestRawMaterialProducer extends RawMaterialProducer {
-        public boolean wasCalled = false;
-
-        public TestRawMaterialProducer(Resource guaranteedOutputs) {
-            super(guaranteedOutputs);
-        }
-
-        @Override
-        public void execute() {
-            wasCalled = true;
-        }
-
-        @Override
-        public void setCard(Card card) {
-            super.setCard(card);
-        }
-    }
-
-    class TestTransformationFixed extends TransformationFixed {
-        public boolean wasCalled = false;
-        private final int pollutionToReturn;
-
-        public TestTransformationFixed(int pollutionToReturn) {
-            super(Map.of(Resource.RED, 1), Map.of(Resource.MONEY, 1), pollutionToReturn);
-            this.pollutionToReturn = pollutionToReturn;
-        }
-
-        @Override
-        public int execute(Map<Resource, List<Pair<Card, Integer>>> cards) {
-            wasCalled = true;
-            return pollutionToReturn;
-        }
-    }
-
-    class TestPollutionTransfer extends PollutionTransfer {
-        public boolean wasCalled = false;
-        public List<Pair<Card, Integer>> receivedCards = null;
-
-        @Override
-        public void execute(List<Pair<Card, Integer>> cards) {
-            wasCalled = true;
-            receivedCards = cards;
-        }
-
-        @Override
-        public void setCard(Card card) {
-            super.setCard(card);
-        }
-    }
-
-    class TestProcessActionDeliver extends ProcessActionDeliver {
-        public Effect processedEffect = null;
-        public Grid processedGrid = null;
-
-        public TestProcessActionDeliver() {
-            super(System.in);
-        }
-
-        public void process(Effect effect, Grid grid) {
-            this.processedEffect = effect;
-            this.processedGrid = grid;
-        }
-
-        @Override public void process(RawMaterialProducer effect){}
-        @Override public void process(TransformationFixed effect){}
-        @Override public void process(Exchange effect){}
-        @Override public void process(EffectOr effect){}
-        @Override public void process(AssistanceEffect effect){}
-        @Override public void process(PollutionTransfer effect){}
-    }
-
-    class TestExchange extends Exchange {
-        public boolean wasCalled = false;
-        public Map<Resource, List<Pair<Integer, Card>>> receivedInput = null;
-        public Set<Pair<Resource, Integer>> receivedOutput = null;
-        private final int pollutionToReturn;
-
-        public TestExchange(int pollutionToReturn) {
-            super(Set.of(Set.of(Pair.of(Resource.RED, 1))), Set.of(Set.of(Pair.of(Resource.MONEY, 1))));
-            this.pollutionToReturn = pollutionToReturn;
-        }
-
-        @Override
-        public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
-            wasCalled = true;
-            receivedInput = input;
-            receivedOutput = output;
-            return pollutionToReturn;
-        }
-
-        @Override
-        public void setCard(Card card) {
-            super.setCard(card);
-        }
-    }
     @Test
     @DisplayName("ProcessActionRawMaterialProducer Test")
     public void rawMaterialProducerTest() {
@@ -453,5 +249,228 @@ public class ProcessActionTest {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             actionTransfer.activateCard();
         }, "PollutionTransfer expected exception, target card cannot accept pollution");
+    }
+
+    class TestCard implements Card {
+        private final int pollutionSpaces = 10;
+        public int putPollutionCount = 0;
+        public int receivedPollution = 0;
+        public int getResourcesCallCount = 0;
+        public Map<Resource, Integer> receivedResources = new HashMap<>();
+        private boolean canPutPollutionResult = true;
+        private final Map<Resource, Integer> currentResources = new HashMap<>();
+        private final boolean canGetResourcesResult = true;
+        private final int curPollution = 0;
+        private boolean isOverPollutedResult = false;
+
+        public void setCanPutPollution(boolean value) {
+            this.canPutPollutionResult = value;
+        }
+
+        public void setInitialResources(Map<Resource, Integer> initialResources) {
+            this.currentResources.putAll(initialResources);
+        }
+
+        public Map<Resource, Integer> takeResources() {
+            return currentResources;
+        }
+
+        @Override
+        public boolean canPutPollution(int amount) {
+            return canPutPollutionResult;
+        }
+
+        @Override
+        public void putPollution(int amount) {
+            putPollutionCount++;
+            receivedPollution += amount;
+        }
+
+        @Override
+        public boolean canGetResources(Map<Resource, Integer> resources) {
+            if (isOverPolluted()) return false;
+            for (Map.Entry<Resource, Integer> entry : resources.entrySet()) {
+                if (currentResources.getOrDefault(entry.getKey(), 0) < entry.getValue()) return false;
+            }
+            return canGetResourcesResult;
+        }
+
+        @Override
+        public void getResources(Map<Resource, Integer> resources) {
+            getResourcesCallCount++;
+            if (!canGetResources(resources)) throw new IllegalArgumentException("Cannot get resources.");
+            for (Map.Entry<Resource, Integer> entry : resources.entrySet()) {
+                currentResources.put(entry.getKey(), currentResources.get(entry.getKey()) - entry.getValue());
+            }
+            currentResources.entrySet().removeIf(e -> e.getValue() == 0);
+        }
+
+        @Override
+        public boolean canPutResources(Map<Resource, Integer> resources) {
+            return true;
+        }
+
+        @Override
+        public void putResources(Map<Resource, Integer> resources) {
+            for (Map.Entry<Resource, Integer> entry : resources.entrySet()) {
+                currentResources.merge(entry.getKey(), entry.getValue(), Integer::sum);
+            }
+        }
+
+        @Override
+        public boolean isOverPolluted() {
+            return isOverPollutedResult || curPollution >= pollutionSpaces;
+        }
+
+        public void setOverPolluted(boolean value) {
+            this.isOverPollutedResult = value;
+        }
+
+        @Override
+        public Effect getUpper() {
+            return null;
+        }
+
+        @Override
+        public Effect getLower() {
+            return null;
+        }
+
+        @Override
+        public CardSource getCardSource() {
+            return null;
+        }
+
+        @Override
+        public boolean canGetPollution(int amount) {
+            return true;
+        }
+
+        @Override
+        public void getPollution(int amount) {
+        }
+
+        @Override
+        public Map<Resource, Integer> getCurResources() {
+            return currentResources;
+        }
+
+        @Override
+        public boolean hasAssistance() {
+            return false;
+        }
+    }
+
+    class TestRawMaterialProducer extends RawMaterialProducer {
+        public boolean wasCalled = false;
+
+        public TestRawMaterialProducer(Resource guaranteedOutputs) {
+            super(guaranteedOutputs);
+        }
+
+        @Override
+        public void execute() {
+            wasCalled = true;
+        }
+
+        @Override
+        public void setCard(Card card) {
+            super.setCard(card);
+        }
+    }
+
+    class TestTransformationFixed extends TransformationFixed {
+        private final int pollutionToReturn;
+        public boolean wasCalled = false;
+
+        public TestTransformationFixed(int pollutionToReturn) {
+            super(Map.of(Resource.RED, 1), Map.of(Resource.MONEY, 1), pollutionToReturn);
+            this.pollutionToReturn = pollutionToReturn;
+        }
+
+        @Override
+        public int execute(Map<Resource, List<Pair<Card, Integer>>> cards) {
+            wasCalled = true;
+            return pollutionToReturn;
+        }
+    }
+
+    class TestPollutionTransfer extends PollutionTransfer {
+        public boolean wasCalled = false;
+        public List<Pair<Card, Integer>> receivedCards = null;
+
+        @Override
+        public void execute(List<Pair<Card, Integer>> cards) {
+            wasCalled = true;
+            receivedCards = cards;
+        }
+
+        @Override
+        public void setCard(Card card) {
+            super.setCard(card);
+        }
+    }
+
+    class TestProcessActionDeliver extends ProcessActionDeliver {
+        public Effect processedEffect = null;
+        public Grid processedGrid = null;
+
+        public TestProcessActionDeliver() {
+            super(System.in);
+        }
+
+        public void process(Effect effect, Grid grid) {
+            this.processedEffect = effect;
+            this.processedGrid = grid;
+        }
+
+        @Override
+        public void process(RawMaterialProducer effect) {
+        }
+
+        @Override
+        public void process(TransformationFixed effect) {
+        }
+
+        @Override
+        public void process(Exchange effect) {
+        }
+
+        @Override
+        public void process(EffectOr effect) {
+        }
+
+        @Override
+        public void process(AssistanceEffect effect) {
+        }
+
+        @Override
+        public void process(PollutionTransfer effect) {
+        }
+    }
+
+    class TestExchange extends Exchange {
+        private final int pollutionToReturn;
+        public boolean wasCalled = false;
+        public Map<Resource, List<Pair<Integer, Card>>> receivedInput = null;
+        public Set<Pair<Resource, Integer>> receivedOutput = null;
+
+        public TestExchange(int pollutionToReturn) {
+            super(Set.of(Set.of(Pair.of(Resource.RED, 1))), Set.of(Set.of(Pair.of(Resource.MONEY, 1))));
+            this.pollutionToReturn = pollutionToReturn;
+        }
+
+        @Override
+        public int execute(Map<Resource, List<Pair<Integer, Card>>> input, Set<Pair<Resource, Integer>> output) {
+            wasCalled = true;
+            receivedInput = input;
+            receivedOutput = output;
+            return pollutionToReturn;
+        }
+
+        @Override
+        public void setCard(Card card) {
+            super.setCard(card);
+        }
     }
 }

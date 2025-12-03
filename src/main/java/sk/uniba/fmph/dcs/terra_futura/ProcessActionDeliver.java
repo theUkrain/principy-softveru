@@ -7,7 +7,6 @@ import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
 import sk.uniba.fmph.dcs.terra_futura.process.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
-import sk.uniba.fmph.dcs.terra_futura.tiles.GridInterface;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
 import java.io.InputStream;
@@ -15,7 +14,7 @@ import java.util.*;
 
 public class ProcessActionDeliver {
 
-    private Scanner sc;
+    private final Scanner sc;
     private Grid grid;
     private Game game;
 
@@ -123,7 +122,7 @@ public class ProcessActionDeliver {
 
                     int amount = sc.nextInt();
 
-                    if (!input.keySet().contains(r)) input.put(r, List.of(Pair.of(amount, card)));
+                    if (!input.containsKey(r)) input.put(r, List.of(Pair.of(amount, card)));
                     else input.get(r).add(Pair.of(amount, card));
                 }
             }
@@ -167,7 +166,7 @@ public class ProcessActionDeliver {
 
         int playerIndex = sc.nextInt();
 
-        Player assistPlayer =  game.getPlayer(playerIndex);
+        Player assistPlayer = game.getPlayer(playerIndex);
 
         Grid grid = assistPlayer.getGrid();
 
@@ -183,37 +182,36 @@ public class ProcessActionDeliver {
                 System.out.println("Card: " + card);
                 System.out.println("Request assist from this card? (y/n)");
 
-                if(!sc.next().equals("y")) continue;
+                if (!sc.next().equals("y")) continue;
 
                 Effect requested = null;
 
                 System.out.println("Select this effect? (y/n)\n" + card.getUpper());
 
-                if(!sc.next().equals("y")) {
+                if (!sc.next().equals("y")) {
                     System.out.println("Select this effect? (y/n)\n" + card.getLower());
 
-                    if(!sc.next().equals("y")) break;
+                    if (!sc.next().equals("y")) break;
 
                     requested = card.getLower();
-                }
+                } else requested = card.getUpper();
 
-                else requested = card.getUpper();
-
-                if(!requested.canProvideAssistance()) throw new IllegalArgumentException("This effect can't provide assistance");
+                if (!requested.canProvideAssistance())
+                    throw new IllegalArgumentException("This effect can't provide assistance");
 
                 GameObserver assistanceObserver = assistPlayer.getObserver();
 
                 Player curPlayer = null;
 
-                for(int i = 0; i < game.playerCount(); i++) {
-                    if(game.getPlayer(i).getGrid() == grid) curPlayer = game.getPlayer(i);
+                for (int i = 0; i < game.playerCount(); i++) {
+                    if (game.getPlayer(i).getGrid() == grid) curPlayer = game.getPlayer(i);
                 }
 
                 assistanceObserver.write("Would you like to produce assistance to " + curPlayer.getName() + " with effect " + requested + " (y/n)?");
 
                 String ans = assistanceObserver.read();
 
-                if(!ans.equals("y")) {
+                if (!ans.equals("y")) {
                     curPlayer.getObserver().write("Player " + assistPlayer.getName() + " doesn't want to mess with you!!!");
                     throw new IllegalArgumentException("Assistance aborted!");
                 }
@@ -309,17 +307,17 @@ public class ProcessActionDeliver {
     }
 
     public Card askForPollutionToGet(Grid grid) {
-        for (int dx = -2; dx <= 2; dx++){
-            for (int dy = -2; dy <= 2; dy++){
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dy = -2; dy <= 2; dy++) {
                 GridPosition pos = new GridPosition(dx, dy);
                 Optional<Card> optional = grid.getCard(pos);
 
-                if(optional.isEmpty()) continue;
+                if (optional.isEmpty()) continue;
 
                 System.out.println("Card: " + optional.get());
                 System.out.println("Transfer pollution from this card? (y/n)");
 
-                if(!sc.next().equalsIgnoreCase("y")) continue;
+                if (!sc.next().equalsIgnoreCase("y")) continue;
 
                 return optional.get();
             }

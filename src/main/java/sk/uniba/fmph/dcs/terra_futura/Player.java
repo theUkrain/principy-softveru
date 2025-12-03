@@ -4,12 +4,12 @@ import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class Player {
-    private String name;
-    private Grid grid;
-    private ActivationPattern activationPattern1;
-    private ActivationPattern activationPattern2;
-    private ScoringMethod scoringMethod1;
-    private ScoringMethod scoringMethod2;
+    private final String name;
+    private final Grid grid;
+    private final ActivationPattern activationPattern1;
+    private final ActivationPattern activationPattern2;
+    private final ScoringMethod scoringMethod1;
+    private final ScoringMethod scoringMethod2;
     private GameObserver observer;
 
     public Player(String name, Grid grid, ActivationPattern activationPattern1, ActivationPattern activationPattern2,
@@ -27,43 +27,43 @@ public class Player {
     }
 
     public void setObserver(GameObserver observer) {
-        if(observer != null) throw new IllegalStateException("Observer is already tied-up to player " + name);
+        if (observer != null) throw new IllegalStateException("Observer is already tied-up to player " + name);
         this.observer = observer;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public int selectFirstScoringMethod(){
+    public int selectFirstScoringMethod() {
         return scoringMethod1.selectThisMethodAndCalculate();
     }
 
-    public ScoringMethod getFirstScoringMethod(){
+    public ScoringMethod getFirstScoringMethod() {
         return scoringMethod1;
     }
 
-    public int selectSecondScoringMethod(){
+    public int selectSecondScoringMethod() {
         return scoringMethod2.selectThisMethodAndCalculate();
     }
 
-    public ScoringMethod getSecondScoringMethod(){
+    public ScoringMethod getSecondScoringMethod() {
         return scoringMethod2;
     }
 
-    public void selectFirstActivationPattern(){
+    public void selectFirstActivationPattern() {
         activationPattern1.select();
     }
 
-    public ActivationPattern getFirstActivationPattern(){
+    public ActivationPattern getFirstActivationPattern() {
         return activationPattern1;
     }
 
-    public void selectSecondActivationPattern(){
+    public void selectSecondActivationPattern() {
         activationPattern2.select();
     }
 
-    public ActivationPattern getSecondActivationPattern(){
+    public ActivationPattern getSecondActivationPattern() {
         return activationPattern2;
     }
 

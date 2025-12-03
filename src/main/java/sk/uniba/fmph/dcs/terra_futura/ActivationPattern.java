@@ -1,17 +1,17 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.json.JSONObject;
-import org.json.JSONArray;
-import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 
-
-public final class ActivationPattern {
-    private ArrayList<GridPosition> pattern;
+public class ActivationPattern {
+    private final ArrayList<GridPosition> pattern;
     private boolean selected;
-    private InterfaceActivateGrid grid;
+    private final InterfaceActivateGrid grid;
 
     public ActivationPattern(final InterfaceActivateGrid grid, final Collection<GridPosition> pattern) {
 

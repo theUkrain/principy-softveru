@@ -3,8 +3,6 @@ package sk.uniba.fmph.dcs.terra_futura.observer;
 import sk.uniba.fmph.dcs.terra_futura.Player;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GameObserver implements TerraFuturaObserverInterface {
     private final InputStream input;

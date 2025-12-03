@@ -1,20 +1,18 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
-
 import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class GameObserverTest {
 
@@ -31,13 +29,6 @@ public class GameObserverTest {
         ScoringMethod scoring2 = createTestScoringMethod();
 
         testPlayer = new Player("TestPlayer", testGrid, pattern1, pattern2, scoring1, scoring2);
-    }
-    private class TestActivateGrid implements InterfaceActivateGrid {
-
-        @Override
-        public void setActivationPattern(Collection<GridPosition> pattern) {
-            
-        }
     }
 
     private ActivationPattern createTestActivationPattern() {
@@ -468,5 +459,13 @@ public class GameObserverTest {
                 player.getFirstScoringMethod());
         assertNotNull("Player should have second scoring method",
                 player.getSecondScoringMethod());
+    }
+
+    private class TestActivateGrid implements InterfaceActivateGrid {
+
+        @Override
+        public void setActivationPattern(Collection<GridPosition> pattern) {
+
+        }
     }
 }

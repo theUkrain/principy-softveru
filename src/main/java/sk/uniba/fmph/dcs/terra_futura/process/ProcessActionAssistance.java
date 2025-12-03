@@ -8,8 +8,8 @@ import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends ProcessAction {
     private final T effectAnotherPlayer;
-    private ProcessActionDeliver deliver;
     private final Grid grid;
+    private ProcessActionDeliver deliver;
 
     public ProcessActionAssistance(Effect effect, T effectAnotherPlayer, ProcessActionDeliver deliver, Grid grid) {
         super(effect);
@@ -34,9 +34,7 @@ public class ProcessActionAssistance<T extends Effect & CopyableEffect> extends 
             Card cardFrom = deliver.askForPollutionToGet(grid);
             cardFrom.getPollution(1);
             card.putPollution(1);
-        }
-
-        else {
+        } else {
             deliver.process(newEffect, grid);
         }
 

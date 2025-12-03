@@ -1,25 +1,20 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
-import java.io.InputStream;
-import java.util.*;
-
 import org.apache.commons.lang3.tuple.Pair;
-
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.effects.*;
+import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
-import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
+import sk.uniba.fmph.dcs.terra_futura.tiles.*;
+
+import java.io.InputStream;
+import java.util.*;
 
 public class Game implements TerraFuturaInterface {
     private Set<Pair<Player, Integer>> scoreTable;
-    private Scanner sc;
-    private InputStream in;
+    private final Scanner sc;
+    private final InputStream in;
     private GameState state;
 
     private List<Player> players;
@@ -30,7 +25,7 @@ public class Game implements TerraFuturaInterface {
 
     private ProcessActionDeliver actionDeliver;
 
-    private InputStream input;
+    private final InputStream input;
 
     public Game(InputStream in) {
         this.in = in;
@@ -390,7 +385,6 @@ public class Game implements TerraFuturaInterface {
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage() + "\nTry again");
             executeCard(card, g);
-            return;
         }
     }
 

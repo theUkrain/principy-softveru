@@ -25,7 +25,6 @@ public class RawMaterialProducer extends SetCardToEffect {
     }
 
     /**
-     *
      * @return can effect be executed via assistance effect
      */
     @Override
@@ -34,16 +33,14 @@ public class RawMaterialProducer extends SetCardToEffect {
     }
 
     /**
-     *
      * @param game
      */
     @Override
     public void apply(ProcessActionDeliver deliver) {
-        deliver.process((RawMaterialProducer) this);
+        deliver.process(this);
     }
 
     /**
-     *
      * @return
      */
     @Override
@@ -51,13 +48,13 @@ public class RawMaterialProducer extends SetCardToEffect {
         return "Generates resource " + guaranteedOutputs;
     }
 
-    public Resource getGuaranteedOutputs(){
+    public Resource getGuaranteedOutputs() {
         return guaranteedOutputs;
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(this == obj){
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
         RawMaterialProducer t = (RawMaterialProducer) obj;
