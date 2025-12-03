@@ -1,64 +1,63 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
-import java.util.List;
 import java.util.Map;
 
-public class RawMaterialProducer implements Effect {
-    private Map<Resource, Integer> guaranteedOutputs;
-    private Resource resource;
-    private int generatedPollution;
+public class RawMaterialProducer extends SetCardToEffect {
+    private final Resource guaranteedOutputs;
 
-
-    public RawMaterialProducer(final Map<Resource, Integer> guaranteedOutputs, final int generatedPollution) {
+    public RawMaterialProducer(final Resource guaranteedOutputs) {
         this.guaranteedOutputs = guaranteedOutputs;
-        this.generatedPollution = generatedPollution;
-        if (guaranteedOutputs.keySet().size() > 1) {
-            throw new RuntimeException("To many materials");
-        }
-        for (Resource r : guaranteedOutputs.keySet()) {
-            resource = r;
-        }
     }
 
-    public int execute(Card card, Resource resource) {
-        if (!card.canPutResources(guaranteedOutputs)) {
-            return 0;
+
+    /**
+     * method that puts corresponding material on user card
+     */
+    public void execute() {
+        if (!card.canPutResources(Map.of(guaranteedOutputs, 1))) {
+            throw new IllegalStateException("Can't put resources");
         }
-        if (guaranteedOutputs.containsKey(Resource.UNIVERSAL) && (resource.equals(Resource.RED) || resource.equals(Resource.YELLOW) || resource.equals(Resource.GREEN))) {
-            card.putResources(Map.of(resource, 1));
-        }
-        if (guaranteedOutputs.containsKey(resource)) {
-            card.putResources(Map.of(resource, 1));
-        }
-        return generatedPollution;
+
+        card.putResources(Map.of(guaranteedOutputs, 1));
     }
 
+    /**
+     * @return can effect be executed via assistance effect
+     */
     @Override
     public boolean canProvideAssistance() {
         return false;
     }
 
+    /**
+     * @param game
+     */
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        boolean canExecute = true;
-        if (!(card.canPutResources(guaranteedOutputs) && wantedResource.keySet().size() > 1)) {
-            canExecute = false;
-        }
-        if (!(guaranteedOutputs.containsKey(Resource.UNIVERSAL) && (resource.equals(Resource.RED) || resource.equals(Resource.YELLOW) || resource.equals(Resource.GREEN)))) {
-            canExecute = false;
-        }
-        if (!guaranteedOutputs.containsKey(resource)) {
-            canExecute = false;
-        }
-        return canExecute;
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process(this);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public String toString() {
+        return "Generates resource " + guaranteedOutputs;
+    }
+
+    public Resource getGuaranteedOutputs() {
+        return guaranteedOutputs;
     }
 
     @Override
-    public String toString() {
-        return "Generated resource/resources is " + generatedPollution;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        RawMaterialProducer t = (RawMaterialProducer) obj;
+        return this.guaranteedOutputs == t.getGuaranteedOutputs();
     }
 }

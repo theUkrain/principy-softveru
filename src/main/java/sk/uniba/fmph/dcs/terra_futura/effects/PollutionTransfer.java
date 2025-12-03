@@ -1,26 +1,30 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
 import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 
 import java.util.List;
-import java.util.Map;
 
-public class PollutionTransfer implements Effect {
+public class PollutionTransfer extends SetCardToEffect implements CopyableEffect {
 
-    public int execute(Card card, List<Pair<Card, Integer>> cards) {
+    public void execute(List<Pair<Card, Integer>> cards) {
         int commulatedPollution = 0;
         for (Pair<Card, Integer> p : cards) {
-            commulatedPollution += p.getRight();
-        }
-        if (card.canPutResources(Map.of(Resource.POLLUTION, commulatedPollution))) {
-            for (Pair<Card, Integer> p : cards) {
-                p.getLeft().getResources(Map.of(Resource.POLLUTION, p.getRight()));
+            if (p.getLeft().canGetPollution(p.getRight())) {
+                commulatedPollution += p.getRight();
+            } else {
+                throw new IllegalArgumentException("You took more pollution than exist in card " + p.getLeft());
             }
-            return -commulatedPollution;
         }
-        return 0;
+        if (card.canPutPollution(commulatedPollution)) {
+            for (Pair<Card, Integer> p : cards) {
+                p.getLeft().getPollution(p.getRight());
+            }
+            card.putPollution(commulatedPollution);
+        } else {
+            throw new IllegalArgumentException("Cant put more pollution");
+        }
     }
 
     @Override
@@ -29,14 +33,8 @@ public class PollutionTransfer implements Effect {
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        int commulatedPollution = 0;
-        for (Resource r: cards.keySet()) {
-            for (Pair<Card, Integer> p : cards.get(r)) {
-                commulatedPollution += p.getRight();
-            }
-        }
-        return card.canPutResources(Map.of(Resource.POLLUTION, commulatedPollution));
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process(this);
     }
 
     @Override
@@ -44,5 +42,15 @@ public class PollutionTransfer implements Effect {
         return "This effect will get up to 4 pollutions " +
                 "from other cards considering amount of pollution " +
                 "on card that is being under this effect";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof PollutionTransfer);
+    }
+
+    @Override
+    public Effect copy() {
+        return new PollutionTransfer();
     }
 }

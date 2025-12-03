@@ -1,36 +1,46 @@
-
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
-import java.util.List;
-import java.util.Map;
+public class AssistanceEffect extends SetCardToEffect {
 
-public class AssistanceEffect implements Effect {
-
-    public Effect execute(Card cardWithAssist, Effect effectOfAnoutherPlayer,
-                          Map<Resource, List<Pair<Card, Integer>>> cards,
-                          Map<Resource, Integer> wantedResource) {
-        if (effectOfAnoutherPlayer.canProvideAssistance() && effectOfAnoutherPlayer.check(cardWithAssist, cards, wantedResource)) {
-            return effectOfAnoutherPlayer;
+    /**
+     * @param effectOfAnotherPlayer - effect of another player that will be executed according to games rules
+     * @param <T>                   - generalized to make possible to use other player effect in outer logic
+     * @return - instance of effect, that will be processed by outer logic
+     */
+    public <T extends Effect & CopyableEffect> T execute(T effectOfAnotherPlayer) {
+        if (effectOfAnotherPlayer.canProvideAssistance()) {
+            return effectOfAnotherPlayer;
         }
+
         return null;
     }
 
+    /**
+     * @return can effect be executed via assistance effect
+     */
     @Override
     public boolean canProvideAssistance() {
         return false;
     }
 
+
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        return false;
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process(this);
     }
 
     @Override
     public String toString() {
         return "This is assistance effect";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        return obj instanceof AssistanceEffect;
     }
 }

@@ -1,40 +1,110 @@
 package sk.uniba.fmph.dcs.terra_futura.effects;
 
-import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
-import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
+import sk.uniba.fmph.dcs.terra_futura.ProcessActionDeliver;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
-public class EffectOr implements Effect {
+public class EffectOr extends SetCardToEffect {
 
-    List<Effect> effectPair = new ArrayList<>();
+    private List<Effect> effectList = new ArrayList<>();
 
-    public EffectOr(Effect e1, Effect e2) {
-        effectPair.add(e1);
-        effectPair.add(e2);
+    public EffectOr(SetCardToEffect e1, SetCardToEffect e2) {
+        effectList.add(e1);
+        effectList.add(e2);
+
+        e1.setCard(card);
+        e2.setCard(card);
     }
 
+    public EffectOr(List<Effect> effectList) {
+        this.effectList = effectList;
+    }
+
+    /**
+     * method to get list of effects
+     *
+     * @return list of effects, that are in this composite effect
+     */
+    public List<Effect> getEffectList() {
+        return Collections.unmodifiableList(this.effectList);
+    }
+
+    /**
+     * @param whatEffectToTrigger
+     * @return instance of effect that would be processed by outer logic
+     */
     public Effect execute(int whatEffectToTrigger) {
-        return effectPair.get(whatEffectToTrigger);
+        return effectList.get(whatEffectToTrigger);
     }
 
-    public boolean canProvideAssistance(){
-        return true;
+    /**
+     * @return does this effect can provide assistance
+     */
+    @Override
+    public boolean canProvideAssistance() {
+        for (Effect effect : effectList) {
+            if (effect.canProvideAssistance()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public boolean check(Card card, Map<Resource, List<Pair<Card, Integer>>> cards, Map<Resource, Integer> wantedResource) {
-        return effectPair.getFirst().check(card, cards,  wantedResource) &&
-                effectPair.getLast().check(card,cards, wantedResource);
+    public void apply(ProcessActionDeliver deliver) {
+        deliver.process(this);
     }
 
-    public String toString(){
-        return "This composite effect is consist of" + effectPair.getFirst()
-                + " and " + effectPair.getLast() + " they will do ongoing effects \n First: "
-                + effectPair.getFirst().toString() + " Second: " + effectPair.getLast().toString();
+    /**
+     * @return string representation of effects that are in this composite effect
+     */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("This composite effect is consist of ");
+        for (Effect effect : effectList) {
+            sb.append(effect.toString());
+        }
+
+        return sb.toString();
     }
 
+
+    /**
+     * @param obj
+     * @return obj is equal to our object
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        EffectOr other = (EffectOr) obj;
+        if (effectList.size() != other.effectList.size()) {
+            return false;
+        }
+        for (int i = 0; i < effectList.size(); i++) {
+            if (!effectList.get(i).equals(other.effectList.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Override of hashcode method
+     *
+     * @return hash code
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(effectList);
+    }
 }
