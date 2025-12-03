@@ -182,7 +182,7 @@ public class ProcessActionTest {
         public Grid processedGrid = null;
 
         public TestProcessActionDeliver() {
-            super(System.in, null);
+            super(System.in);
         }
 
         public void process(Effect effect, Grid grid) {

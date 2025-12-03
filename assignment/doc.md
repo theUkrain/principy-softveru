@@ -1,32 +1,35 @@
-#Documentation for our design
+# Documentation for our design
 
-Our design is different from initial one.
+Our design differs from the initial one.
 
 ## Our effects
 
-We have tried to implement all effects, that can be present in the game:
--Exchange allows player to trade-off one of possible inputs to one of possible outputs
--RawMaterialProducer produces one copy of resource given in constructor 
--Transformation fixed allows player to trade of fixed input to fixed output
--EffectOr represents Composite pattern on effect
--...
+We have attempted to implement all effects that can be present in the game:
 
-Effects as well process main game logic. Effects are managed with classes in "process" package.
+- Exchange allows the player to trade one of the possible inputs for one of the possible outputs.
 
-##Card-effect correspondence
+- RawMaterialProducer produces one unit of the resource given in the constructor.
 
-All  effects extend SetCardToEffect interface, witch guarantees, that effect, given to card, will stick to his card forever.
-That robustness between cards and effects is provided via CardFactory. Card Factory also controls, that there will be produced 
-at most 23 cards of type I and 24 cards of type II.
+- TransformationFixed allows the player to trade a fixed input for a fixed output.
 
-##Visitor pattern 
+- EffectOr represents the Composite pattern applied to effects.
 
-Our main difference was implementation of effect management via visitor pattern, where: 
--ProcessActionDeliver is "visitor"
--Effects are "components"
+- …
 
-ProcessActionDeliver handles communication with player (via standard input stream), while each individual ProcessAction handles 
-respected effect
+Effects also process the main game logic. They are managed by the classes in the process package.
 
+## Card–effect correspondence
 
- 
+All effects implement the SetCardToEffect interface, which guarantees that the effect assigned to a card will stay attached to that card permanently.
+This robustness between cards and effects is ensured via the CardFactory.
+CardFactory also controls that at most 23 cards of type I and 24 cards of type II can be produced.
+
+## Visitor pattern
+
+Our main difference lies in the implementation of effect management via the Visitor pattern, where:
+
+ProcessActionDeliver is the visitor,
+
+Effects act as the components.
+
+ProcessActionDeliver handles communication with the player (via the standard input stream), while each individual ProcessAction handles its respective effect.

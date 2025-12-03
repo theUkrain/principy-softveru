@@ -1,5 +1,6 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 
 public class Player {
@@ -9,6 +10,7 @@ public class Player {
     private ActivationPattern activationPattern2;
     private ScoringMethod scoringMethod1;
     private ScoringMethod scoringMethod2;
+    private GameObserver observer;
 
     public Player(String name, Grid grid, ActivationPattern activationPattern1, ActivationPattern activationPattern2,
                   ScoringMethod scoringMethod1, ScoringMethod scoringMethod2) {
@@ -18,6 +20,15 @@ public class Player {
         this.activationPattern2 = activationPattern2;
         this.scoringMethod1 = scoringMethod1;
         this.scoringMethod2 = scoringMethod2;
+    }
+
+    public GameObserver getObserver() {
+        return observer;
+    }
+
+    public void setObserver(GameObserver observer) {
+        if(observer != null) throw new IllegalStateException("Observer is already tied-up to player " + name);
+        this.observer = observer;
     }
 
     public String getName(){

@@ -3,6 +3,7 @@ package sk.uniba.fmph.dcs.terra_futura;
 import org.apache.commons.lang3.tuple.Pair;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
+import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
 import sk.uniba.fmph.dcs.terra_futura.process.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
@@ -21,6 +22,10 @@ public class ProcessActionDeliver {
     public ProcessActionDeliver(InputStream in, Game game) {
         this.sc = new Scanner(in);
         this.game = game;
+    }
+
+    public ProcessActionDeliver(InputStream in) {
+        this.sc = new Scanner(in);
     }
 
     private Map<Resource, List<Pair<Card, Integer>>> requestResourceMap(Map<Resource, Integer> requiredRes, Grid grid) {
@@ -158,7 +163,7 @@ public class ProcessActionDeliver {
     }
 
     public void process(AssistanceEffect effect) {
-        System.out.println("Select player, from who you will ask for assistance:");
+        System.out.println("Select player, from who you would like to ask for assistance:");
 
         int playerIndex = sc.nextInt();
 
@@ -177,6 +182,48 @@ public class ProcessActionDeliver {
 
                 System.out.println("Card: " + card);
                 System.out.println("Request assist from this card? (y/n)");
+
+                if(!sc.next().equals("y")) continue;
+
+                Effect requested = null;
+
+                System.out.println("Select this effect? (y/n)\n" + card.getUpper());
+
+                if(!sc.next().equals("y")) {
+                    System.out.println("Select this effect? (y/n)\n" + card.getLower());
+
+                    if(!sc.next().equals("y")) break;
+
+                    requested = card.getLower();
+                }
+
+                else requested = card.getUpper();
+
+                if(!requested.canProvideAssistance()) throw new IllegalArgumentException("This effect can't provide assistance");
+
+                GameObserver assistanceObserver = assistPlayer.getObserver();
+
+                Player curPlayer = null;
+
+                for(int i = 0; i < game.playerCount(); i++) {
+                    if(game.getPlayer(i).getGrid() == grid) curPlayer = game.getPlayer(i);
+                }
+
+                assistanceObserver.write("Would you like to produce assistance to " + curPlayer.getName() + " with effect " + requested + " (y/n)?");
+
+                String ans = assistanceObserver.read();
+
+                if(!ans.equals("y")) {
+                    curPlayer.getObserver().write("Player " + assistPlayer.getName() + " doesn't want to mess with you!!!");
+                    throw new IllegalArgumentException("Assistance aborted!");
+                }
+
+                ProcessActionAssistance<CopyableEffect> processAction = new ProcessActionAssistance<>(effect, (CopyableEffect) requested, this, grid);
+
+                int generatedPollution = processAction.activateCard();
+
+                askPlacePollution(generatedPollution, grid);
+
             }
         }
 
