@@ -107,7 +107,7 @@ public class PileTest {
         for(int i=0; i<20; ++i){
             pile2.getCard(i);
         }
-        Assertions.assertThrows(IllegalArgumentException.class, () -> pile2.getCard(0));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> pile2.getCard(0));
 
         input  = generateInput(3);
         Pile pile3 = new Pile(input);

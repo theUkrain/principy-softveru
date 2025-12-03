@@ -5,12 +5,9 @@ import java.util.*;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.*;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Card;
-import sk.uniba.fmph.dcs.terra_futura.tiles.CardSource;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
 import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
 import sk.uniba.fmph.dcs.terra_futura.tiles.Pile;
@@ -45,6 +42,7 @@ public class Game implements TerraFuturaInterface {
         return players.get(ind);
     }
 
+    @Override
     public void gameInit() {
         int n = sc.nextInt();
         if (n < 2 || n > 4) throw new IllegalArgumentException("Unable to create a game for " + n + " players");
@@ -108,6 +106,7 @@ public class Game implements TerraFuturaInterface {
         return methods;
     }
 
+    @Override
     public void gameStart() {
         System.out.println("----------------< Terra Futura Game >----------------");
         gameMethod();
@@ -167,10 +166,9 @@ public class Game implements TerraFuturaInterface {
         }
 
         gameFinish();
-
     }
 
-    private void gameFinish(){ 
+    private void gameFinish(){
         System.out.println("-------- Final activation --------");
 
         for (int i = 0; i < players.size(); ++i) {
@@ -178,7 +176,7 @@ public class Game implements TerraFuturaInterface {
 
             // Select activation pattern
             System.out.println("-- Select pattern");
-            selectActPattern(players.get(i));
+            selectActivationPattern(players.get(i));
             Set<Card> activatedCards = players.get(i).getGrid().getActivatedCards();
             executeActivatedCards(activatedCards, players.get(i).getGrid());
 
@@ -189,7 +187,7 @@ public class Game implements TerraFuturaInterface {
         }
     }
 
-    private void selectActPattern(Player player) {
+    private void selectActivationPattern(Player player) {
         System.out.println("Your activation patterns:");
         System.out.println(player.getFirstActivationPattern());
         System.out.println(player.getSecondActivationPattern());
@@ -198,7 +196,7 @@ public class Game implements TerraFuturaInterface {
         int choice = sc.nextInt();
         if (choice != 1 && choice != 2) {
             System.out.println("Invalid pattern choice");
-            selectActPattern(player);
+            selectActivationPattern(player);
             return;
         }
         switch (choice) {
@@ -394,41 +392,5 @@ public class Game implements TerraFuturaInterface {
             }
         }
         return true;
-    }
-
-    @Override
-    public void takeCard(int playerId, CardSource source, GridPosition destination) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'takeCard'");
-    }
-
-    @Override
-    public boolean discardLastCardFromDeck(int playerId, Deck deck) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'discardLastCardFromDeck'");
-    }
-
-    @Override
-    public void selectReward(int playerId, Resource resource) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'selectReward'");
-    }
-
-    @Override
-    public boolean turnFinished(int playerId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'turnFinished'");
-    }
-
-    @Override
-    public boolean selectActivationPattern(int playerId, int card) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'selectActivationPattern'");
-    }
-
-    @Override
-    public boolean selectScoring(int playerId, int card) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'selectScoring'");
     }
 }
