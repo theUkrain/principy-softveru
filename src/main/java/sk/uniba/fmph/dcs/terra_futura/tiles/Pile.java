@@ -9,8 +9,6 @@ import java.util.Optional;
 public class Pile implements PileInterface {
     private List<Card> active;
     private List<Card> discard;
-    private List<Card> active;
-    private List<Card> discard;
 
     public Pile(Collection<Card> input){
         active = new ArrayList<>(input);
@@ -18,14 +16,6 @@ public class Pile implements PileInterface {
         Collections.shuffle(active);
     }
 
-    private void refill() {
-        List<Card> temp = active;
-        Collections.shuffle(discard);
-        active = discard;
-        discard = temp;
-    }
-
-    @Override
     private void refill() {
         List<Card> temp = active;
         Collections.shuffle(discard);
@@ -42,7 +32,6 @@ public class Pile implements PileInterface {
 
         if(index >= active.size()) index = active.size()-1;
 
-        return Optional.ofNullable(active.remove(index));
         return Optional.ofNullable(active.remove(index));
 
     }
@@ -67,10 +56,6 @@ public class Pile implements PileInterface {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append("Active:\n");
-        for (Card c : active) sb.append(" ").append(c).append("\n");
-        sb.append("Discard:\n");
-        for (Card c : discard) sb.append(" ").append(c).append("\n");
         sb.append("Active:\n");
         for (Card c : active) sb.append(" ").append(c).append("\n");
         sb.append("Discard:\n");

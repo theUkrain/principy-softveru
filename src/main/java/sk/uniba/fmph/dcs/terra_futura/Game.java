@@ -1,9 +1,7 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
 import org.apache.commons.lang3.tuple.Pair;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.GameState;
-import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
 import sk.uniba.fmph.dcs.terra_futura.effects.Effect;
 import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
 import sk.uniba.fmph.dcs.terra_futura.tiles.*;

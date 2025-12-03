@@ -4,7 +4,6 @@ package sk.uniba.fmph.dcs.terra_futura;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.*;
 
 import org.junit.jupiter.api.Assertions;
 import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Deck;

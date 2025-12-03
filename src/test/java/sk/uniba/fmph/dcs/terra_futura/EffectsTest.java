@@ -111,8 +111,6 @@ public class EffectsTest {
         // check if card produces correct resources
         automatedTestPutRawMaterialProducer();
 
-        // TODO check pollution
-
         // special checks
         Resource test = Resource.BULB;
         RawMaterialProducer effect = new RawMaterialProducer(test);

@@ -15,65 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class PileTest {
-    private List<Card> generateInput(int n) {
-        List<Card> input = new ArrayList<>();
-        for (int i = 0; i < n; ++i) {
-            input.add(new TestCard());
-        }
-        return input;
-    }
-
-    @Test
-    @DisplayName("Test method: getCard")
-    public void testGetCard() {
-        List<Card> input = generateInput(20);
-        Pile tpile = new Pile(input);
-
-        for (int i = 0; i < 20; ++i) {
-            Optional<Card> tcard = tpile.getCard(i);
-            assertTrue(tcard.isPresent());
-        }
-
-
-        input = generateInput(20);
-        final Pile pile2 = new Pile(input);
-        for (int i = 0; i < 20; ++i) {
-            pile2.getCard(i);
-        }
-        Assertions.assertThrows(IllegalArgumentException.class, () -> pile2.getCard(0));
-
-        input = generateInput(3);
-        Pile pile3 = new Pile(input);
-        Card c1 = (pile3.getCard(0)).get();
-        Card c2 = (pile3.getCard(0)).get();
-        assertTrue(c1 != c2);
-
-        input = generateInput(50);
-        Pile pile4 = new Pile(input);
-        int extracted = 0;
-        for (int i = 0; i < 50; ++i) {
-            if (i % 2 == 0) {
-                ++extracted;
-                pile4.getCard(0);
-            } else {
-                pile4.discardCard();
-            }
-        }
-        assertEquals(25, extracted);
-        Optional<Card> ct = pile4.getCard(0);
-        assertTrue(ct.isPresent());
-
-        input = generateInput(25);
-        Pile pile5 = new Pile(input);
-        for (int i = 0; i < 25; ++i) {
-            assertDoesNotThrow(() -> pile5.discardCard());
-        }
-    }
-
     private class TestCard implements Card {
 
         @Override
@@ -167,7 +111,7 @@ public class PileTest {
         for(int i=0; i<20; ++i){
             pile2.getCard(i);
         }
-        Assertions.assertThrows(IllegalArgumentException.class, () -> pile2.getCard(0));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> pile2.getCard(0));
 
         input  = generateInput(3);
         Pile pile3 = new Pile(input);
