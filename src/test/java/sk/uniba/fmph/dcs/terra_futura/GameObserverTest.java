@@ -1,319 +1,472 @@
 package sk.uniba.fmph.dcs.terra_futura;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
-import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
-import sk.uniba.fmph.dcs.terra_futura.observer.TerraFuturaObserverInterface;
-
 import static org.junit.Assert.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import sk.uniba.fmph.dcs.terra_futura.observer.GameObserver;
+import sk.uniba.fmph.dcs.terra_futura.tiles.Grid;
+import sk.uniba.fmph.dcs.terra_futura.tiles.GridPosition;
+import sk.uniba.fmph.dcs.terra_futura.ConstantGameObjects.Resource;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 public class GameObserverTest {
 
-    /**
-     * Mock observer for testing.
-     * Implements TerraFuturaObserverInterface and tracks notifications.
-     */
-    /*
-    private static class testObserver implements TerraFuturaObserverInterface {
-        private String lastNotification;
-        private int notificationCount;
-
-        @Override
-        public void notifyAll(Map<Integer, String> newState) {
-            
-        }
-
-        @Override
-        public void notify(String gameState) {
-            this.lastNotification = gameState;
-            this.notificationCount++;
-        }
-
-        public String getLastNotification() {
-            return lastNotification;
-        }
-
-        public int getNotificationCount() {
-            return notificationCount;
-        }
-
-        public void reset() {
-            lastNotification = null;
-            notificationCount = 0;
-        }
-    }
-
-    private GameObserver gameObserver;
-    private testObserver observer1;
-    private testObserver observer2;
+    private Player testPlayer;
+    private Grid testGrid;
 
     @Before
     public void setUp() {
-        gameObserver = new GameObserver();
-        observer1 = new testObserver();
-        observer2 = new testObserver();
+        testGrid = new Grid();
+
+        ActivationPattern pattern1 = createTestActivationPattern();
+        ActivationPattern pattern2 = createTestActivationPattern();
+        ScoringMethod scoring1 = createTestScoringMethod();
+        ScoringMethod scoring2 = createTestScoringMethod();
+
+        testPlayer = new Player("TestPlayer", testGrid, pattern1, pattern2, scoring1, scoring2);
+    }
+    private class TestActivateGrid implements InterfaceActivateGrid {
+
+        @Override
+        public void setActivationPattern(Collection<GridPosition> pattern) {
+            
+        }
     }
 
-    @Test
-    public void testRegisterObserver() {
-        gameObserver.registerObserver(1, observer1);
+    private ActivationPattern createTestActivationPattern() {
+        return new ActivationPattern(new TestActivateGrid(), Collections.emptyList()) {
+            private boolean selected = false;
 
-        assertTrue("Observer should be registered", gameObserver.hasObserver(1));
-        assertEquals("Should have 1 observer", 1, gameObserver.getObserverCount());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testRegisterNullObserver() {
-        gameObserver.registerObserver(1, null);
-    }
-
-    @Test
-    public void testRegisterMultipleObservers() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.registerObserver(2, observer2);
-
-        assertTrue("Observer 1 should be registered", gameObserver.hasObserver(1));
-        assertTrue("Observer 2 should be registered", gameObserver.hasObserver(2));
-        assertEquals("Should have 2 observers", 2, gameObserver.getObserverCount());
-    }
-
-    @Test
-    public void testUnregisterObserver() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.registerObserver(2, observer2);
-
-        gameObserver.unregisterObserver(1);
-
-        assertFalse("Observer 1 should be unregistered", gameObserver.hasObserver(1));
-        assertTrue("Observer 2 should still be registered", gameObserver.hasObserver(2));
-        assertEquals("Should have 1 observer", 1, gameObserver.getObserverCount());
-    }
-
-    @Test
-    public void testUnregisterNonExistentObserver() {
-        // Should not throw exception
-        gameObserver.unregisterObserver(999);
-        assertEquals("Should have 0 observers", 0, gameObserver.getObserverCount());
-    }
-
-    @Test
-    public void testNotifyPlayer() {
-        gameObserver.registerObserver(1, observer1);
-
-        String testState = "Test game state";
-        gameObserver.notifyPlayer(1, testState);
-
-        assertEquals("Observer should receive notification",
-                testState, observer1.getLastNotification());
-        assertEquals("Observer should be notified once",
-                1, observer1.getNotificationCount());
-    }
-
-    @Test
-    public void testNotifyPlayerNotRegistered() {
-        gameObserver.registerObserver(1, observer1);
-
-        // Try to notify unregistered player - should not throw exception
-        gameObserver.notifyPlayer(2, "Test state");
-
-        assertNull("Observer 1 should not receive notification",
-                observer1.getLastNotification());
-        assertEquals("Observer 1 should not be notified",
-                0, observer1.getNotificationCount());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNotifyPlayerWithNullState() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.notifyPlayer(1, null);
-    }
-
-    @Test
-    public void testNotifyAll() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.registerObserver(2, observer2);
-
-        Map<Integer, String> states = new HashMap<>();
-        states.put(1, "State for player 1");
-        states.put(2, "State for player 2");
-
-        gameObserver.notifyAll(states);
-
-        assertEquals("Observer 1 should receive state 1",
-                "State for player 1", observer1.getLastNotification());
-        assertEquals("Observer 2 should receive state 2",
-                "State for player 2", observer2.getLastNotification());
-        assertEquals("Observer 1 should be notified once",
-                1, observer1.getNotificationCount());
-        assertEquals("Observer 2 should be notified once",
-                1, observer2.getNotificationCount());
-    }
-
-    @Test
-    public void testNotifyAllWithMissingPlayer() {
-        gameObserver.registerObserver(1, observer1);
-        // Observer 2 not registered
-
-        Map<Integer, String> states = new HashMap<>();
-        states.put(1, "State for player 1");
-        states.put(2, "State for player 2");
-
-        gameObserver.notifyAll(states);
-
-        assertEquals("Observer 1 should receive notification",
-                "State for player 1", observer1.getLastNotification());
-        assertNull("Observer 2 should not receive notification",
-                observer2.getLastNotification());
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testNotifyAllWithNullMap() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.notifyAll(null);
-    }
-
-    @Test
-    public void testMultipleNotifications() {
-        gameObserver.registerObserver(1, observer1);
-
-        gameObserver.notifyPlayer(1, "First state");
-        gameObserver.notifyPlayer(1, "Second state");
-        gameObserver.notifyPlayer(1, "Third state");
-
-        assertEquals("Observer should receive last notification",
-                "Third state", observer1.getLastNotification());
-        assertEquals("Observer should be notified 3 times",
-                3, observer1.getNotificationCount());
-    }
-
-    @Test
-    public void testHasObserverEmptyObservers() {
-        assertFalse("Should not have any observers", gameObserver.hasObserver(1));
-    }
-
-    @Test
-    public void testGetObserverCountEmpty() {
-        assertEquals("Should have 0 observers", 0, gameObserver.getObserverCount());
-    }
-
-    @Test
-    public void testRegisterSamePlayerTwice() {
-        testObserver firstObserver = new testObserver();
-        testObserver secondObserver = new testObserver();
-
-        gameObserver.registerObserver(1, firstObserver);
-        gameObserver.registerObserver(1, secondObserver);
-
-        assertEquals("Should still have 1 observer (replaced)",
-                1, gameObserver.getObserverCount());
-
-        gameObserver.notifyPlayer(1, "Test");
-
-        assertNull("First observer should not receive notification",
-                firstObserver.getLastNotification());
-        assertEquals("Second observer should receive notification",
-                "Test", secondObserver.getLastNotification());
-    }
-
-    @Test
-    public void testNotifyAllEmptyStates() {
-        gameObserver.registerObserver(1, observer1);
-
-        Map<Integer, String> emptyStates = new HashMap<>();
-        gameObserver.notifyAll(emptyStates);
-
-        assertNull("Observer should not be notified",
-                observer1.getLastNotification());
-        assertEquals("Notification count should be 0",
-                0, observer1.getNotificationCount());
-    }
-
-    @Test
-    public void testClearAllObservers() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.registerObserver(2, observer2);
-
-        assertEquals("Should have 2 observers", 2, gameObserver.getObserverCount());
-
-        gameObserver.clearAllObservers();
-
-        assertEquals("Should have 0 observers after clear", 0, gameObserver.getObserverCount());
-        assertFalse("Observer 1 should not be registered", gameObserver.hasObserver(1));
-        assertFalse("Observer 2 should not be registered", gameObserver.hasObserver(2));
-    }
-
-    @Test
-    public void testObserverException() {
-        // Observer that throws exception
-        TerraFuturaObserverInterface faultyObserver = new TerraFuturaObserverInterface() {
             @Override
-            public void notifyAll(Map<Integer, String> newState) {
-
+            public void select() {
+                selected = true;
             }
 
             @Override
-            public void notify(String gameState) {
-                throw new RuntimeException("Test exception");
+            public boolean isSelected() {
+                return selected;
             }
         };
+    }
 
-        gameObserver.registerObserver(1, faultyObserver);
-        gameObserver.registerObserver(2, observer2);
+    private ScoringMethod createTestScoringMethod() {
+        return new ScoringMethod(testGrid, Collections.emptyList(), 0) {
+            @Override
+            public int selectThisMethodAndCalculate() {
+                return 0;
+            }
+        };
+    }
 
-        Map<Integer, String> states = new HashMap<>();
-        states.put(1, "State 1");
-        states.put(2, "State 2");
-
-        // Should not throw - exception is caught internally
-        gameObserver.notifyAll(states);
-
-        // Observer 2 should still receive notification despite observer 1 failing
-        assertEquals("Observer 2 should receive notification",
-                "State 2", observer2.getLastNotification());
+    private GameObserver createObserverWithInput(String input, Player player) {
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        return new GameObserver(inputStream, outputStream, player);
     }
 
     @Test
-    public void testMultiplePlayersIndependentNotifications() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.registerObserver(2, observer2);
+    public void testConstructor() {
+        String input = "";
+        GameObserver observer = createObserverWithInput(input, testPlayer);
 
-        // Notify only player 1
-        gameObserver.notifyPlayer(1, "Player 1 message");
-
-        assertEquals("Observer 1 should receive message",
-                "Player 1 message", observer1.getLastNotification());
-        assertNull("Observer 2 should not receive message",
-                observer2.getLastNotification());
-
-        // Now notify only player 2
-        gameObserver.notifyPlayer(2, "Player 2 message");
-
-        assertEquals("Observer 2 should receive message",
-                "Player 2 message", observer2.getLastNotification());
-        assertEquals("Observer 1 should keep old message",
-                "Player 1 message", observer1.getLastNotification());
+        assertNotNull("Observer should be created", observer);
+        assertNotNull("Player should not be null", observer.getPlayer());
+        assertEquals("Player should match", testPlayer, observer.getPlayer());
     }
 
     @Test
-    public void testObserverReceivesOnlyOwnState() {
-        gameObserver.registerObserver(1, observer1);
-        gameObserver.registerObserver(2, observer2);
+    public void testGetPlayer() {
+        GameObserver observer = createObserverWithInput("", testPlayer);
 
-        Map<Integer, String> states = new HashMap<>();
-        states.put(1, "Secret state for player 1");
-        states.put(2, "Secret state for player 2");
-
-        gameObserver.notifyAll(states);
-
-        // Each observer should receive only their own state
-        assertEquals("Observer 1 should receive only player 1 state",
-                "Secret state for player 1", observer1.getLastNotification());
-        assertEquals("Observer 2 should receive only player 2 state",
-                "Secret state for player 2", observer2.getLastNotification());
+        Player player = observer.getPlayer();
+        assertNotNull("Player should not be null", player);
+        assertEquals("Player name should match", "TestPlayer", player.getName());
+        assertSame("Grid should match", testGrid, player.getGrid());
     }
 
-     */
+    @Test
+    public void testReadSingleLine() {
+        String input = "test command\n";
+        GameObserver observer = createObserverWithInput(input, testPlayer);
+
+        String result = observer.read();
+        assertEquals("Should read the input line", "test command", result);
+    }
+
+    @Test
+    public void testReadMultipleLines() {
+        String input = "line1\nline2\nline3\n";
+        GameObserver observer = createObserverWithInput(input, testPlayer);
+
+        assertEquals("First line", "line1", observer.read());
+        assertEquals("Second line", "line2", observer.read());
+        assertEquals("Third line", "line3", observer.read());
+    }
+
+    @Test
+    public void testReadEmptyLine() {
+        String input = "\n";
+        GameObserver observer = createObserverWithInput(input, testPlayer);
+
+        String result = observer.read();
+        assertEquals("Should read empty string", "", result);
+    }
+
+    @Test
+    public void testReadWithWhitespace() {
+        String input = "  command with spaces  \n";
+        GameObserver observer = createObserverWithInput(input, testPlayer);
+
+        String result = observer.read();
+        assertEquals("Should preserve whitespace", "  command with spaces  ", result);
+    }
+
+    @Test
+    public void testReadReturnsNullOnEOF() {
+        String input = ""; // Empty input = EOF
+        GameObserver observer = createObserverWithInput(input, testPlayer);
+
+        String result = observer.read();
+        assertNull("Should return null on EOF", result);
+    }
+
+    @Test
+    public void testWrite() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.write("test message");
+
+        String result = output.toString();
+        assertTrue("Output should contain message", result.contains("test message"));
+    }
+
+    @Test
+    public void testWriteMultipleMessages() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.write("message 1");
+        observer.write("message 2");
+        observer.write("message 3");
+
+        String result = output.toString();
+        assertTrue("Should contain first message", result.contains("message 1"));
+        assertTrue("Should contain second message", result.contains("message 2"));
+        assertTrue("Should contain third message", result.contains("message 3"));
+    }
+
+    @Test
+    public void testWriteWithNewlines() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.write("line 1");
+
+        String result = output.toString();
+        assertTrue("Should end with newline", result.endsWith(System.lineSeparator()));
+    }
+
+    @Test
+    public void testNotify() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.notify("game state update");
+
+        String result = output.toString();
+        assertTrue("Should contain notification", result.contains("game state update"));
+    }
+
+    @Test
+    public void testNotifyMultipleTimes() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.notify("state 1");
+        observer.notify("state 2");
+
+        String result = output.toString();
+        assertTrue("Should contain first state", result.contains("state 1"));
+        assertTrue("Should contain second state", result.contains("state 2"));
+    }
+
+    @Test
+    public void testNotifyUsesWrite() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        String testMessage = "test notification";
+        observer.notify(testMessage);
+
+        String result = output.toString();
+        assertTrue("notify should write to output", result.contains(testMessage));
+    }
+
+    @Test
+    public void testReadAndWrite() {
+        String input = "player command\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(inputStream, outputStream, testPlayer);
+
+        observer.write("Enter command:");
+        String command = observer.read();
+        assertEquals("Should read command", "player command", command);
+
+        observer.write("Command received: " + command);
+
+        String output = outputStream.toString();
+        assertTrue("Should contain prompt", output.contains("Enter command:"));
+        assertTrue("Should contain response", output.contains("Command received: player command"));
+    }
+
+    @Test
+    public void testMultipleReadWriteCycles() {
+        String input = "cmd1\ncmd2\ncmd3\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(inputStream, outputStream, testPlayer);
+
+        for (int i = 1; i <= 3; i++) {
+            observer.write("Enter command " + i + ":");
+            String command = observer.read();
+            assertEquals("Should read command " + i, "cmd" + i, command);
+            observer.write("Received: " + command);
+        }
+
+        String output = outputStream.toString();
+        assertTrue("Should contain all prompts and responses",
+                output.contains("Enter command 1:") &&
+                        output.contains("Received: cmd1") &&
+                        output.contains("Enter command 2:") &&
+                        output.contains("Received: cmd2"));
+    }
+
+    @Test
+    public void testWriteEmptyString() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.write("");
+
+        String result = output.toString();
+        assertEquals("Should write newline for empty string",
+                System.lineSeparator(), result);
+    }
+
+    @Test
+    public void testWriteNull() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.write(null);
+
+        String result = output.toString();
+        assertTrue("Should write 'null'", result.contains("null"));
+    }
+
+    @Test
+    public void testWriteSpecialCharacters() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.write("Special: !@#$%^&*()");
+        observer.write("Unicode: ñ é ü ❤");
+
+        String result = output.toString();
+        assertTrue("Should handle special characters", result.contains("!@#$%^&*()"));
+        assertTrue("Should handle unicode", result.contains("ñ é ü"));
+    }
+
+    @Test
+    public void testReadSpecialCharacters() {
+        String input = "Special: !@#$%^&*()\nUnicode: ñ é ü\n";
+        GameObserver observer = createObserverWithInput(input, testPlayer);
+
+        String line1 = observer.read();
+        String line2 = observer.read();
+
+        assertEquals("Should read special characters", "Special: !@#$%^&*()", line1);
+        assertTrue("Should read unicode", line2.contains("ñ é ü"));
+    }
+
+    @Test
+    public void testClose() {
+        InputStream input = new ByteArrayInputStream("test\n".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.close();
+    }
+
+    @Test
+    public void testCloseMultipleTimes() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        observer.close();
+        observer.close();
+        observer.close();
+    }
+
+    @Test
+    public void testDifferentPlayers() {
+        Grid grid1 = new Grid();
+        Grid grid2 = new Grid();
+
+        ActivationPattern pattern1 = createTestActivationPattern();
+        ActivationPattern pattern2 = createTestActivationPattern();
+        ScoringMethod scoring1 = createTestScoringMethod();
+        ScoringMethod scoring2 = createTestScoringMethod();
+
+        Player player1 = new Player("Alice", grid1, pattern1, pattern2, scoring1, scoring2);
+        Player player2 = new Player("Bob", grid2, pattern1, pattern2, scoring1, scoring2);
+
+        GameObserver observer1 = new GameObserver(
+                new ByteArrayInputStream("".getBytes()),
+                new ByteArrayOutputStream(),
+                player1
+        );
+
+        GameObserver observer2 = new GameObserver(
+                new ByteArrayInputStream("".getBytes()),
+                new ByteArrayOutputStream(),
+                player2
+        );
+
+        assertEquals("Observer 1 should have player 1", player1, observer1.getPlayer());
+        assertEquals("Observer 2 should have player 2", player2, observer2.getPlayer());
+        assertNotEquals("Players should be different",
+                observer1.getPlayer(), observer2.getPlayer());
+    }
+
+    @Test
+    public void testConcurrentReadWrite() {
+        String input = "concurrent command\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(inputStream, outputStream, testPlayer);
+
+        observer.write("Prompt");
+        String command = observer.read();
+        observer.write("Response: " + command);
+
+        String output = outputStream.toString();
+        assertTrue("Should contain prompt", output.contains("Prompt"));
+        assertTrue("Should contain response", output.contains("Response: concurrent command"));
+    }
+
+    @Test
+    public void testLongInput() {
+        StringBuilder longInput = new StringBuilder();
+        for (int i = 0; i < 1000; i++) {
+            longInput.append("word").append(i).append(" ");
+        }
+        longInput.append("\n");
+
+        GameObserver observer = createObserverWithInput(longInput.toString(), testPlayer);
+
+        String result = observer.read();
+        assertNotNull("Should read long input", result);
+        assertTrue("Should contain input data", result.contains("word0"));
+        assertTrue("Should contain end data", result.contains("word999"));
+    }
+
+    @Test
+    public void testLongOutput() {
+        InputStream input = new ByteArrayInputStream("".getBytes());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        GameObserver observer = new GameObserver(input, output, testPlayer);
+
+        StringBuilder longMessage = new StringBuilder();
+        for (int i = 0; i < 1000; i++) {
+            longMessage.append("line ").append(i).append(" ");
+        }
+
+        observer.write(longMessage.toString());
+
+        String result = output.toString();
+        assertTrue("Should write long output", result.contains("line 0"));
+        assertTrue("Should write end of output", result.contains("line 999"));
+    }
+
+    @Test
+    public void testGameTurnSimulation() {
+        String input = "take card 0\nactivate card\nend turn\n";
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        GameObserver observer = new GameObserver(inputStream, outputStream, testPlayer);
+
+        observer.notify("Your turn!");
+        observer.write("Available actions: take card, activate card, end turn");
+
+        String action1 = observer.read();
+        assertEquals("Should read first action", "take card 0", action1);
+        observer.write("Card taken successfully");
+
+        String action2 = observer.read();
+        assertEquals("Should read second action", "activate card", action2);
+        observer.write("Card activated");
+
+        String action3 = observer.read();
+        assertEquals("Should read third action", "end turn", action3);
+        observer.write("Turn ended");
+
+        String output = outputStream.toString();
+        assertTrue("Should contain all messages",
+                output.contains("Your turn!") &&
+                        output.contains("Card taken successfully") &&
+                        output.contains("Card activated") &&
+                        output.contains("Turn ended"));
+    }
+
+    @Test
+    public void testPlayerHasGrid() {
+        GameObserver observer = createObserverWithInput("", testPlayer);
+
+        Player player = observer.getPlayer();
+        assertNotNull("Player should have grid", player.getGrid());
+        assertSame("Grid should match test grid", testGrid, player.getGrid());
+    }
+
+    @Test
+    public void testPlayerHasActivationPatterns() {
+        GameObserver observer = createObserverWithInput("", testPlayer);
+
+        Player player = observer.getPlayer();
+        assertNotNull("Player should have first activation pattern",
+                player.getFirstActivationPattern());
+        assertNotNull("Player should have second activation pattern",
+                player.getSecondActivationPattern());
+    }
+
+    @Test
+    public void testPlayerHasScoringMethods() {
+        GameObserver observer = createObserverWithInput("", testPlayer);
+
+        Player player = observer.getPlayer();
+        assertNotNull("Player should have first scoring method",
+                player.getFirstScoringMethod());
+        assertNotNull("Player should have second scoring method",
+                player.getSecondScoringMethod());
+    }
 }
